@@ -20,7 +20,7 @@ enum IntentStatus {
 }
 
 model Intent {
-  id         Int      @id @default(autoincrement())
+  id         String       @id @default(cuid())
   startDate  DateTime
   endDate    DateTime
   status     IntentStatus
@@ -28,16 +28,21 @@ model Intent {
   successYes Int
   successNo  Int
   reminders  String // Or JSON?
-  userId     Int
-  aimId      Int
+  createdAt  DateTime     @default(now())
 
   // Relationships
-  user User  @relation("UserIntents", fields: [userId], references: [id])
-  aim  Aim   @relation("AimIntents", fields: [aimId], references: [id])
-  tags Tag[] @relation("IntentTags")
+  user   User   @relation("UserIntents", fields: [userId], references: [id])
+  aim    Aim    @relation("AimIntents", fields: [aimId], references: [id])
+  tags   Tag[]  @relation("IntentTags")
+
+  // Added to improve query performance
+  //  userId and aimId are required to be stored
+  //  as properties within the Intent object
+  userId String
+  aimId  String
 
   // Indexes
-  @@index([userId], name: "userId_index")
+  @@index([userId], name: "user_id_index")
   @@index([aimId], name: "aim_id_index")
 }
 
@@ -48,11 +53,12 @@ enum UserRole {
 }
 
 model User {
-  id        Int    @id @default(autoincrement())
+  id        String   @id @default(cuid())
   firstName String
   lastName  String
   role      UserRole
   timezone  String
+  createdAt DateTime @default(now())
 
   // Relationships
   intents Intent[] @relation("UserIntents")
@@ -62,8 +68,9 @@ model User {
 }
 
 model Group {
-  id    Int    @id @default(autoincrement())
-  title String
+  id        String   @id @default(cuid())
+  title     String
+  createdAt DateTime @default(now())
 
   // Relationships
   users User[] @relation("GroupMembers")
@@ -72,11 +79,12 @@ model Group {
 }
 
 model Aim {
-  id              Int    @id @default(autoincrement())
+  id              String   @id @default(cuid())
   title           String
   helpfulnessLow  Int
   helpfulnessMid  Int
   helpfulnessHigh Int
+  createdAt       DateTime @default(now())
 
   // Relationships
   groups  Group[]  @relation("GroupAims")
@@ -85,14 +93,15 @@ model Aim {
   users   User[]   @relation("AimParticipants")
 
   // Indexes
-  @@index([helpfulnessLow], name: "helpfulnessLow_index") // Add an index on the 'low' column
-  @@index([helpfulnessMid], name: "helpfulnessMid_index") // Add an index on the 'mid' column
-  @@index([helpfulnessHigh], name: "helpfulnessHigh_index") // Add an index on the 'high' column
+  @@index([helpfulnessLow], name: "helpfulnessLow_index")
+  @@index([helpfulnessMid], name: "helpfulnessMid_index")
+  @@index([helpfulnessHigh], name: "helpfulnessHigh_index")
 }
 
 model Tag {
-  id    Int    @id @default(autoincrement())
-  title String
+  id        String   @id @default(cuid())
+  title     String
+  createdAt DateTime @default(now())
 
   // Relationships
   aims    Aim[]    @relation("AimTags")
