@@ -1,14 +1,12 @@
 import Head from "next/head";
 import Link from "next/link";
 import { SignIn, SignOutButton, useUser } from "@clerk/nextjs";
-
 import { api } from "~/utils/api";
-import { Sign } from "crypto";
 
 export default function Home() {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
-
   const user = useUser();
+
+  const { data } = api.aims.getAll.useQuery();
 
   return (
     <>
@@ -22,6 +20,7 @@ export default function Home() {
           {!user.isSignedIn && <SignIn />}
           {!!user.isSignedIn && <SignOutButton />}
         </div>
+        <div>{data?.map((aim) => <div key={aim.id}>{aim.title}</div>)}</div>
       </main>
     </>
   );
