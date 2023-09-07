@@ -35,15 +35,14 @@ model Intent {
   aim  Aim   @relation("AimIntents", fields: [aimId], references: [id])
   tags Tag[] @relation("IntentTags")
 
-  // Added to improve query performance
-  //  userId and aimId are required to be stored
-  //  as properties within the Intent object
-  creatorId String
-  aimId     String
+  // Fields that represent foreign keys to improve query performance
+  // Added @map directive to improve database integrity
+  creatorId String @map("user_id")
+  aimId     String @map("aim_id")
 
   // Indexes
-  @@index([creatorId], name: "creator_id_index")
-  @@index([aimId], name: "aim_id_index")
+  @@index([creatorId])
+  @@index([aimId])
 }
 
 enum UserRole {
@@ -95,9 +94,10 @@ model Aim {
   users   User[]   @relation("AimParticipants")
 
   // Indexes
-  @@index([helpfulnessLow], name: "helpfulnessLow_index")
-  @@index([helpfulnessMid], name: "helpfulnessMid_index")
-  @@index([helpfulnessHigh], name: "helpfulnessHigh_index")
+  @@index([helpfulnessLow])
+  @@index([helpfulnessMid])
+  @@index([helpfulnessHigh])
+  @@index([title])
 }
 
 model Tag {
@@ -111,4 +111,7 @@ model Tag {
   groups  Group[]  @relation("GroupTags")
   users   User[]   @relation("UserTags")
   intents Intent[] @relation("IntentTags")
+
+  // Indexes
+  @@index([title])
 }
