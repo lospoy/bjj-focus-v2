@@ -31,25 +31,25 @@ model Intent {
   createdAt  DateTime     @default(now())
 
   // Relationships
-  user   User   @relation("UserIntents", fields: [userId], references: [id])
-  aim    Aim    @relation("AimIntents", fields: [aimId], references: [id])
-  tags   Tag[]  @relation("IntentTags")
+  user User  @relation("UserIntents", fields: [creatorId], references: [id])
+  aim  Aim   @relation("AimIntents", fields: [aimId], references: [id])
+  tags Tag[] @relation("IntentTags")
 
   // Added to improve query performance
   //  userId and aimId are required to be stored
   //  as properties within the Intent object
-  userId String
-  aimId  String
+  creatorId String
+  aimId     String
 
   // Indexes
-  @@index([userId], name: "user_id_index")
+  @@index([creatorId], name: "creator_id_index")
   @@index([aimId], name: "aim_id_index")
 }
 
 enum UserRole {
-  User
-  GroupManager
-  Admin
+  USER
+  GROUP_MANAGER
+  ADMIN
 }
 
 model User {
@@ -71,11 +71,12 @@ model Group {
   id        String   @id @default(cuid())
   title     String
   createdAt DateTime @default(now())
+  creatorId String
 
   // Relationships
-  users User[] @relation("GroupMembers")
-  aims  Aim[]  @relation("GroupAims")
-  tags  Tag[]  @relation("GroupTags")
+  members User[] @relation("GroupMembers")
+  aims    Aim[]  @relation("GroupAims")
+  tags    Tag[]  @relation("GroupTags")
 }
 
 model Aim {
@@ -85,6 +86,7 @@ model Aim {
   helpfulnessMid  Int
   helpfulnessHigh Int
   createdAt       DateTime @default(now())
+  creatorId       String
 
   // Relationships
   groups  Group[]  @relation("GroupAims")
@@ -102,6 +104,7 @@ model Tag {
   id        String   @id @default(cuid())
   title     String
   createdAt DateTime @default(now())
+  creatorId String
 
   // Relationships
   aims    Aim[]    @relation("AimTags")
