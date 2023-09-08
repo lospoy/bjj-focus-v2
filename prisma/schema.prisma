@@ -12,11 +12,9 @@ datasource db {
 }
 
 enum IntentStatus {
-  Inactive
-  Active
-  Paused
-  Cancelled
-  Deleted
+  ACTIVE
+  PAUSED
+  DELETED
 }
 
 model Intent {
@@ -28,7 +26,7 @@ model Intent {
   successYes Int
   successNo  Int
   reminders  String // Or JSON?
-  createdAt  DateTime     @default(now())
+  createdOn  DateTime     @default(now())
 
   // Relationships
   user User  @relation("UserIntents", fields: [creatorId], references: [id])
@@ -57,7 +55,7 @@ model User {
   lastName  String
   role      UserRole
   timezone  String
-  createdAt DateTime @default(now())
+  createdOn DateTime @default(now())
 
   // Relationships
   intents Intent[] @relation("UserIntents")
@@ -69,7 +67,7 @@ model User {
 model Group {
   id        String   @id @default(cuid())
   title     String
-  createdAt DateTime @default(now())
+  createdOn DateTime @default(now())
   creatorId String
 
   // Relationships
@@ -84,7 +82,7 @@ model Aim {
   helpfulnessLow  Int
   helpfulnessMid  Int
   helpfulnessHigh Int
-  createdAt       DateTime @default(now())
+  createdOn       DateTime @default(now())
   creatorId       String
 
   // Relationships
@@ -103,7 +101,7 @@ model Aim {
 model Tag {
   id        String   @id @default(cuid())
   title     String
-  createdAt DateTime @default(now())
+  createdOn DateTime @default(now())
   creatorId String
 
   // Relationships
