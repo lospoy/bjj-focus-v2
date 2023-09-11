@@ -40,11 +40,11 @@ const addUserDataToAims = async (aims: Aim[]) => {
 };
 
 // Create a new ratelimiter, that allows 3 requests per 1 minute
-const ratelimit = new Ratelimit({
-  redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(3, "1 m"),
-  analytics: true,
-});
+// const ratelimit = new Ratelimit({
+//   redis: Redis.fromEnv(),
+//   limiter: Ratelimit.slidingWindow(3, "1 m"),
+//   analytics: true,
+// });
 
 export const aimsRouter = createTRPCRouter({
   getById: publicProcedure
@@ -62,7 +62,7 @@ export const aimsRouter = createTRPCRouter({
   getAll: publicProcedure.query(async ({ ctx }) => {
     const aims = await ctx.prisma.aim.findMany({
       take: 100,
-      orderBy: [{ createdOn: "desc" }],
+      orderBy: [{ createdOn: "desc" }], //descending, newest first
     });
 
     return addUserDataToAims(aims);
@@ -89,22 +89,27 @@ export const aimsRouter = createTRPCRouter({
   create: privateProcedure
     .input(
       z.object({
-        // Validator. Type definition inferred from the validator.
+        // Zod Validator - www.github.com/colinhacks/zod
+        // Type definition inferred from the validator.
         // "Only emojis are allowed" error message comes from the server
-        title: z.string().emoji("Only emojis are allowed").min(1).max(280),
+        // title: z.string().emoji("Only emojis are allowed").min(1).max(280),
+        title: z.string().min(3).max(120),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       const creatorId = ctx.userId;
 
-      const { success } = await ratelimit.limit(creatorId);
+      // const { success } = await ratelimit.limit(creatorId);
 
-      if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
+      // if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
 
       const aim = await ctx.prisma.aim.create({
         data: {
           creatorId,
           title: input.title,
+          helpfulnessLow: 0,
+          helpfulnessMid: 0,
+          helpfulnessHigh: 0,
         },
       });
 

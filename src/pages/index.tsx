@@ -1,9 +1,6 @@
 import { type NextPage } from "next";
-
 import { api } from "~/utils/api";
 import { SignInButton, useUser } from "@clerk/nextjs";
-import dayjs from "dayjs";
-import Image from "next/image";
 import { LoadingPage, LoadingSpinner } from "~/components/loading";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -28,7 +25,7 @@ const CreateAimWizard = () => {
       if (errorMessage?.[0]) {
         toast.error(errorMessage[0]);
       } else {
-        toast.error("Failed to aim. Please try again later.");
+        toast.error("Failed to save. Please try again later.");
       }
     },
   });
@@ -37,15 +34,8 @@ const CreateAimWizard = () => {
 
   return (
     <div className="flex w-full gap-3">
-      <Image
-        src={user.profileImageUrl}
-        alt="profile-image"
-        className="h-14 w-14 rounded-full"
-        width={56}
-        height={56}
-      />
       <input
-        placeholder="type some emojis!"
+        placeholder="What do you want to focus on?"
         className="grow bg-transparent outline-none"
         type="text"
         value={input}
@@ -81,9 +71,7 @@ const Feed = () => {
 
   return (
     <div className="flex flex-col">
-      {data.map((fullAim) => (
-        <AimView {...fullAim} key={fullAim.aim.id} />
-      ))}
+      {data?.map((fullAim) => <AimView {...fullAim} key={fullAim.aim.id} />)}
     </div>
   );
 };

@@ -78,6 +78,7 @@ export const publicProcedure = t.procedure;
 // extending publicProcedure with a new middleware
 // not the same as a NextJS middleware that runs on an edge function
 // it's just a process that runs before your main request processing
+// this procedure will always have an authentication object
 const enforceUserIsAuthed = t.middleware(async ({ ctx, next }) => {
   if (!ctx.userId) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
