@@ -1,161 +1,104 @@
-import React, { useState, useContext, createContext, useEffect } from "react";
-
-// Define the step data type
-interface StepData {
-  intent: string;
-  setIntent: React.Dispatch<React.SetStateAction<string>>;
-  fromDate: Date;
-  setFromDate: React.Dispatch<React.SetStateAction<Date>>;
-  untilDate: Date;
-  setUntilDate: React.Dispatch<React.SetStateAction<Date>>;
-  reminders: string;
-  setReminders: React.Dispatch<React.SetStateAction<string>>;
-  selectedDays: string[];
-  setSelectedDays: React.Dispatch<React.SetStateAction<string[]>>;
-}
-
-// Create a single context for all steps
-// Intent Wizard CREATES and EDITS intents
-const IntentWizardContext = createContext<StepData | undefined>(undefined);
+import React, { useState, useEffect } from "react";
 
 interface IntentWizardProps {
   intentId?: string; // Pass intentId to edit an existing intent
+  aimId?: string; // Pass aimId either to edit existing intent or as suggestion for new intent
 }
 
-function IntentWizard({ intentId }: IntentWizardProps) {
-  const [step, setStep] = useState(1);
-  const [intent, setIntent] = useState("");
-  const [fromDate, setFromDate] = useState<Date>(new Date());
-  const [untilDate, setUntilDate] = useState<Date>(new Date());
-  const [reminders, setReminders] = useState("");
-  const [selectedDays, setSelectedDays] = useState<string[]>([]);
-
-  const contextValue: StepData = {
-    intent,
-    setIntent,
-    fromDate,
-    setFromDate,
-    untilDate,
-    setUntilDate,
-    reminders,
-    setReminders,
-    selectedDays,
-    setSelectedDays,
-  };
+function IntentWizard({ intentId, aimId }: IntentWizardProps) {
+  // const currentUserId = ctx.userId
+  const [formData, setFormData] = useState({
+    aim: "",
+    aimId: aimId,
+    startDate: new Date(),
+    endDate: new Date(),
+    createdOn: new Date(),
+    reminders: "",
+    creatorId: "",
+    isPublic: true,
+    successYes: 0,
+    successNo: 0,
+    status: "ACTIVE",
+    // creatorId: currentUserId,
+  });
 
   useEffect(() => {
     // If intentId is provided, fetch the existing intent data and populate the form for editing
     if (intentId) {
-      // Replace this with your logic to fetch existing intent data
-      const existingIntentData: StepData = {
-        intent: "Existing Intent",
-        fromDate: new Date(),
-        untilDate: new Date(),
-        reminders: "Existing Reminders",
-        selectedDays: ["Monday", "Wednesday"],
-        setIntent: setIntent,
-        setFromDate: setFromDate,
-        setUntilDate: setUntilDate,
-        setReminders: setReminders,
-        setSelectedDays: setSelectedDays,
-      };
+      // Logic to fetch existing intent data
+      const existingIntentData = {};
 
       // Set the form fields with existing data
-      setIntent(existingIntentData.intent);
-      setFromDate(existingIntentData.fromDate);
-      setUntilDate(existingIntentData.untilDate);
-      setReminders(existingIntentData.reminders);
-      setSelectedDays(existingIntentData.selectedDays);
+      setFormData(existingIntentData);
     }
   }, [intentId]);
 
-  const handleNext = () => {
-    setStep(step + 1);
-  };
-
-  const handlePrev = () => {
-    setStep(step - 1);
-  };
-
   const handleSave = () => {
-    // Implement save or edit logic here
-    console.log("Form Data:", contextValue);
+    // Save or Edit logic here
+    console.log("Form Data:", { formData });
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
   };
 
   return (
-    <div className="IntentWizard-container">
-      <IntentWizardContext.Provider value={contextValue}>
-        {step === 1 && <Step1 />}
-        {step === 2 && <Step2 />}
-        {step === 3 && <Step3 />}
-        <div className="buttons">
-          {step > 1 && <button onClick={handlePrev}>Previous</button>}
-          {step < 3 ? (
-            <button onClick={handleNext}>Next</button>
-          ) : (
-            <button onClick={handleSave}>Save</button>
-          )}
-        </div>
-      </IntentWizardContext.Provider>
-    </div>
-  );
-}
-
-function Step1() {
-  const { intent, setIntent } = useContext(IntentWizardContext)!;
-
-  return (
-    <div className="step">
-      <h1>Step 1</h1>
-      <h2>Set new Intent</h2>
-      <input
-        type="text"
-        placeholder="Write your own Aim"
-        value={intent}
-        onChange={(e) => setIntent(e.target.value)}
-      />
-    </div>
-  );
-}
-
-function Step2() {
-  const { fromDate, setFromDate, untilDate, setUntilDate } =
-    useContext(IntentWizardContext)!;
-
-  return (
-    <div className="step">
-      <h1>Step 2</h1>
-      <label>From Date</label>
-      <input
-        type="date"
-        value={fromDate.toISOString().split("T")[0]} // Format as YYYY-MM-DD
-        onChange={(e) => setFromDate(new Date(e.target.value))}
-      />
-      <label>Until Date</label>
-      <input
-        type="date"
-        value={untilDate.toISOString().split("T")[0]} // Format as YYYY-MM-DD
-        onChange={(e) => setUntilDate(new Date(e.target.value))}
-      />
-    </div>
-  );
-}
-
-function Step3() {
-  const { reminders, setReminders, selectedDays, setSelectedDays } =
-    useContext(IntentWizardContext)!;
-
-  return (
-    <div className="step">
-      <h1>Step 3</h1>
-      <label>Remind me on:</label>
-      <input
-        type="text"
-        placeholder="Enter reminders"
-        value={reminders}
-        onChange={(e) => setReminders(e.target.value)}
-      />
+    <div className="w-full rounded-lg bg-gray-100 p-4 shadow-md">
+      <div className="mb-4">
+        <label className="mb-2 block">Set Intent</label>
+        <input
+          className="w-full rounded border p-2"
+          type="text"
+          name="aim"
+          placeholder="Write your own Aim"
+          value={formData.aim}
+          onChange={handleChange}
+        />
+      </div>
+      <div className="mb-4">
+        <label className="mb-2 block">From Date</label>
+        <input
+          className="w-full rounded border p-2"
+          type="date"
+          name="startDate"
+          value={formData.startDate.toISOString().split("T")[0]}
+          onChange={handleChange}
+        />
+      </div>
+      <div className="mb-4">
+        <label className="mb-2 block">Until Date</label>
+        <input
+          className="w-full rounded border p-2"
+          type="date"
+          name="endDate"
+          value={formData.endDate.toISOString().split("T")[0]}
+          onChange={handleChange}
+        />
+      </div>
+      <div className="mb-4">
+        <label className="mb-2 block">Remind me on:</label>
+        <input
+          className="w-full rounded border p-2"
+          type="text"
+          name="reminders"
+          placeholder="Enter reminders"
+          value={formData.reminders}
+          onChange={handleChange}
+        />
+      </div>
       {/* Add clock and day of the week selection here */}
+      <div className="mt-4 flex justify-end">
+        <button
+          className="rounded bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700"
+          onClick={handleSave}
+        >
+          Save
+        </button>
+      </div>
     </div>
   );
 }
