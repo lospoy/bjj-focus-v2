@@ -16,7 +16,7 @@
 <br>
 
 ## 🛠️ Under development ##
-> _Tap into your diffuse mode with a Poke._
+> _Poke your diffuse mode._
 <br>
 
 ## DB design
