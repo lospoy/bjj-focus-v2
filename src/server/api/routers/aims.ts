@@ -56,7 +56,8 @@ export const aimsRouter = createTRPCRouter({
 
       if (!aim) throw new TRPCError({ code: "NOT_FOUND" });
 
-      return (await addUserDataToAims([aim]))[0];
+      const [aimWithUserData] = await addUserDataToAims([aim]);
+      return aimWithUserData;
     }),
 
   getAll: publicProcedure.query(async ({ ctx }) => {
