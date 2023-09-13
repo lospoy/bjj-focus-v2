@@ -6,21 +6,14 @@ import { api } from "~/utils/api";
 import type { RouterOutputs } from "~/utils/api";
 
 type AimData = RouterOutputs["aims"]["getById"];
-const getAimData = (id: string): Promise<AimData> => {
+
+const useAimData = (id: string): AimData | undefined => {
   const { data } = api.aims.getById.useQuery({ id });
 
-  // Check if data is available, and return it if present
-  if (data) {
-    return data as AimData;
-  }
-
-  // Return null if data is not available
-  return null;
+  return data;
 };
 
-console.log(getAimData("clm9lh4p10000rclcik5ya9v7"));
-
-const CreateAimWizard = () => {
+const AimWizard = () => {
   const { user } = useUser();
   // In a pro app we could use Zod and React Hook form to invalidate input in-client
   // Also we'd use React Hook form to manage the input state
@@ -46,7 +39,7 @@ const CreateAimWizard = () => {
   if (!user) return null;
 
   return (
-    <div className="flex w-full gap-3">
+    <div className="flex w-full gap-3 rounded border bg-white p-2">
       <input
         placeholder="What do you want to focus on?"
         className="grow bg-transparent outline-none"
@@ -76,4 +69,4 @@ const CreateAimWizard = () => {
   );
 };
 
-export default CreateAimWizard;
+export { AimWizard, useAimData };
