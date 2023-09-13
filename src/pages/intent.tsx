@@ -1,13 +1,11 @@
 import { type NextPage } from "next";
 import { api } from "~/utils/api";
 import { useUser } from "@clerk/nextjs";
-import { useState } from "react";
-import toast from "react-hot-toast";
 import { PageLayout } from "~/components/layout";
 import IntentWizard from "~/components/intentWizard";
 
 const Intent: NextPage = () => {
-  const { isLoaded: userLoaded, isSignedIn } = useUser();
+  const { isLoaded: userLoaded } = useUser();
 
   // Start fetching asap
   // (React query will use cached data if the data doesn't change)

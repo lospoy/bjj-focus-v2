@@ -2,11 +2,9 @@ import { type NextPage } from "next";
 import { api } from "~/utils/api";
 import { SignInButton, useUser } from "@clerk/nextjs";
 import { LoadingPage } from "~/components/loading";
-
 import { PageLayout } from "~/components/layout";
 import { AimView } from "~/components/aimView";
 import IntentWizard from "~/components/intentWizard";
-import CreateAimWizard from "~/components/aimWizard";
 
 const Feed = () => {
   const { data, isLoading: aimsLoading } = api.aims.getAll.useQuery();
@@ -39,7 +37,7 @@ const Home: NextPage = () => {
             <SignInButton />
           </div>
         )}
-        {isSignedIn && <CreateAimWizard />}
+        {isSignedIn && <IntentWizard />}
       </div>
 
       <Feed />
