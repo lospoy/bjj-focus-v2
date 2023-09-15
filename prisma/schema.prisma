@@ -14,6 +14,7 @@ datasource db {
 enum IntentStatus {
   ACTIVE
   PAUSED
+  COMPLETED
   DELETED
 }
 
@@ -21,12 +22,12 @@ model Intent {
   id         String       @id @default(cuid())
   startDate  DateTime
   endDate    DateTime
-  status     IntentStatus
-  isPublic   Boolean
+  status     IntentStatus @default(ACTIVE)
   successYes Int
   successNo  Int
   reminders  String // Or JSON?
   createdOn  DateTime     @default(now())
+  notes      String       @default("")
 
   // Relationships
   user User  @relation("UserIntents", fields: [creatorId], references: [id])
@@ -79,11 +80,13 @@ model Group {
 model Aim {
   id              String   @id @default(cuid())
   title           String
+    isPublic   Boolean      @default(true)
   helpfulnessLow  Int
   helpfulnessMid  Int
   helpfulnessHigh Int
   createdOn       DateTime @default(now())
   creatorId       String
+  notes           String       @default("")
 
   // Relationships
   groups  Group[]  @relation("GroupAims")
