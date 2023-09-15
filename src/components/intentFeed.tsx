@@ -1,3 +1,9 @@
+// AimView
+// Handles displaying all Intents
+
+// Used in:
+// ~../pages/index
+
 import { LoadingPage } from "~/components/loading";
 import { IntentView } from "./intentView";
 import { api } from "~/utils/api";

@@ -1,8 +1,11 @@
+// IntentView
+// Handles displaying a single Intent
+
+// Used in:
+// ~/intentFeed
+
 import type { RouterOutputs } from "~/utils/api";
 import { AimView } from "./aimView";
-
-// intentView
-// Handles the logic to display a single intent
 
 type IntentWithUser = RouterOutputs["intents"]["getAll"][number];
 

@@ -1,13 +1,17 @@
-// AimView.js
+// AimView
+// Handles displaying a single Aim
+
+// Used in:
+// ~/intentView
+
 import Link from "next/link";
-import { useAimData } from "./aimWizard"; // Import the useAimData function
+import { useAimData } from "./aimWizard";
 
 export const AimView = ({ aimId }: { aimId: string }) => {
   const aimData = useAimData(aimId);
 
   if (!aimData) {
-    // Handle the case where aimData is not available (loading or error)
-    return <div>Loading...</div>; // You can customize this message
+    return <div>Loading...</div>;
   }
 
   const { aim } = aimData;
