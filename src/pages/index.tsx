@@ -1,23 +1,9 @@
 import { type NextPage } from "next";
 import { api } from "~/utils/api";
 import { SignInButton, useUser } from "@clerk/nextjs";
-import { LoadingPage } from "~/components/loading";
 import { PageLayout } from "~/components/layout";
-import { AimView } from "~/components/aimView";
 import IntentWizard from "~/components/intentWizard";
-
-const Feed = () => {
-  const { data, isLoading: aimsLoading } = api.aims.getAll.useQuery();
-
-  if (aimsLoading) return <LoadingPage />;
-  if (!data) return <div>Something went wrong</div>;
-
-  return (
-    <div className="flex flex-col">
-      {data?.map((fullAim) => <AimView {...fullAim} key={fullAim.aim.id} />)}
-    </div>
-  );
-};
+import { IntentFeed } from "~/components/intentFeed";
 
 const Home: NextPage = () => {
   const { isLoaded: userLoaded, isSignedIn } = useUser();
@@ -40,7 +26,7 @@ const Home: NextPage = () => {
         {isSignedIn && <IntentWizard />}
       </div>
 
-      <Feed />
+      <IntentFeed />
     </PageLayout>
   );
 };

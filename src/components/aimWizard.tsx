@@ -41,7 +41,7 @@ const AimWizard = () => {
   return (
     <div className="flex w-full gap-3 rounded border bg-white p-2">
       <input
-        placeholder="What do you want to focus on?"
+        placeholder="Write your intent here"
         className="grow bg-transparent outline-none"
         type="text"
         value={input}

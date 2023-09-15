@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { AimWizard, useAimData } from "./aimWizard";
+import { AimWizard } from "./aimWizard";
 
 interface IntentWizardProps {
   intentId?: string; // Pass intentId to edit an existing intent
   aimId?: string; // Pass aimId either to edit existing intent or as suggestion for new intent
 }
 
-function IntentWizard({ intentId, aimId = "" }: IntentWizardProps) {
+function IntentWizard({ intentId, aimId}: IntentWizardProps) {
   // const currentUserId = ctx.userId
-  const aimTitle = useAimData(aimId)?.aim.title;
 
   const [formData, setFormData] = useState({
-    aimTitle: aimTitle ?? "",
-    aimId: aimId,
+    aimId: aimId ?? "",
     startDate: new Date(),
     endDate: new Date(),
     reminders: "",
