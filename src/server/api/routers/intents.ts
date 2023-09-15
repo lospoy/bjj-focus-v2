@@ -92,34 +92,27 @@ export const intentsRouter = createTRPCRouter({
       z.object({
         // Zod Validator - www.github.com/colinhacks/zod
         // Type definition inferred from the validator
-        title: z.string().min(3).max(120),
+        creatorId: z.string(),
         startDate: z.date(),
         endDate: z.date(),
         status: z.enum(["ACTIVE", "PAUSED", "DELETED"]), // Replace with your actual enum values
-        isPublic: z.boolean(),
-        successYes: z.number().min(0),
-        successNo: z.number().min(0),
         reminders: z.string(),
-        creatorId: z.string(),
         aimId: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const creatorId = ctx.userId;
+      const currentUser = ctx.userId;
 
-      const { success } = await ratelimit.limit(creatorId);
+      const { success } = await ratelimit.limit(currentUser);
 
       if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
 
       const intent = await ctx.prisma.intent.create({
         data: {
-          creatorId,
+          creatorId: currentUser,
           startDate: new Date(input.startDate),
           endDate: new Date(input.endDate),
-          status: "ACTIVE",
-          isPublic: true,
-          successYes: 0,
-          successNo: 0,
+          status: input.status,
           reminders: input.reminders,
           aimId: input.aimId,
         },

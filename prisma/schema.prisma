@@ -23,8 +23,8 @@ model Intent {
   startDate  DateTime
   endDate    DateTime
   status     IntentStatus @default(ACTIVE)
-  successYes Int
-  successNo  Int
+  successYes Int          @default(0)
+  successNo  Int          @default(0)
   reminders  String // Or JSON?
   createdOn  DateTime     @default(now())
   notes      String       @default("")
@@ -80,13 +80,13 @@ model Group {
 model Aim {
   id              String   @id @default(cuid())
   title           String
-    isPublic   Boolean      @default(true)
+  isPublic        Boolean  @default(true)
   helpfulnessLow  Int
   helpfulnessMid  Int
   helpfulnessHigh Int
   createdOn       DateTime @default(now())
   creatorId       String
-  notes           String       @default("")
+  notes           String   @default("")
 
   // Relationships
   groups  Group[]  @relation("GroupAims")
