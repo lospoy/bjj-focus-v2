@@ -2,8 +2,9 @@ import { type NextPage } from "next";
 import { api } from "~/utils/api";
 import { SignInButton, useUser } from "@clerk/nextjs";
 import { PageLayout } from "~/components/layout";
-import IntentWizard from "~/components/intentWizard";
+import { IntentWizard } from "~/components/intentWizard";
 import { IntentFeed } from "~/components/intentFeed";
+import { AimFeed } from "~/components/aimFeed";
 
 const Home: NextPage = () => {
   const { isLoaded: userLoaded, isSignedIn } = useUser();
@@ -26,7 +27,12 @@ const Home: NextPage = () => {
         {isSignedIn && <IntentWizard />}
       </div>
 
-      <IntentFeed />
+      <div className="p-2">
+        <AimFeed />
+      </div>
+      <div className="p-2">
+        <IntentFeed />
+      </div>
     </PageLayout>
   );
 };

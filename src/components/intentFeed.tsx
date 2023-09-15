@@ -1,4 +1,4 @@
-// AimView
+// IntentFeed
 // Handles displaying all Intents
 
 // Used in:

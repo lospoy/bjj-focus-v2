@@ -2,27 +2,29 @@
 // Handles displaying a single Aim
 
 // Used in:
-// ~/intentView
+// ~/aimFeed
 
-import Link from "next/link";
-import { useAimData } from "./aimWizard";
+import type { RouterOutputs } from "~/utils/api";
 
-export const AimView = ({ aimId }: { aimId: string }) => {
-  const aimData = useAimData(aimId);
+type AimWithUser = RouterOutputs["aims"]["getAll"][number];
 
-  if (!aimData) {
-    return <div>Loading...</div>;
-  }
+export const AimView = (props: AimWithUser) => {
+  const { aim } = props;
 
-  const { aim } = aimData;
   return (
-    <div key={aim.id} className="flex gap-3 p-2">
+    <div
+      key={aim.id}
+      className="flex gap-3 border-4 border-b border-lime-200 bg-slate-400 p-4"
+    >
       <div className="flex flex-col">
-        <div className="flex text-slate-300">
-          <Link href={`/aim/${aim.id}`}></Link>{" "}
+        <div className="gap-y-4 pl-2">
+          <div className="text-md mt-3 flex flex-col gap-x-2">
+            {" "}
+            <h1 className="text-smxl">#Aim (this should be a tag)</h1>
+            <h2 className="text-2xl">{aim.title}</h2>
+            <h3 className="text-sm">{aim.notes}</h3>
+          </div>
         </div>
-        <span className="text-2xl">{aim.title}</span>
-        <span className="text-sm">{aim.notes}</span>
       </div>
     </div>
   );

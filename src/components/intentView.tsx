@@ -5,7 +5,7 @@
 // ~/intentFeed
 
 import type { RouterOutputs } from "~/utils/api";
-import { AimView } from "./aimView";
+import { AimViewById } from "./aimViewById";
 
 type IntentWithUser = RouterOutputs["intents"]["getAll"][number];
 
@@ -17,7 +17,7 @@ export const IntentView = (props: IntentWithUser) => {
   return (
     <div key={intent.id} className="flex gap-3 border-b border-slate-400 p-4">
       <div className="flex flex-col">
-        <AimView aimId={intent.aimId} />
+        <AimViewById aimId={intent.aimId} />
         <div className="gap-y-4 pl-2">
           <div className="text-md mt-3 flex flex-col gap-x-2">
             {" "}
