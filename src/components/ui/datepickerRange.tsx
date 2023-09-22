@@ -14,12 +14,15 @@ import {
   PopoverTrigger,
 } from "~/components/ui/popover";
 
+const today = new Date();
+const lastDateOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
 export function DatePickerWithRange({
   className,
 }: React.HTMLAttributes<HTMLDivElement>) {
   const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(2022, 0, 20),
-    to: addDays(new Date(2022, 0, 20), 20),
+    from: today,
+    to: lastDateOfMonth,
   });
 
   return (
