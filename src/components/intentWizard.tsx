@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { api } from "~/utils/api";
 import { DatePickerWithRange } from "./ui/datepickerRange";
 import { Button } from "~/components/ui/button";
@@ -13,8 +13,6 @@ import {
 } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import type { RouterOutputs } from "~/utils/api";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import {
   Form,
   FormControl,
@@ -23,27 +21,12 @@ import {
   FormLabel,
   FormMessage,
 } from "~/components/ui/form";
-import { intentsRouter } from "~/server/api/routers/intents";
+import { useUser } from "@clerk/nextjs";
 type IntentData = RouterOutputs["intents"]["getById"];
+type IntentFormSchema = RouterOutputs["intents"]["create"];
 
 const today = new Date();
 const lastDateOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-
-const formSchema = z.object({
-  reminders: z.string().min(2, {
-    message: "Reminders must be at least 2 characters.",
-  }),
-  startDate: z.date().refine((date) => {
-    today.setHours(0, 0, 0, 0);
-    date.setHours(0, 0, 0, 0);
-    return date >= today;
-  }, "Date must be today or a future date."),
-  endDate: z.date().refine((date) => {
-    today.setHours(0, 0, 0, 0);
-    date.setHours(0, 0, 0, 0);
-    return date >= today;
-  }, "Date must be today or a future date."),
-});
 
 const useIntentData = (id: string): IntentData | undefined => {
   const { data } = api.intents.getById.useQuery({ id });
@@ -63,22 +46,28 @@ interface IntentWizardProps {
 }
 
 export function IntentWizard({ intentId, aimId }: IntentWizardProps) {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const { user } = useUser();
+
+  const form = useForm<IntentFormSchema>({
     defaultValues: {
       reminders: "",
       startDate: today,
       endDate: lastDateOfMonth,
+      status: "ACTIVE",
+      aimId: aimId ?? "no aim id",
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: IntentData) {
+    const mutation = api.intents.create.useMutation();
+
     if (intentId) {
       // Handle edit logic for an existing intent
       console.log("edit intent", values);
     } else {
       // Handle save logic for a new intent
       console.log("new intent", values);
+      mutation.mutate({});
     }
     // Other actions upon saving/editing
   }
@@ -96,6 +85,8 @@ export function IntentWizard({ intentId, aimId }: IntentWizardProps) {
   //     });
   //   }
   // }, [intentId, setValue]);
+
+  if (!user) return null;
 
   return (
     <div className="flex flex-col">

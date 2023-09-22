@@ -93,10 +93,20 @@ export const intentsRouter = createTRPCRouter({
         // Zod Validator - www.github.com/colinhacks/zod
         // Type definition inferred from the validator
         creatorId: z.string(),
-        startDate: z.date(),
-        endDate: z.date(),
+        startDate: z.date().refine((date) => {
+          new Date().setHours(0, 0, 0, 0);
+          date.setHours(0, 0, 0, 0);
+          return date >= new Date();
+        }, "Date must be today or a future date."),
+        endDate: z.date().refine((date) => {
+          new Date().setHours(0, 0, 0, 0);
+          date.setHours(0, 0, 0, 0);
+          return date >= new Date();
+        }, "Date must be today or a future date."),
         status: z.enum(["ACTIVE", "PAUSED", "DELETED"]), // Replace with your actual enum values
-        reminders: z.string(),
+        reminders: z.string().min(2, {
+          message: "Reminders must be at least 2 characters.",
+        }),
         aimId: z.string(),
       }),
     )
