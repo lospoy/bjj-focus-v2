@@ -89,26 +89,34 @@ export const intentsRouter = createTRPCRouter({
 
   create: privateProcedure
     .input(
-      z.object({
-        // Zod Validator - www.github.com/colinhacks/zod
-        // Type definition inferred from the validator
-        creatorId: z.string(),
-        startDate: z.date().refine((date) => {
-          new Date().setHours(0, 0, 0, 0);
-          date.setHours(0, 0, 0, 0);
-          return date >= new Date();
-        }, "Date must be today or a future date."),
-        endDate: z.date().refine((date) => {
-          new Date().setHours(0, 0, 0, 0);
-          date.setHours(0, 0, 0, 0);
-          return date >= new Date();
-        }, "Date must be today or a future date."),
-        status: z.enum(["ACTIVE", "PAUSED", "DELETED"]), // Replace with your actual enum values
-        reminders: z.string().min(2, {
-          message: "Reminders must be at least 2 characters.",
+      z
+        .object({
+          // Zod Validator - www.github.com/colinhacks/zod
+          // Type definition inferred from the validator
+          startDate: z.date().refine(
+            (date) => {
+              const serverTime = new Date();
+              const fiveMinutesAgo = new Date(serverTime);
+              fiveMinutesAgo.setMinutes(serverTime.getMinutes() - 5);
+
+              return date >= fiveMinutesAgo;
+            },
+            {
+              message: "Start date cannot be more than 5 minutes in the past.",
+            },
+          ),
+
+          endDate: z.date(),
+          status: z.enum(["ACTIVE", "PAUSED", "DELETED", "COMPLETED"]), // Replace with your actual enum values
+          reminders: z.string().min(2, {
+            message: "Reminders must be at least 2 characters.",
+          }),
+          aimId: z.string(),
+        })
+        .refine((data) => data.endDate > data.startDate, {
+          message: "End date cannot be earlier than start date.",
+          path: ["endDate"],
         }),
-        aimId: z.string(),
-      }),
     )
     .mutation(async ({ ctx, input }) => {
       const currentUser = ctx.userId;

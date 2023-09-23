@@ -22,11 +22,9 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { useUser } from "@clerk/nextjs";
+import { IntentStatus } from "@prisma/client";
 type IntentData = RouterOutputs["intents"]["getById"];
 type IntentFormSchema = RouterOutputs["intents"]["create"];
-
-const today = new Date();
-const lastDateOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 
 const useIntentData = (id: string): IntentData | undefined => {
   const { data } = api.intents.getById.useQuery({ id });
@@ -47,27 +45,36 @@ interface IntentWizardProps {
 
 export function IntentWizard({ intentId, aimId }: IntentWizardProps) {
   const { user } = useUser();
+  const { mutateAsync } = api.intents.create.useMutation();
+  const today = new Date(Date.now()); // UTC time so that it's synced with the server time
+  const lastDateOfMonth = new Date(
+    today.getFullYear(),
+    today.getMonth() + 1,
+    0,
+  );
+  const testAim = "clmvg2ing0000rcvoczaw8ebb";
 
   const form = useForm<IntentFormSchema>({
     defaultValues: {
-      reminders: "",
+      reminders: "empty reminder",
+      status: IntentStatus.ACTIVE,
+      aimId: aimId ?? testAim,
       startDate: today,
       endDate: lastDateOfMonth,
-      status: "ACTIVE",
-      aimId: aimId ?? "no aim id",
     },
   });
 
-  function onSubmit(values: IntentData) {
-    const mutation = api.intents.create.useMutation();
+  async function onSubmit() {
+    const formValues = { ...form.getValues() };
 
     if (intentId) {
       // Handle edit logic for an existing intent
-      console.log("edit intent", values);
+      console.log("edit intent", formValues);
     } else {
       // Handle save logic for a new intent
-      console.log("new intent", values);
-      mutation.mutate({});
+      console.log("new intent", formValues);
+
+      await mutateAsync(formValues);
     }
     // Other actions upon saving/editing
   }
