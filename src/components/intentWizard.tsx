@@ -23,6 +23,8 @@ import {
 } from "~/components/ui/form";
 import { useUser } from "@clerk/nextjs";
 import { IntentStatus } from "@prisma/client";
+import { useRouter } from "next/router";
+import { useAimData } from "./aimWizard";
 type IntentData = RouterOutputs["intents"]["getById"];
 type IntentFormSchema = RouterOutputs["intents"]["create"];
 
@@ -43,22 +45,30 @@ interface IntentWizardProps {
   aimId?: string; // Pass aimId either to edit existing intent or as suggestion for new intent
 }
 
-export function IntentWizard({ intentId, aimId }: IntentWizardProps) {
+export function IntentWizard({ intentId }: IntentWizardProps) {
   const { user } = useUser();
+  const router = useRouter();
   const { mutateAsync } = api.intents.create.useMutation();
+
+  // grabs aimId from URL slug
+  // defined @ src\components\aimFeed.tsx
+  const aimId = router.query.aimId as string;
+  const aimTitle = useAimData(aimId)?.aim.title;
+  const aimNotes = useAimData(aimId)?.aim.notes;
+
+  // some date calculations
   const today = new Date(Date.now()); // UTC time so that it's synced with the server time
   const lastDateOfMonth = new Date(
     today.getFullYear(),
     today.getMonth() + 1,
     0,
   );
-  const testAim = "clmvg2ing0000rcvoczaw8ebb";
 
   const form = useForm<IntentFormSchema>({
     defaultValues: {
       reminders: "empty reminder",
       status: IntentStatus.ACTIVE,
-      aimId: aimId ?? testAim,
+      aimId: aimId,
       startDate: today,
       endDate: lastDateOfMonth,
     },
@@ -103,8 +113,8 @@ export function IntentWizard({ intentId, aimId }: IntentWizardProps) {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <Card className="mx-auto max-w-2xl">
               <CardHeader>
-                <CardTitle>Create New Intent</CardTitle>
-                <CardDescription>Card description</CardDescription>
+                <CardTitle>{aimTitle}</CardTitle>
+                <CardDescription>{aimNotes}</CardDescription>
               </CardHeader>
               <CardContent>
                 <FormField
