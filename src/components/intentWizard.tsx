@@ -1,5 +1,5 @@
 // IntentWizard
-// Handles creating and editing Intents
+// Handles creating and (not yet editing) Intents
 
 // Used in:
 // ~../pages/intent
@@ -64,10 +64,17 @@ export function IntentWizard({ intentId }: IntentWizardProps) {
 
   // some date calculations
   const today = new Date(Date.now()); // UTC time so that it's synced with the server time
+  // Calculate the last day of the current month
+  const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+  // Set the time to the last minute and second of the day in the local timezone
   const lastDateOfMonth = new Date(
-    today.getFullYear(),
-    today.getMonth() + 1,
-    0,
+    lastDayOfMonth.getFullYear(),
+    lastDayOfMonth.getMonth(),
+    lastDayOfMonth.getDate(),
+    23, // Hours
+    59, // Minutes
+    59, // Seconds
+    999, // Milliseconds
   );
 
   const form = useForm<IntentFormSchema>({
