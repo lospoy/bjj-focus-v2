@@ -1,3 +1,9 @@
+// IntentWizard
+// Handles creating and editing Intents
+
+// Used in:
+// ~../pages/intent
+
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { api } from "~/utils/api";

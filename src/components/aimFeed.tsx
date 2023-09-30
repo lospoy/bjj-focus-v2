@@ -18,7 +18,7 @@ export const AimFeed = () => {
 
   const handleClick = async (aimId: string) => {
     // Construct the URL with the aimId as a slug
-    const url = `/intentWizard?aimId=${aimId}`;
+    const url = `/intent/${aimId}`;
 
     // Navigate to the IntentWizard page with the aimId in the URL
     await router.push(url);
