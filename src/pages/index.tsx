@@ -2,7 +2,6 @@ import { type NextPage } from "next";
 import { api } from "~/utils/api";
 import { SignInButton, useUser } from "@clerk/nextjs";
 import { PageLayout } from "~/components/layout";
-import { IntentWizard } from "~/components/intentWizard";
 import { IntentFeed } from "~/components/intentFeed";
 import { AimFeed } from "~/components/aimFeed";
 
@@ -24,7 +23,7 @@ const Home: NextPage = () => {
             <SignInButton />
           </div>
         )}
-        {isSignedIn && <IntentWizard />}
+        <div>Navbar goes here</div>
       </div>
 
       <div className="p-2">
