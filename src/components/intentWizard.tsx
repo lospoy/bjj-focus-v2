@@ -3,8 +3,6 @@
 
 // Used in:
 // ~../pages/intent
-
-import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { api } from "~/utils/api";
 import { DatePickerWithRange } from "./ui/datepickerRange";
@@ -31,20 +29,21 @@ import { useUser } from "@clerk/nextjs";
 import { IntentStatus } from "@prisma/client";
 import { useRouter } from "next/router";
 import { useAimData } from "./aimWizard";
-type IntentData = RouterOutputs["intents"]["getById"];
+
 type IntentFormSchema = RouterOutputs["intents"]["create"];
 
-const useIntentData = (id: string): IntentData | undefined => {
-  const { data } = api.intents.getById.useQuery({ id });
+// type IntentData = RouterOutputs["intents"]["getById"];
+// const useIntentData = (id: string): IntentData | undefined => {
+//   const { data } = api.intents.getById.useQuery({ id });
 
-  return data;
-};
+//   return data;
+// };
 
-const getIntentData = (id: string): IntentData | undefined => {
-  const { data } = api.intents.getById.useQuery({ id });
+// const getIntentData = (id: string): IntentData | undefined => {
+//   const { data } = api.intents.getById.useQuery({ id });
 
-  return data;
-};
+//   return data;
+// };
 
 interface IntentWizardProps {
   intentId?: string; // Pass intentId to edit an existing intent
