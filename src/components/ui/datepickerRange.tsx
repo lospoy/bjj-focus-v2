@@ -56,7 +56,11 @@ export function DatePickerWithRange({
             mode="range"
             defaultMonth={date?.from}
             selected={date}
-            onSelect={(newDateRange: DateRange) => setDate(newDateRange)}
+            onSelect={(newDateRange: DateRange | undefined) => {
+              if (newDateRange) {
+                setDate(newDateRange);
+              }
+            }}
             numberOfMonths={1}
             className="bg-white"
           />
