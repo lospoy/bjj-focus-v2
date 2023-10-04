@@ -5,26 +5,24 @@
 // ~/aimFeed
 
 import type { RouterOutputs } from "~/utils/api";
-
 type AimWithUser = RouterOutputs["aims"]["getAll"][number];
+
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "~/components/ui/card";
 
 export const AimView = (props: AimWithUser) => {
   const { aim } = props;
 
   return (
-    <div
-      key={aim.id}
-      className="flex gap-3 border-4 border-b border-lime-200 bg-slate-400 p-4"
-    >
-      <div className="flex flex-col">
-        <div className="gap-y-4 pl-2">
-          <div className="text-md mt-3 flex flex-col gap-x-2">
-            {" "}
-            <h1 className="text-2xl">{aim.title}</h1>
-            <span className="text-sm">{aim.notes}</span>
-          </div>
-        </div>
-      </div>
-    </div>
+    <Card className="mb-2" key={aim.id}>
+      <CardHeader>
+        <CardTitle>{aim.title}</CardTitle>
+        <CardDescription>{aim.notes}</CardDescription>
+      </CardHeader>
+    </Card>
   );
 };
