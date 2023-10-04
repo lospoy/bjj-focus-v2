@@ -20,9 +20,8 @@ export const AimView = (props: AimWithUser) => {
         <div className="gap-y-4 pl-2">
           <div className="text-md mt-3 flex flex-col gap-x-2">
             {" "}
-            <h1 className="text-smxl">#Aim (this should be a tag)</h1>
-            <h2 className="text-2xl">{aim.title}</h2>
-            <h3 className="text-sm">{aim.notes}</h3>
+            <h1 className="text-2xl">{aim.title}</h1>
+            <span className="text-sm">{aim.notes}</span>
           </div>
         </div>
       </div>
