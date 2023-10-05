@@ -1,11 +1,12 @@
-// url/intent/[aimId]
+// url/intent/aim-selection
 
 import { type NextPage } from "next";
 import { useUser } from "@clerk/nextjs";
 import { PageLayout } from "~/components/layout";
-import { IntentWizard } from "~/components/intentWizard";
 
-const IntentWizardSetReminders: NextPage = () => {
+import { AimFeed } from "~/components/aimFeed";
+
+const IntentWizardAimSelection: NextPage = () => {
   const { isLoaded: userLoaded, isSignedIn } = useUser();
 
   // Return empty div if user isn't loaded yet
@@ -13,11 +14,11 @@ const IntentWizardSetReminders: NextPage = () => {
 
   return (
     <PageLayout>
-      <div className="flex border-b border-slate-400 p-4">
-        <IntentWizard />
+      <div className="flex p-4">
+        <AimFeed />
       </div>
     </PageLayout>
   );
 };
 
-export default IntentWizardSetReminders;
+export default IntentWizardAimSelection;

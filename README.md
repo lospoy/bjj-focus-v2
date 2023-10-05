@@ -16,7 +16,7 @@
 <br>
 
 ## PRE-ALHPA 🛠️ Under development ##
-> _Poke your diffuse mode._
+> _Poke Poke._
 <br>
 
 ## DB design
