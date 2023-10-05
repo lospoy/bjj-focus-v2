@@ -30,7 +30,7 @@ export const IntentFeed = () => {
   if (!data) return <div>Something went wrong</div>;
 
   return (
-    <Tabs defaultValue="active" className="w-[400px]">
+    <Tabs defaultValue="active">
       <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="active">Active</TabsTrigger>
         <TabsTrigger value="completed">Completed</TabsTrigger>
