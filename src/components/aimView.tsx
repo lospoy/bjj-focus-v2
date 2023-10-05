@@ -14,11 +14,14 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 
-export const AimView = (props: AimWithUser) => {
-  const { aim } = props;
+export const AimView = (props: AimWithUser & { isSelected: boolean }) => {
+  const { aim, isSelected } = props;
 
   return (
-    <Card className="mb-2" key={aim.id}>
+    <Card
+      className={`mb-2 ${isSelected ? "bg-green-200" : "bg-white"}`}
+      key={aim.id}
+    >
       <CardHeader>
         <CardTitle>{aim.title}</CardTitle>
         <CardDescription>{aim.notes}</CardDescription>
