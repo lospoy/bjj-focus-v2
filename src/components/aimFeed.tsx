@@ -20,8 +20,7 @@ export const AimFeed = () => {
   const [selectedAimId, setSelectedAimId] = useState<string>();
 
   const handleAimClick = (aimId: string) => {
-    // Set the selected aimId in the state
-    setSelectedAimId(() => aimId);
+    setSelectedAimId(aimId);
   };
 
   // Function to construct and navigate to the URL with the selected aimId
@@ -29,10 +28,6 @@ export const AimFeed = () => {
     const url = `/intent/${selectedAimId}`;
     await router.push(url);
   };
-
-  useEffect(() => {
-    console.log("Clicked on aim with ID:", selectedAimId);
-  }, [selectedAimId]);
 
   if (aimsLoading) return <LoadingPage />;
   if (!data) return <div>Something went wrong</div>;
