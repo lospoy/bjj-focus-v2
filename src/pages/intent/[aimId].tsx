@@ -1,11 +1,11 @@
-// url/intent
+// url/intent/[aimId]
 
 import { type NextPage } from "next";
 import { useUser } from "@clerk/nextjs";
 import { PageLayout } from "~/components/layout";
 import { IntentWizard } from "~/components/intentWizard";
 
-const Home: NextPage = () => {
+const IntentWizardSetReminders: NextPage = () => {
   const { isLoaded: userLoaded, isSignedIn } = useUser();
 
   // Return empty div if user isn't loaded yet
@@ -20,4 +20,4 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+export default IntentWizardSetReminders;
