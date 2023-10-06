@@ -3,7 +3,7 @@
 import { type NextPage } from "next";
 import { api } from "~/utils/api";
 import { SignInButton, useUser } from "@clerk/nextjs";
-import { PageLayout } from "~/components/layout";
+import { PageLayout } from "~/components/ui/layout";
 import { IntentFeed } from "~/components/intentFeed";
 import { Button } from "~/components/ui/button";
 import { Target } from "lucide-react";

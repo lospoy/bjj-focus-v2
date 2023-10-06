@@ -4,7 +4,7 @@
 // Used in:
 // ~../pages/index
 
-import { LoadingPage } from "~/components/loading";
+import { LoadingPage } from "~/components/ui/loading";
 import { IntentView } from "./intentView";
 import { api } from "~/utils/api";
 import {

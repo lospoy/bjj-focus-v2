@@ -8,7 +8,7 @@
 // ~../pages/index
 
 import { useRouter } from "next/router";
-import { LoadingPage } from "~/components/loading";
+import { LoadingPage } from "~/components/ui/loading";
 import { AimView } from "./aimView";
 import { api } from "~/utils/api";
 import { Button } from "./ui/button";

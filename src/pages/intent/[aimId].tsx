@@ -2,7 +2,7 @@
 
 import { type NextPage } from "next";
 import { useUser } from "@clerk/nextjs";
-import { PageLayout } from "~/components/layout";
+import { PageLayout } from "~/components/ui/layout";
 import { IntentWizard } from "~/components/intentWizard";
 
 const IntentWizardSetReminders: NextPage = () => {
