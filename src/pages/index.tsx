@@ -8,10 +8,11 @@ import { IntentFeed } from "~/components/intentFeed";
 import { Button } from "~/components/ui/button";
 import { Target } from "lucide-react";
 import { useRouter } from "next/router";
+import Navbar from "~/components/ui/navbar";
 
 const Home: NextPage = () => {
-  const { isLoaded: userLoaded, isSignedIn } = useUser();
   const router = useRouter();
+  const { isLoaded: userLoaded, isSignedIn } = useUser();
 
   // Start fetching asap
   // (React query will use cached data if the data doesn't change)
@@ -28,13 +29,13 @@ const Home: NextPage = () => {
   return (
     <PageLayout>
       <div className="flex flex-col">
-        <div className="flex border-b border-slate-400 p-4">
+        <div className="flex p-4">
           {!isSignedIn && (
             <div className="flex justify-center">
               <SignInButton />
             </div>
           )}
-          <div>Navbar goes here</div>
+          <Navbar />
         </div>
         <div className="w-full p-2">
           <IntentFeed />
