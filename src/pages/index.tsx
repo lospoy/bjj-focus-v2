@@ -8,9 +8,28 @@ import { IntentFeed } from "~/components/intentFeed";
 import { Button } from "~/components/ui/button";
 import { Target } from "lucide-react";
 import { useRouter } from "next/router";
+import { useDispatch } from "react-redux";
+import { setUser } from "../store/actions/userActions";
 import Navbar from "~/components/ui/navbar";
+import { useEffect } from "react";
 
 const Home: NextPage = () => {
+  // Dispatching user data to Redux store
+  const dispatch = useDispatch();
+  const user = useUser().user;
+
+  useEffect(() => {
+    if (user) {
+      // Ensure user data is not null or undefined before dispatching
+      const userData = {
+        firstName: user.firstName ?? "",
+        imageUrl: user.imageUrl ?? "",
+        email: user.primaryEmailAddress?.emailAddress ?? "",
+      };
+      dispatch(setUser(userData));
+    }
+  }, [dispatch, user]);
+
   const router = useRouter();
   const { isLoaded: userLoaded, isSignedIn } = useUser();
 
