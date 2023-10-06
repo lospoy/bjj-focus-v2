@@ -3,15 +3,35 @@
 import { type NextPage } from "next";
 import { api } from "~/utils/api";
 import { SignInButton, useUser } from "@clerk/nextjs";
-import { PageLayout } from "~/components/layout";
+import { PageLayout } from "~/components/ui/layout";
 import { IntentFeed } from "~/components/intentFeed";
 import { Button } from "~/components/ui/button";
 import { Target } from "lucide-react";
 import { useRouter } from "next/router";
+import { useDispatch } from "react-redux";
+import { setUser } from "../store/actions/userActions";
+import Navbar from "~/components/ui/navbar";
+import { useEffect } from "react";
 
 const Home: NextPage = () => {
-  const { isLoaded: userLoaded, isSignedIn } = useUser();
+  // Dispatching user data to Redux store
+  const dispatch = useDispatch();
+  const user = useUser().user;
+
+  useEffect(() => {
+    if (user) {
+      // Ensure user data is not null or undefined before dispatching
+      const userData = {
+        firstName: user.firstName ?? "",
+        imageUrl: user.imageUrl ?? "",
+        email: user.primaryEmailAddress?.emailAddress ?? "",
+      };
+      dispatch(setUser(userData));
+    }
+  }, [dispatch, user]);
+
   const router = useRouter();
+  const { isLoaded: userLoaded, isSignedIn } = useUser();
 
   // Start fetching asap
   // (React query will use cached data if the data doesn't change)
@@ -28,13 +48,13 @@ const Home: NextPage = () => {
   return (
     <PageLayout>
       <div className="flex flex-col">
-        <div className="flex border-b border-slate-400 p-4">
+        <div className="flex p-4">
           {!isSignedIn && (
             <div className="flex justify-center">
               <SignInButton />
             </div>
           )}
-          <div>Navbar goes here</div>
+          <Navbar />
         </div>
         <div className="w-full p-2">
           <IntentFeed />
