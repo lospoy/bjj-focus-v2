@@ -19,9 +19,4 @@
 > _Poke Poke._
 <br>
 
-## DB design
-<div align="center" padding="0">
-    <img src="https://u.cubeupload.com/aa9988vvb/PokePokeDBdiagram.png" width="100%">
-</div>
-
 
