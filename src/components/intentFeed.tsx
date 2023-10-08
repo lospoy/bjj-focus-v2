@@ -37,12 +37,6 @@ export const IntentFeed = () => {
       </TabsList>
       <TabsContent value="active">
         <Card>
-          <CardHeader>
-            <CardTitle>Active</CardTitle>
-            <CardDescription>
-              These are the intents you are currently working on.
-            </CardDescription>
-          </CardHeader>
           <CardContent className="space-y-2">
             <div className="flex flex-col">
               {activeIntents?.map((fullIntent) => (
@@ -54,10 +48,6 @@ export const IntentFeed = () => {
       </TabsContent>
       <TabsContent value="completed">
         <Card>
-          <CardHeader>
-            <CardTitle>Completed</CardTitle>
-            <CardDescription>These are your completed intents.</CardDescription>
-          </CardHeader>
           <CardContent className="space-y-2">
             <div className="flex flex-col">
               {completedIntents?.map((fullIntent) => (
