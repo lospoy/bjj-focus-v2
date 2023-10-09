@@ -11,7 +11,37 @@ import {
 import { Ratelimit } from "@upstash/ratelimit"; // for deno: see above
 import { Redis } from "@upstash/redis";
 import { filterUserForClient } from "~/server/helpers/filterUserForClient";
-import type { Intent } from "@prisma/client";
+import { IntentStatus, type Intent } from "@prisma/client";
+
+const intentSchema = z
+  .object({
+    // Zod Validator - www.github.com/colinhacks/zod
+    // Type definition inferred from the validator
+    startDate: z.date().refine(
+      (date) => {
+        const serverTime = new Date();
+        const fiveMinutesAgo = new Date(serverTime);
+        fiveMinutesAgo.setMinutes(serverTime.getMinutes() - 5);
+
+        return date >= fiveMinutesAgo;
+      },
+      {
+        message: "Start date cannot be more than 5 minutes in the past.",
+      },
+    ),
+
+    endDate: z.date(),
+    status: z.enum(["ACTIVE", "PAUSED", "DELETED", "COMPLETED"]), // Replace with your actual enum values
+    reminders: z.string().min(2, {
+      message: "Reminders must be at least 2 characters.",
+    }),
+    aimId: z.string(),
+    id: z.string(),
+  })
+  .refine((data) => data.endDate > data.startDate, {
+    message: "End date cannot be earlier than start date.",
+    path: ["endDate"],
+  });
 
 const addUserDataToIntents = async (intents: Intent[]) => {
   const users = (
@@ -87,37 +117,10 @@ export const intentsRouter = createTRPCRouter({
         .then(addUserDataToIntents),
     ),
 
+  // *******PRIVATE PROCEDURES
+  // *******CREATE
   create: privateProcedure
-    .input(
-      z
-        .object({
-          // Zod Validator - www.github.com/colinhacks/zod
-          // Type definition inferred from the validator
-          startDate: z.date().refine(
-            (date) => {
-              const serverTime = new Date();
-              const fiveMinutesAgo = new Date(serverTime);
-              fiveMinutesAgo.setMinutes(serverTime.getMinutes() - 5);
-
-              return date >= fiveMinutesAgo;
-            },
-            {
-              message: "Start date cannot be more than 5 minutes in the past.",
-            },
-          ),
-
-          endDate: z.date(),
-          status: z.enum(["ACTIVE", "PAUSED", "DELETED", "COMPLETED"]), // Replace with your actual enum values
-          reminders: z.string().min(2, {
-            message: "Reminders must be at least 2 characters.",
-          }),
-          aimId: z.string(),
-        })
-        .refine((data) => data.endDate > data.startDate, {
-          message: "End date cannot be earlier than start date.",
-          path: ["endDate"],
-        }),
-    )
+    .input(intentSchema)
     .mutation(async ({ ctx, input }) => {
       const currentUser = ctx.userId;
 
@@ -137,5 +140,70 @@ export const intentsRouter = createTRPCRouter({
       });
 
       return intent;
+    }),
+
+  // *******UPDATE
+  update: privateProcedure
+    .input(intentSchema)
+    .mutation(async ({ ctx, input }) => {
+      const currentUser = ctx.userId;
+      const intentId = input.id;
+
+      // Check if the user has permission to update this intent
+      const intent = await ctx.prisma.intent.findUnique({
+        where: { id: intentId },
+      });
+
+      if (!intent) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      if (intent.creatorId !== currentUser) {
+        throw new TRPCError({ code: "FORBIDDEN" });
+      }
+
+      // Perform the update
+      const updatedIntent = await ctx.prisma.intent.update({
+        where: { id: intentId },
+        data: {
+          startDate: new Date(input.startDate),
+          endDate: new Date(input.endDate),
+          status: input.status,
+          reminders: input.reminders,
+        },
+      });
+
+      return updatedIntent;
+    }),
+
+  // *******SOFT DELETE
+  softDelete: privateProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const currentUser = ctx.userId;
+      const intentId = input.id;
+
+      // Check if the user has permission to update this intent
+      const intent = await ctx.prisma.intent.findUnique({
+        where: { id: intentId },
+      });
+
+      if (!intent) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      if (intent.creatorId !== currentUser) {
+        throw new TRPCError({ code: "FORBIDDEN" });
+      }
+
+      // Perform the update
+      const softDeletedIntent = await ctx.prisma.intent.update({
+        where: { id: intentId },
+        data: {
+          status: IntentStatus.DELETED,
+        },
+      });
+
+      return softDeletedIntent;
     }),
 });
