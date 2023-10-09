@@ -7,13 +7,7 @@
 import { LoadingPage } from "~/components/ui/loading";
 import { IntentView } from "./intentView";
 import { api } from "~/utils/api";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
+import { Card, CardContent } from "~/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 
 export const IntentFeed = () => {
@@ -37,7 +31,7 @@ export const IntentFeed = () => {
       </TabsList>
       <TabsContent value="active">
         <Card>
-          <CardContent className="space-y-2">
+          <CardContent className="w-full">
             <div className="flex flex-col">
               {activeIntents?.map((fullIntent) => (
                 <IntentView {...fullIntent} key={fullIntent.intent.id} />
