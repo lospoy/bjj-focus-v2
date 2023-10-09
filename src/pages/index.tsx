@@ -59,10 +59,9 @@ const Home: NextPage = () => {
         <IntentFeed />
         <Button
           onClick={handleNewIntentClick}
-          className="flex self-end rounded-full"
+          className="fixed bottom-2 right-2 z-50 m-4 flex h-20 self-end rounded-full border-4 bg-transparent p-4 text-white shadow-lg"
         >
           <Plus className="h-10 w-10 text-accent" />
-          <span className="font-bold">New Intent</span>
         </Button>
       </div>
     </PageLayout>
