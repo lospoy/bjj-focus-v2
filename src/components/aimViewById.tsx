@@ -16,10 +16,7 @@ export const AimViewById = ({ aimId }: { aimId: string }) => {
 
   const { aim } = aimData;
   return (
-    <div
-      key={aim.id}
-      className="boder-b flex gap-3 border-4 border-lime-200 bg-slate-400 p-2"
-    >
+    <div key={aim.id} className="flex gap-3 p-2">
       <div className="flex flex-col">
         <div className="flex text-slate-300">
           <Link href={`/aim/${aim.id}`}></Link>{" "}

@@ -11,7 +11,7 @@ export default function Navbar() {
             <BurgerNav />
           </div>
           <Link href="/">
-            <h1 className="text-3xl font-bold text-[#eb5582]">PokePoke</h1>
+            <h1 className="text-3xl font-bold text-accent">PokePoke</h1>
           </Link>
           <UserNav />
         </div>

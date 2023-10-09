@@ -6,7 +6,7 @@ import { SignInButton, useUser } from "@clerk/nextjs";
 import { PageLayout } from "~/components/ui/layout";
 import { IntentFeed } from "~/components/intentFeed";
 import { Button } from "~/components/ui/button";
-import { Target } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import { setUser } from "../store/actions/userActions";
@@ -56,15 +56,12 @@ const Home: NextPage = () => {
           )}
           <Navbar />
         </div>
-        <div className="w-full p-2">
-          <IntentFeed />
-        </div>
+        <IntentFeed />
         <Button
           onClick={handleNewIntentClick}
-          className="flex self-end rounded-full"
+          className="fixed bottom-2 right-2 z-50 m-4 flex h-20 self-end rounded-full border-4 bg-transparent p-4 text-white shadow-lg"
         >
-          <Target className="h-16 w-16" />
-          <span className="font-bold">New Intent</span>
+          <Plus className="h-10 w-10 text-accent" />
         </Button>
       </div>
     </PageLayout>
