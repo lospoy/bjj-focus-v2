@@ -4,15 +4,14 @@
 // Used in:
 // ~/intentFeed
 
-import type { RouterOutputs } from "~/utils/api";
+import { api, type RouterOutputs } from "~/utils/api";
 import { AimViewById } from "./aimViewById";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Progress } from "~/components/ui/progress";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -26,10 +25,22 @@ type IntentWithUser = RouterOutputs["intents"]["getAll"][number];
 
 export const IntentView = (props: IntentWithUser) => {
   const { intent } = props;
+  const { mutateAsync } = api.intents.softDelete.useMutation();
+
   const [progress, setProgress] = useState(5);
+
   const startDate = intent.startDate.toLocaleDateString();
   const endDate = intent.endDate.toLocaleDateString();
   const dates = `${startDate} - ${endDate}`;
+
+  async function handleDeleteClick() {
+    try {
+      console.warn("Soft Delete successful");
+      await mutateAsync({ id: intent.id });
+    } catch (error) {
+      console.error("Error during soft delete:", error);
+    }
+  }
 
   const calculateProgress = useCallback(() => {
     // Calculates how far along this intent the user is based on daysSinceStart/totalDays
@@ -95,7 +106,11 @@ export const IntentView = (props: IntentWithUser) => {
             )}
           </div>
           <DialogFooter>
-            <Button variant="destructive">Delete Intent</Button>
+            {intent.status !== "COMPLETED" && (
+              <Button onClick={handleDeleteClick} variant="destructive">
+                Delete Intent
+              </Button>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>
