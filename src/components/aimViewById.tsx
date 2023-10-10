@@ -4,7 +4,6 @@
 // Used in:
 // ~/aimView
 
-import Link from "next/link";
 import { useAimData } from "./aimWizard";
 
 export const AimViewById = ({ aimId }: { aimId: string }) => {
@@ -16,14 +15,9 @@ export const AimViewById = ({ aimId }: { aimId: string }) => {
 
   const { aim } = aimData;
   return (
-    <div key={aim.id} className="flex gap-3 p-2">
-      <div className="flex flex-col">
-        <div className="flex text-slate-300">
-          <Link href={`/aim/${aim.id}`}></Link>{" "}
-        </div>
-        <span className="text-2xl">{aim.title}</span>
-        <span className="text-sm">{aim.notes}</span>
-      </div>
+    <div key={aim.id} className="flex flex-col">
+      <span className="flex text-2xl">{aim.title}</span>
+      <span className="flex text-sm">{aim.notes}</span>
     </div>
   );
 };
