@@ -1,0 +1,16 @@
+{
+  "name": "PokePoke",
+  "short_name": "PokePoke",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#fffff",
+  "theme_color": "#eb5683",
+  "description": "An intent setting and tracking app",
+  "icons": [
+    {
+      "src": "/brain64.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    }
+  ]
+}
