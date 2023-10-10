@@ -7,7 +7,6 @@
 import { LoadingPage } from "~/components/ui/loading";
 import { IntentView } from "./intentView";
 import { api } from "~/utils/api";
-import { Card, CardContent } from "~/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 
 export const IntentFeed = () => {
@@ -24,32 +23,20 @@ export const IntentFeed = () => {
   if (!data) return <div>Something went wrong</div>;
 
   return (
-    <Tabs defaultValue="active">
+    <Tabs defaultValue="active" className="space-y-6">
       <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="active">Active</TabsTrigger>
         <TabsTrigger value="completed">Completed</TabsTrigger>
       </TabsList>
-      <TabsContent value="active">
-        <Card>
-          <CardContent className="w-full">
-            <div className="flex flex-col">
-              {activeIntents?.map((fullIntent) => (
-                <IntentView {...fullIntent} key={fullIntent.intent.id} />
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+      <TabsContent value="active" className="flex w-full flex-col space-y-4">
+        {activeIntents?.map((fullIntent) => (
+          <IntentView {...fullIntent} key={fullIntent.intent.id} />
+        ))}
       </TabsContent>
-      <TabsContent value="completed">
-        <Card>
-          <CardContent className="space-y-2">
-            <div className="flex flex-col">
-              {completedIntents?.map((fullIntent) => (
-                <IntentView {...fullIntent} key={fullIntent.intent.id} />
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+      <TabsContent value="completed" className="flex w-full flex-col space-y-4">
+        {completedIntents?.map((fullIntent) => (
+          <IntentView {...fullIntent} key={fullIntent.intent.id} />
+        ))}
       </TabsContent>
     </Tabs>
   );
