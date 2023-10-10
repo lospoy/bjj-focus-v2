@@ -36,7 +36,6 @@ const intentSchema = z
       message: "Reminders must be at least 2 characters.",
     }),
     aimId: z.string(),
-    id: z.string(),
   })
   .refine((data) => data.endDate > data.startDate, {
     message: "End date cannot be earlier than start date.",
@@ -140,40 +139,6 @@ export const intentsRouter = createTRPCRouter({
       });
 
       return intent;
-    }),
-
-  // *******UPDATE
-  update: privateProcedure
-    .input(intentSchema)
-    .mutation(async ({ ctx, input }) => {
-      const currentUser = ctx.userId;
-      const intentId = input.id;
-
-      // Check if the user has permission to update this intent
-      const intent = await ctx.prisma.intent.findUnique({
-        where: { id: intentId },
-      });
-
-      if (!intent) {
-        throw new TRPCError({ code: "NOT_FOUND" });
-      }
-
-      if (intent.creatorId !== currentUser) {
-        throw new TRPCError({ code: "FORBIDDEN" });
-      }
-
-      // Perform the update
-      const updatedIntent = await ctx.prisma.intent.update({
-        where: { id: intentId },
-        data: {
-          startDate: new Date(input.startDate),
-          endDate: new Date(input.endDate),
-          status: input.status,
-          reminders: input.reminders,
-        },
-      });
-
-      return updatedIntent;
     }),
 
   // *******SOFT DELETE

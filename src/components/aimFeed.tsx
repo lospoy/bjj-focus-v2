@@ -12,7 +12,7 @@ import { LoadingPage } from "~/components/ui/loading";
 import { AimView } from "./aimView";
 import { api } from "~/utils/api";
 import { Button } from "./ui/button";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 export const AimFeed = () => {
   const router = useRouter();
@@ -42,7 +42,10 @@ export const AimFeed = () => {
           <AimView {...fullAim} isSelected={selectedAimId === fullAim.aim.id} />
         </div>
       ))}
-      <Button className="w-1/3 self-end" onClick={handleNextClick}>
+      <Button
+        className="mt-3 w-2/5 self-end bg-accent"
+        onClick={handleNextClick}
+      >
         Next
       </Button>
     </div>

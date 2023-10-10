@@ -72,7 +72,7 @@ export const IntentView = (props: IntentWithUser) => {
             <div className="flex flex-col">
               <Progress
                 value={progress}
-                className="-mb-2 rounded-lg rounded-b-none"
+                className="-mb-2 rounded-xl rounded-b-none"
               />
               <div className="p-3">
                 <AimViewById aimId={intent.aimId} />
@@ -106,7 +106,11 @@ export const IntentView = (props: IntentWithUser) => {
             </div>
             <DialogFooter>
               {intent.status !== "COMPLETED" && (
-                <Button onClick={handleDeleteClick} variant="destructive">
+                <Button
+                  className="w-2/5 self-center"
+                  onClick={handleDeleteClick}
+                  variant="destructive"
+                >
                   Delete Intent
                 </Button>
               )}

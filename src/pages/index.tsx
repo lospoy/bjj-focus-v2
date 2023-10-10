@@ -58,7 +58,7 @@ const Home: NextPage = () => {
         <IntentFeed />
         <Button
           onClick={handleNewIntentClick}
-          className="fixed bottom-2 right-2 z-50 m-4 flex h-20 self-end rounded-full border-4 bg-current p-4 text-white shadow-lg"
+          className="fixed bottom-2 right-2 z-50 m-4 flex h-20 self-end rounded-full border-4 bg-current p-4 text-white shadow-lg "
         >
           <Plus className="h-10 w-10 text-accent" />
         </Button>

@@ -4,8 +4,8 @@ import { BurgerNav } from "./burger-nav";
 
 export default function Navbar() {
   return (
-    <nav className="w-full bg-white px-4 md:border-0">
-      <div className="mx-auto max-w-screen-xl items-center">
+    <nav className="w-full bg-white px-4 md:border-0 ">
+      <div className="mx-auto items-center md:max-w-3xl">
         <div className="flex items-center justify-between py-3">
           <div className="hidden">
             <BurgerNav />
