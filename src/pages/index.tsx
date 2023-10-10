@@ -10,7 +10,6 @@ import { Plus } from "lucide-react";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import { setUser } from "../store/actions/userActions";
-import Navbar from "~/components/ui/navbar";
 import { useEffect } from "react";
 
 const Home: NextPage = () => {

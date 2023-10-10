@@ -14,12 +14,10 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { ChevronDown } from "lucide-react";
 import { Card } from "./ui/card";
 
 type IntentWithUser = RouterOutputs["intents"]["getAll"][number];
@@ -90,12 +88,21 @@ export const IntentView = (props: IntentWithUser) => {
             </DialogHeader>
             <div className="gap-4 py-4">
               <div className="mb-3 space-y-1">
-                <Label htmlFor="username">Reminders</Label>
-                <Input id="username" defaultValue={intent.reminders} />
+                <Label htmlFor="reminders">Reminders</Label>
+                <Input
+                  id="reminders"
+                  autoFocus={false}
+                  defaultValue={intent.reminders}
+                />
               </div>
               <div className="mb-3 space-y-1">
                 <Label htmlFor="dates">Dates</Label>
-                <Input id="dates" defaultValue={dates} />
+                <Input
+                  id="dates"
+                  type="date"
+                  autoFocus={false}
+                  defaultValue={dates}
+                />
               </div>
               {intent.notes && (
                 <div className="mb-3 space-y-1">
