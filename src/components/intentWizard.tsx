@@ -98,7 +98,9 @@ export function IntentWizard({ intentId }: IntentWizardProps) {
 
       await mutateAsync(formValues);
     }
-    // Other actions upon saving/editing
+    setTimeout(() => {
+      void router.push("/");
+    }, 300);
   }
 
   // Fetch existing intent data if intentId is provided
@@ -118,53 +120,51 @@ export function IntentWizard({ intentId }: IntentWizardProps) {
   if (!user) return null;
 
   return (
-    <div className="flex flex-col">
-      <div className="mt-10">
-        <Form {...form}>
-          {/* added a checksVoidReturn: false to ESLint -> "@typescript-eslint/no-misused-promises" */}
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <Card className="mx-auto max-w-2xl">
-              <CardHeader>
-                <CardTitle>{aimTitle}</CardTitle>
-                <CardDescription>{aimNotes}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <FormField
-                  control={form.control}
-                  name="reminders"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Reminders</FormLabel>
-                      <FormControl>
-                        <Input placeholder="reminders go here" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="startDate"
-                  render={() => (
-                    <FormItem>
-                      <FormLabel>Dates</FormLabel>
-                      <FormControl>
-                        <DatePickerWithRange />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </CardContent>
-              <CardFooter>
-                <Button className="w-full" type="submit">
-                  Create Intent
-                </Button>
-              </CardFooter>
+    <div className="-m-4">
+      <Form {...form}>
+        {/* added a checksVoidReturn: false to ESLint -> "@typescript-eslint/no-misused-promises" */}
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <CardHeader className="space-y-0">
+            <Card className="p-6">
+              <CardTitle className="text-2xl">{aimTitle}</CardTitle>
+              <CardDescription>{aimNotes}</CardDescription>
             </Card>
-          </form>
-        </Form>
-      </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <FormField
+              control={form.control}
+              name="reminders"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Reminders</FormLabel>
+                  <FormControl>
+                    <Input placeholder="reminders go here" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="startDate"
+              render={() => (
+                <FormItem>
+                  <FormLabel>Dates</FormLabel>
+                  <FormControl>
+                    <DatePickerWithRange />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </CardContent>
+          <CardFooter className=" flex flex-col">
+            <Button className="flex w-2/5 items-center bg-accent" type="submit">
+              Create Intent
+            </Button>
+          </CardFooter>
+        </form>
+      </Form>
     </div>
   );
 }

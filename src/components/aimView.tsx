@@ -18,14 +18,19 @@ export const AimView = (props: AimWithUser & { isSelected: boolean }) => {
   const { aim, isSelected } = props;
 
   return (
-    <Card
-      className={`mb-2 ${isSelected ? "bg-green-200" : "bg-white"}`}
-      key={aim.id}
+    <div
+      className={`rounded-3xl border-8 ${
+        isSelected
+          ? "border-secondary bg-secondary"
+          : "border-solid border-transparent"
+      }`}
     >
-      <CardHeader>
-        <CardTitle>{aim.title}</CardTitle>
-        <CardDescription>{aim.notes}</CardDescription>
-      </CardHeader>
-    </Card>
+      <Card key={aim.id}>
+        <CardHeader className="space-y-0">
+          <CardTitle className="text-xl">{aim.title}</CardTitle>
+          <CardDescription>{aim.notes}</CardDescription>
+        </CardHeader>
+      </Card>
+    </div>
   );
 };

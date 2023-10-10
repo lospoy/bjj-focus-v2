@@ -36,7 +36,6 @@ const intentSchema = z
       message: "Reminders must be at least 2 characters.",
     }),
     aimId: z.string(),
-    id: z.string(),
   })
   .refine((data) => data.endDate > data.startDate, {
     message: "End date cannot be earlier than start date.",
