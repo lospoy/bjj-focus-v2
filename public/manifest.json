@@ -4,10 +4,13 @@
   "start_url": "/?source=pwa",
   "display": "standalone",
   "orientation": "portrait",
-  "scope": "/",
+  "scope": ".",
+  "id": "/",
+  "dir": "ltr",
   "background_color": "#fffff",
   "theme_color": "#eb5683",
   "description": "An intent setting and tracking app",
+  "splash_pages": null,
   "icons": [
     {
       "src": "/brain64.png",
