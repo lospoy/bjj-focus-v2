@@ -1,31 +1,19 @@
-import WithPWA from "next-pwa";
+await import("./src/env.mjs");
+import withPWA from "next-pwa";
+const isProduction = process.env.NODE_ENV === "production";
 
-const withPWA = WithPWA({
-  dest: "public",
-  register: true,
-  disable: process.env.NODE_ENV !== "production",
-});
-
-/*
- * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.
- * This is especially useful for Docker builds.
- */
-!process.env.SKIP_ENV_VALIDATION && (await import("./src/env.mjs"));
-
-/** @type {import("next").NextConfig} */
-const config = withPWA({
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   reactStrictMode: true,
-
-  /**
-   * If you have the "experimental: { appDir: true }" setting enabled, then you
-   * must comment the below `i18n` config out.
-   *
-   * @see https://github.com/vercel/next.js/issues/41980
-   */
   i18n: {
     locales: ["en"],
     defaultLocale: "en",
   },
-});
+};
 
-export default config;
+const fullConfig = withPWA({
+  dest: "public",
+  disable: !isProduction,
+})(nextConfig);
+
+export default fullConfig;

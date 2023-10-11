@@ -5,11 +5,16 @@ import "~/styles/globals.css";
 import { Provider } from "react-redux";
 import store from "~/store/store";
 import Navbar from "~/components/ui/navbar";
+import Head from "next/head";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <Provider store={store}>
       <ClerkProvider>
+        <Head>
+          <link rel="manifest" href="/manifest.json" />
+          <meta name="theme-color" content="#eb5683" />
+        </Head>
         <Navbar />
         <Component {...pageProps} />
       </ClerkProvider>
