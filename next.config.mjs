@@ -1,31 +1,27 @@
-import WithPWA from "next-pwa";
-
-const withPWA = WithPWA({
+// `next-pwa` config should be passed here
+const withPWA = require("next-pwa")({
   dest: "public",
   register: true,
-  disable: process.env.NODE_ENV !== "production",
+  disable: process.env.NODE_ENV === "development",
 });
 
-/*
- * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.
- * This is especially useful for Docker builds.
- */
-!process.env.SKIP_ENV_VALIDATION && (await import("./src/env.mjs"));
-
-/** @type {import("next").NextConfig} */
-const config = withPWA({
+// Use `withPWA` and pass general Next.js config
+module.exports = withPWA({
   reactStrictMode: true,
-
-  /**
-   * If you have the "experimental: { appDir: true }" setting enabled, then you
-   * must comment the below `i18n` config out.
-   *
-   * @see https://github.com/vercel/next.js/issues/41980
-   */
-  i18n: {
-    locales: ["en"],
-    defaultLocale: "en",
+  webpack5: true,
+  webpack: (config) => {
+    config.resolve.fallback = { fs: false };
+    return config;
   },
+  images: {
+    domains: [
+      "pbs.twimg.com",
+      "img.icons8.com",
+      "gateway.moralisipfs.com",
+      "ipfs.moralis.io",
+      "lh3.googleusercontent.com",
+      "www.artnews.com",
+    ],
+  },
+  output: "standalone",
 });
-
-export default config;
