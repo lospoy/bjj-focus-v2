@@ -3,9 +3,7 @@ import WithPWA from "next-pwa";
 const withPWA = WithPWA({
   dest: "public",
   register: true,
-  skipWaiting: true,
-  // Disables PWA support for non-production environment
-  // disable: process.env.NODE_ENV !== "production",
+  disable: process.env.NODE_ENV !== "production",
 });
 
 /*
