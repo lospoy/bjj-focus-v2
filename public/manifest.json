@@ -4,18 +4,22 @@
   "start_url": "/?source=pwa",
   "display": "standalone",
   "orientation": "portrait",
-  "scope": ".",
-  "id": "/",
-  "dir": "ltr",
+  "scope": "/",
   "background_color": "#fffff",
   "theme_color": "#eb5683",
   "description": "An intent setting and tracking app",
   "splash_pages": null,
   "icons": [
     {
-      "src": "/brain64.png",
+      "src": "/images/brain64.png",
       "sizes": "64x64",
       "type": "image/png"
+    },
+    {
+      "src": "/images/maskable.png",
+      "sizes": "80x80",
+      "type": "image/x-icon",
+      "purpose": "maskable"
     }
   ]
 }

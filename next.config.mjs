@@ -1,19 +1,19 @@
 await import("./src/env.mjs");
+import withPWA from "next-pwa";
+const isProduction = process.env.NODE_ENV === "production";
 
-/** @type {import("next").NextConfig} */
-const config = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   reactStrictMode: true,
-
-  /**
-   * If you have the "experimental: { appDir: true }" setting enabled, then you
-   * must comment the below `i18n` config out.
-   *
-   * @see https://github.com/vercel/next.js/issues/41980
-   */
-  i18n: {
-    locales: ["en"],
-    defaultLocale: "en",
+  pageExtensions: ["js", "jsx", "ts", "tsx", "mdx"],
+  experimental: {
+    scrollRestoration: true,
   },
 };
 
-export default config;
+const fullConfig = withPWA({
+  dest: "public",
+  disable: !isProduction,
+})(nextConfig);
+
+export default withPWA(fullConfig);
