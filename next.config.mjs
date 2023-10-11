@@ -5,9 +5,9 @@ const isProduction = process.env.NODE_ENV === "production";
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  pageExtensions: ["js", "jsx", "ts", "tsx", "mdx"],
-  experimental: {
-    scrollRestoration: true,
+  i18n: {
+    locales: ["en"],
+    defaultLocale: "en",
   },
 };
 
@@ -16,4 +16,4 @@ const fullConfig = withPWA({
   disable: !isProduction,
 })(nextConfig);
 
-export default withPWA(fullConfig);
+export default fullConfig;
