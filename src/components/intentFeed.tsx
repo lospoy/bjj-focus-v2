@@ -9,8 +9,9 @@ import { IntentView } from "./intentView";
 import { api } from "~/utils/api";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 
-export const IntentFeed = () => {
-  const { data, isLoading: intentsLoading } = api.intents.getAll.useQuery();
+export const IntentFeed = ({ userId }: { userId: string }) => {
+  const { data, isLoading: intentsLoading } =
+    api.intents.getIntentsByUserId.useQuery({ userId: userId });
 
   const activeIntents = data?.filter(
     (intent) => intent.intent.status === "ACTIVE",
