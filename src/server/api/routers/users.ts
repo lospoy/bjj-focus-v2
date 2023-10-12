@@ -1,18 +1,21 @@
 import { TRPCError } from "@trpc/server";
+import { Ratelimit } from "@upstash/ratelimit";
 import { z } from "zod";
 import {
   createTRPCRouter,
   privateProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
-import { Ratelimit } from "@upstash/ratelimit"; // for deno: see above
 import { Redis } from "@upstash/redis";
+import { UserRole } from "@prisma/client";
 
 const ClerkUserSchema = z.object({
   id: z.string(),
   email: z.string(),
   firstName: z.string(),
   lastName: z.string(),
+  role: z.enum(["USER", "GROUP_MANAGER", "ADMIN"]),
+  timezone: z.string(),
 });
 
 // Create a new ratelimiter, that allows 1 requests per 1 minute
@@ -43,4 +46,24 @@ export const usersRouter = createTRPCRouter({
 
     return users;
   }),
+
+  // *******PRIVATE PROCEDURES
+  // *******CREATE
+  create: privateProcedure
+    .input(ClerkUserSchema)
+    .mutation(async ({ ctx, input }) => {
+      const currentUser = ctx.userId;
+
+      const user = await ctx.prisma.user.create({
+        data: {
+          id: currentUser,
+          firstName: input.firstName,
+          lastName: input.lastName,
+          role: UserRole.USER,
+          timezone: "",
+        },
+      });
+
+      return user;
+    }),
 });

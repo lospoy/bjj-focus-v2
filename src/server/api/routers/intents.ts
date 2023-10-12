@@ -31,7 +31,7 @@ const intentSchema = z
     ),
 
     endDate: z.date(),
-    status: z.enum(["ACTIVE", "PAUSED", "DELETED", "COMPLETED"]), // Replace with your actual enum values
+    status: z.enum(["ACTIVE", "PAUSED", "DELETED", "COMPLETED"]),
     reminders: z.string().min(2, {
       message: "Reminders must be at least 2 characters.",
     }),
