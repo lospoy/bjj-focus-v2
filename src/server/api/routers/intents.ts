@@ -141,6 +141,8 @@ export const intentsRouter = createTRPCRouter({
       return intent;
     }),
 
+  // *******GET ALL (this user's intents)
+
   // *******SOFT DELETE
   softDelete: privateProcedure
     .input(z.object({ id: z.string() }))

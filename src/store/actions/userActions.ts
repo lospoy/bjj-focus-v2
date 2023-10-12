@@ -8,4 +8,5 @@ export const setUser = createAction<{
   firstName: string;
   imageUrl: string;
   email: string;
+  id: string;
 }>("user/setUser");
