@@ -43,21 +43,4 @@ export const usersRouter = createTRPCRouter({
 
     return users;
   }),
-
-  // *******PRIVATE PROCEDURES
-  // *******CREATE
-  create: privateProcedure.input(ClerkUserSchema).mutation(async ({ ctx }) => {
-    const { success } = await ratelimit.limit(ctx.userId);
-    if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
-
-    const user = await ctx.prisma.user.create({
-      data: {
-        id: ctx.userId,
-        firstName: ctx.sesh.user?.firstName,
-        lastName: ctx.sesh.user?.lastName,
-      },
-    });
-
-    return user;
-  }),
 });
