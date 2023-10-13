@@ -58,7 +58,7 @@ const Home: NextPage = () => {
 
         {user && (
           <div>
-            <IntentFeed userId="user_2Wj1t9CCHyZrpoAnGmTBstl6Ql9" />
+            <IntentFeed userId={user.id} />
           </div>
         )}
         <Button
