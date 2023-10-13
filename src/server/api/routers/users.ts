@@ -1,13 +1,8 @@
 import { TRPCError } from "@trpc/server";
 import { Ratelimit } from "@upstash/ratelimit";
 import { z } from "zod";
-import {
-  createTRPCRouter,
-  privateProcedure,
-  publicProcedure,
-} from "~/server/api/trpc";
+import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { Redis } from "@upstash/redis";
-import { UserRole } from "@prisma/client";
 
 const ClerkUserSchema = z.object({
   id: z.string(),
@@ -47,23 +42,22 @@ export const usersRouter = createTRPCRouter({
     return users;
   }),
 
-  // *******PRIVATE PROCEDURES
-  // *******CREATE
-  create: privateProcedure
+  create: publicProcedure
     .input(ClerkUserSchema)
     .mutation(async ({ ctx, input }) => {
-      const currentUser = ctx.userId;
-
       const user = await ctx.prisma.user.create({
         data: {
-          id: currentUser,
+          id: input.id,
           firstName: input.firstName,
           lastName: input.lastName,
-          role: UserRole.USER,
-          timezone: "",
+          role: input.role,
+          timezone: input.timezone,
         },
       });
 
       return user;
     }),
+
+  // *******PRIVATE PROCEDURES
+  // *******CREATE
 });

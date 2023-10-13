@@ -19,8 +19,6 @@ export function UserNav() {
   const userData = useSelector((state: RootState) => state.user);
   const { signOut, openUserProfile } = useClerk();
 
-  console.log(useClerk());
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
