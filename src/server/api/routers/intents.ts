@@ -52,7 +52,7 @@ const addUserDataToIntents = async (intents: Intent[]) => {
 
   return intents.map((intent) => {
     const creator = users.find((user) => user.id === intent.creatorId);
-    if (!creator?.username)
+    if (!creator?.id)
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
         message: "creator for intent not found",
@@ -62,7 +62,7 @@ const addUserDataToIntents = async (intents: Intent[]) => {
       intent,
       creator: {
         ...creator,
-        username: creator.username,
+        id: creator.id,
       },
     };
   });

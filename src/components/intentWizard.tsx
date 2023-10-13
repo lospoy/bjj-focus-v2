@@ -44,6 +44,13 @@ type IntentFormSchema = RouterOutputs["intents"]["create"];
 
 //   return data;
 // };
+type IntentData = RouterOutputs["intents"]["getById"];
+
+export const useIntentData = (id: string): IntentData | undefined => {
+  const { data } = api.intents.getById.useQuery({ id });
+
+  return data;
+};
 
 interface IntentWizardProps {
   intentId?: string; // Pass intentId to edit an existing intent
