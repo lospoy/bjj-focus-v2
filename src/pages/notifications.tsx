@@ -23,7 +23,8 @@ function notificationTest() {
   const notifBody = "notification body";
   const notifImg = "/maskable.png";
   const options = {
-    title: notifTitle,
+    action: "action itself",
+    title: "action title",
     body: notifBody,
     icon: notifImg,
   };
