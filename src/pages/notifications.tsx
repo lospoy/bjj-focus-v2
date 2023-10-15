@@ -27,6 +27,7 @@ function notificationTest() {
     body: notifBody,
     icon: notifImg,
   };
+
   new Notification(notifTitle, options);
 }
 
