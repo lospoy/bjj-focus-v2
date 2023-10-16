@@ -1,5 +1,4 @@
 // Deletes all files created today in a specific db model
-
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
