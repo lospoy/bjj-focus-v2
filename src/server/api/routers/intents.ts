@@ -13,6 +13,17 @@ import { Redis } from "@upstash/redis";
 import { filterUserForClient } from "~/server/helpers/filterUserForClient";
 import { IntentStatus, type Intent } from "@prisma/client";
 
+export const reminderSchema = z.object({
+  day_of_week: z.enum(["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]),
+  time: z.string().refine((time) => {
+    if (/^([01][0-9]|2[0-3]):[0-5][0-9]$/.test(time)) {
+      return true; // Time is in the valid format
+    } else {
+      return "Time must be in the format HH:MM (00:00 to 23:59)";
+    }
+  }),
+});
+
 const intentSchema = z
   .object({
     // Zod Validator - www.github.com/colinhacks/zod
@@ -32,9 +43,7 @@ const intentSchema = z
 
     endDate: z.date(),
     status: z.enum(["ACTIVE", "PAUSED", "DELETED", "COMPLETED"]),
-    reminders: z.string().min(2, {
-      message: "Reminders must be at least 2 characters.",
-    }),
+    reminders: z.array(reminderSchema),
     aimId: z.string(),
   })
   .refine((data) => data.endDate > data.startDate, {

@@ -1,4 +1,4 @@
-// pages/notification.tsx
+// pages/notifications.tsx
 
 import { useEffect } from "react";
 import type { NextPage } from "next";
@@ -23,8 +23,6 @@ function notificationTest() {
   const notifBody = "notification body";
   const notifImg = "/maskable.png";
   const options = {
-    action: "action itself",
-    title: "action title",
     body: notifBody,
     icon: notifImg,
   };
