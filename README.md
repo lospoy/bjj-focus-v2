@@ -15,7 +15,7 @@
 </p>
 <br>
 
-## PRE-ALHPA 🛠️ Under development ##
+## 🛠️ Under development ##
 > _Poke Poke._
 <br>
 
