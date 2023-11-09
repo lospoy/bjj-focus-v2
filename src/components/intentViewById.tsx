@@ -17,7 +17,9 @@ export const IntentViewById = ({ intentId }: { intentId: string }) => {
   return (
     <div key={intent.id} className="flex flex-col">
       <span className="flex text-2xl">{intent.creatorId}</span>
-      <span className="flex text-sm">{intent.reminders}</span>
+      <span className="flex text-sm">
+        {intent.reminders ? JSON.stringify(intent.reminders) : "no reminders"}
+      </span>
     </div>
   );
 };

@@ -15,7 +15,6 @@ import {
   CardContent,
   CardFooter,
 } from "~/components/ui/card";
-import { Input } from "~/components/ui/input";
 import type { RouterOutputs } from "~/utils/api";
 import {
   Form,
@@ -60,7 +59,7 @@ interface IntentWizardProps {
 export function IntentWizard({ intentId }: IntentWizardProps) {
   const { user } = useUser();
   const router = useRouter();
-  const { mutateAsync } = api.intents.create.useMutation();
+  // const { mutateAsync } = api.intents.create.useMutation();
 
   // grabs aimId from URL slug
   // defined @ src\components\aimFeed.tsx
@@ -85,7 +84,6 @@ export function IntentWizard({ intentId }: IntentWizardProps) {
 
   const form = useForm<IntentFormSchema>({
     defaultValues: {
-      reminders: "empty reminder",
       status: IntentStatus.ACTIVE,
       aimId: aimId,
       startDate: today,
@@ -93,7 +91,7 @@ export function IntentWizard({ intentId }: IntentWizardProps) {
     },
   });
 
-  async function onSubmit() {
+  function onSubmit() {
     const formValues = { ...form.getValues() };
 
     if (intentId) {
@@ -103,12 +101,27 @@ export function IntentWizard({ intentId }: IntentWizardProps) {
       // Handle save logic for a new intent
       console.log("new intent", formValues);
 
-      await mutateAsync(formValues);
+      // await mutateAsync(formValues);
+      console.log(formValues);
     }
     setTimeout(() => {
       void router.push("/");
     }, 300);
   }
+
+  type ButtonDayProps = {
+    value: string;
+    label: string;
+  };
+
+  const ButtonDay = ({ value, label }: ButtonDayProps) => (
+    <Button
+      className="w-10 rounded-xl bg-background text-lg font-semibold text-primary"
+      value={value}
+    >
+      {label}
+    </Button>
+  );
 
   // Fetch existing intent data if intentId is provided
   // useEffect(() => {
@@ -140,19 +153,6 @@ export function IntentWizard({ intentId }: IntentWizardProps) {
           <CardContent className="space-y-4">
             <FormField
               control={form.control}
-              name="reminders"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Reminders</FormLabel>
-                  <FormControl>
-                    <Input placeholder="reminders go here" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
               name="startDate"
               render={() => (
                 <FormItem>
@@ -161,6 +161,23 @@ export function IntentWizard({ intentId }: IntentWizardProps) {
                     <DatePickerWithRange />
                   </FormControl>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+          </CardContent>
+          <CardContent>
+            <FormField
+              control={form.control}
+              name="reminders"
+              render={({ field }) => (
+                <FormItem className="space-x-3" {...field}>
+                  <ButtonDay value="SUN" label="S" />
+                  <ButtonDay value="MON" label="M" />
+                  <ButtonDay value="TUE" label="T" />
+                  <ButtonDay value="WED" label="W" />
+                  <ButtonDay value="THU" label="T" />
+                  <ButtonDay value="FRI" label="F" />
+                  <ButtonDay value="SAT" label="S" />
                 </FormItem>
               )}
             />

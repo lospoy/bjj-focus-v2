@@ -25,7 +25,7 @@ model Intent {
   status     IntentStatus @default(ACTIVE)
   successYes Int          @default(0)
   successNo  Int          @default(0)
-  reminders  String // Or JSON?
+  reminders  Json // Or JSON?
   createdOn  DateTime     @default(now())
   notes      String       @default("")
 

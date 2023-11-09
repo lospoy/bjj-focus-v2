@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import { setUser } from "../store/actions/userActions";
 import { useEffect } from "react";
+import Link from "next/link";
 
 const Home: NextPage = () => {
   // Dispatching user data to Redux store
@@ -67,6 +68,9 @@ const Home: NextPage = () => {
         >
           <Plus className="h-10 w-10 text-accent" />
         </Button>
+        <Link href="/notifications/">
+          <Button>notifications</Button>
+        </Link>
       </div>
     </PageLayout>
   );

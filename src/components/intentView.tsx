@@ -92,7 +92,11 @@ export const IntentView = (props: IntentWithCreator) => {
                 <Input
                   id="reminders"
                   autoFocus={false}
-                  defaultValue={intent.reminders}
+                  defaultValue={
+                    intent.reminders
+                      ? JSON.stringify(intent.reminders)
+                      : "no reminders"
+                  }
                 />
               </div>
               <div className="mb-3 space-y-1">
