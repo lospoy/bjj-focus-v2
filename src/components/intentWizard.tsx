@@ -84,7 +84,6 @@ export function IntentWizard({ intentId }: IntentWizardProps) {
 
   const form = useForm<IntentFormSchema>({
     defaultValues: {
-      reminders: [],
       status: IntentStatus.ACTIVE,
       aimId: aimId,
       startDate: today,
