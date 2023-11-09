@@ -1,8 +1,6 @@
 import { TRPCError } from "@trpc/server";
-import { Ratelimit } from "@upstash/ratelimit";
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-import { Redis } from "@upstash/redis";
 
 const ClerkUserSchema = z.object({
   id: z.string(),
@@ -11,13 +9,6 @@ const ClerkUserSchema = z.object({
   lastName: z.string(),
   role: z.enum(["USER", "GROUP_MANAGER", "ADMIN"]),
   timezone: z.string(),
-});
-
-// Create a new ratelimiter, that allows 1 requests per 1 minute
-const ratelimit = new Ratelimit({
-  redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(1, "1 m"),
-  analytics: true,
 });
 
 export const usersRouter = createTRPCRouter({

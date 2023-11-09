@@ -3,7 +3,7 @@
 
 // Used in:
 // ~../pages/intent
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { api } from "~/utils/api";
 import { DatePickerWithRange } from "./ui/datepickerRange";
 import { Button } from "~/components/ui/button";
@@ -60,7 +60,6 @@ export function IntentWizard({ intentId }: IntentWizardProps) {
   const { user } = useUser();
   const router = useRouter();
   const { mutateAsync } = api.intents.create.useMutation();
-  const { control } = useForm();
 
   // grabs aimId from URL slug
   // defined @ src\components\aimFeed.tsx
@@ -110,7 +109,12 @@ export function IntentWizard({ intentId }: IntentWizardProps) {
     }, 300);
   }
 
-  const ButtonDay = ({ value, label }) => (
+  type ButtonDayProps = {
+    value: string;
+    label: string;
+  };
+
+  const ButtonDay = ({ value, label }: ButtonDayProps) => (
     <Button
       className="w-10 rounded-xl bg-background text-lg font-semibold text-primary"
       value={value}
