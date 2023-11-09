@@ -59,7 +59,7 @@ interface IntentWizardProps {
 export function IntentWizard({ intentId }: IntentWizardProps) {
   const { user } = useUser();
   const router = useRouter();
-  const { mutateAsync } = api.intents.create.useMutation();
+  // const { mutateAsync } = api.intents.create.useMutation();
 
   // grabs aimId from URL slug
   // defined @ src\components\aimFeed.tsx
@@ -91,7 +91,7 @@ export function IntentWizard({ intentId }: IntentWizardProps) {
     },
   });
 
-  async function onSubmit() {
+  function onSubmit() {
     const formValues = { ...form.getValues() };
 
     if (intentId) {
@@ -101,7 +101,8 @@ export function IntentWizard({ intentId }: IntentWizardProps) {
       // Handle save logic for a new intent
       console.log("new intent", formValues);
 
-      await mutateAsync(formValues);
+      // await mutateAsync(formValues);
+      console.log(formValues);
     }
     setTimeout(() => {
       void router.push("/");
