@@ -40,13 +40,15 @@ model Position {
 model Jit {
   id         String        @id @default(cuid())
   createdOn  DateTime      @default(now())
+  name       String       @default("")
   category   JitCategory
   percentage JitPercentage
   notes      String        @default("")
 
   // Relationships
   users    User[]     @relation("JitParticipants")
-  position Position[] @relation("PositionJits")
+  positions Position[] @relation("PositionJits")
+  sequences Sequence[] @relation("SequenceJits")
 
   // Fields that represent foreign keys to improve query performance
   // Added @map directive to improve database integrity
@@ -76,6 +78,7 @@ model User {
   jits      Jit[]      @relation("JitParticipants")
   knownJits KnownJit[] @relation("KnownJits")
   groups    Group[]    @relation("GroupMembers")
+  sequences    Sequence[]    @relation("UserSequences")
 }
 
 model Group {
@@ -100,7 +103,26 @@ model KnownJit {
   // Added @map directive to improve database integrity
   userId String @map("user_id")
   jitId  String @map("jit_id")
+  jitName String @map("jit_name")
 
-  @@id([userId, jitId])
+  @@id([userId, jitId, jitName])
   @@index([userId])
+}
+
+model Sequence {
+  id        String     @id @default(cuid())
+  createdOn DateTime   @default(now())
+
+  // Relationships
+  user     User       @relation("UserSequences", fields: [ownerId], references: [id])
+  steps Jit[] @relation("SequenceJits", fields: [jitName], references: [name])
+
+  // Fields that represent foreign keys to improve query performance
+  // Added @map directive to improve database integrity
+  ownerId   String     @map("owner_id")
+  jitName   String    @map("jit_name")
+
+  // Indexes
+  @@index([ownerId])
+  @@index([jitName])
 }
