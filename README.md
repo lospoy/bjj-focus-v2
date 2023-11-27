@@ -1,6 +1,4 @@
-<div align="center">
-   <img src="https://u.cubeupload.com/aa9988vvb/pokepokecover.png" width="70%">
-</div>
+## BJJ Focus v2
 
 <p align="center">
   <img alt="NextJS" src="https://img.shields.io/badge/-Nextjs-000000?style=for-the-badge&logo=Next.JS&logoColor=white" />
@@ -16,7 +14,7 @@
 <br>
 
 ## 🛠️ Under development ##
-> _Poke Poke._
+> _Focus._
 <br>
 
 
