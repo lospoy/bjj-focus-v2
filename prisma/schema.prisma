@@ -108,6 +108,7 @@ model KnownJit {
 model Sequence {
   id        String   @id @default(cuid())
   createdOn DateTime @default(now())
+  name  String?
 
   // Relationships
   user User @relation("UserSequences", fields: [ownerId], references: [id])
