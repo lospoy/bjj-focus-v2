@@ -11,42 +11,54 @@ datasource db {
   relationMode = "prisma"
 }
 
-enum IntentStatus {
-  ACTIVE
-  PAUSED
-  COMPLETED
-  DELETED
+enum JitCategory {
+  ESCAPE
+  SUB
+  SWEEP
+  PASS
+  CONTROL
+  GUARD
+  TAKEDOWN
 }
 
-model Intent {
-  id         String       @id @default(cuid())
-  startDate  DateTime
-  endDate    DateTime
-  status     IntentStatus @default(ACTIVE)
-  successYes Int          @default(0)
-  successNo  Int          @default(0)
-  reminders  Json // Or JSON?
-  createdOn  DateTime     @default(now())
-  notes      String       @default("")
+enum JitPercentage {
+  LOW
+  HIGH
+}
+
+model Position {
+  id   String @id @default(cuid())
+  name String @unique
 
   // Relationships
-  user User  @relation("UserIntents", fields: [creatorId], references: [id])
-  aim  Aim   @relation("AimIntents", fields: [aimId], references: [id])
-  tags Tag[] @relation("IntentTags")
-
-  // Fields that represent foreign keys to improve query performance
-  // Added @map directive to improve database integrity
-  creatorId String @map("user_id")
-  aimId     String @map("aim_id")
+  jits Jit[] @relation("PositionJits")
 
   // Indexes
-  @@index([creatorId])
-  @@index([aimId])
+  @@index([name])
+}
+
+model Jit {
+  id         String        @id @default(cuid())
+  createdOn  DateTime      @default(now())
+  name       String        @default("")
+  category   JitCategory
+  percentage JitPercentage
+  notes      String        @default("")
+
+  // Relationships
+  users        User[]         @relation("JitParticipants")
+  positions    Position[]     @relation("PositionJits")
+  SequenceJits SequenceJits[]
+  KnownJit     KnownJit[]
+
+  // Indexes
+  @@index([category, percentage])
 }
 
 enum UserRole {
   USER
-  GROUP_MANAGER
+  COACH
+  MANAGER
   ADMIN
 }
 
@@ -55,14 +67,13 @@ model User {
   firstName String
   lastName  String
   role      UserRole
-  timezone  String
   createdOn DateTime @default(now())
 
   // Relationships
-  intents Intent[] @relation("UserIntents")
-  groups  Group[]  @relation("GroupMembers")
-  aims    Aim[]    @relation("AimParticipants")
-  tags    Tag[]    @relation("UserTags")
+  jits      Jit[]      @relation("JitParticipants")
+  knownJits KnownJit[] @relation("KnownJits")
+  groups    Group[]    @relation("GroupMembers")
+  sequences Sequence[] @relation("UserSequences")
 }
 
 model Group {
@@ -73,46 +84,55 @@ model Group {
 
   // Relationships
   members User[] @relation("GroupMembers")
-  aims    Aim[]  @relation("GroupAims")
-  tags    Tag[]  @relation("GroupTags")
 }
 
-model Aim {
-  id              String   @id @default(cuid())
-  title           String
-  isPublic        Boolean  @default(true)
-  helpfulnessLow  Int
-  helpfulnessMid  Int
-  helpfulnessHigh Int
-  createdOn       DateTime @default(now())
-  creatorId       String
-  notes           String   @default("")
+model KnownJit {
+  level        Int
+  hitRolling   Int
+  hitCompeting Int
 
   // Relationships
-  groups  Group[]  @relation("GroupAims")
-  intents Intent[] @relation("AimIntents")
-  tags    Tag[]    @relation("AimTags")
-  users   User[]   @relation("AimParticipants")
+  user User @relation("KnownJits", fields: [userId], references: [id])
+  jit  Jit  @relation(fields: [jitId], references: [id])
 
-  // Indexes
-  @@index([helpfulnessLow])
-  @@index([helpfulnessMid])
-  @@index([helpfulnessHigh])
-  @@index([title])
+  // Fields that represent foreign keys to improve query performance
+  // Added @map directive to improve database integrity
+  userId String @map("user_id")
+  jitId  String @map("jit_id")
+
+  @@id([userId, jitId])
+  @@index([userId])
+  @@index([jitId])
 }
 
-model Tag {
+model Sequence {
   id        String   @id @default(cuid())
-  title     String
   createdOn DateTime @default(now())
-  creatorId String
 
   // Relationships
-  aims    Aim[]    @relation("AimTags")
-  groups  Group[]  @relation("GroupTags")
-  users   User[]   @relation("UserTags")
-  intents Intent[] @relation("IntentTags")
+  user User @relation("UserSequences", fields: [ownerId], references: [id])
+
+  // Fields that represent foreign keys to improve query performance
+  // Added @map directive to improve database integrity
+  ownerId      String         @map("owner_id")
+  jitName      String         @map("jit_name")
+  SequenceJits SequenceJits[]
 
   // Indexes
-  @@index([title])
+  @@index([ownerId])
+  @@index([jitName])
+}
+
+model SequenceJits {
+  id         String   @id @default(cuid())
+  createdOn  DateTime @default(now())
+  sequence   Sequence @relation(fields: [sequenceId], references: [id])
+  sequenceId String
+  jit        Jit      @relation(fields: [jitId], references: [id])
+  jitId      String
+  order      Int
+
+  // Indexes
+  @@index([sequenceId])
+  @@index([jitId])
 }

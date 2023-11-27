@@ -7,7 +7,7 @@ async function main() {
   try {
     // Use Prisma to delete all records from the Intent table
     // modify to delete other tables
-    await prisma.intent.deleteMany({});
+    await prisma.jit.deleteMany({});
 
     console.log("All data from the Intent table has been deleted.");
   } catch (error) {
