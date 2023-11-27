@@ -12,8 +12,8 @@ async function clearDataSavedToday() {
     tomorrow.setDate(today.getDate() + 1); // Set to the beginning of the next day
 
     // Use Prisma Client to find and delete records created on the date specified above
-    // Replace ".intent" with any other model that needs a file deletion
-    const deletedRecords = await prisma.intent.deleteMany({
+    // Replace ".jit" with any other model that needs a file deletion
+    const deletedRecords = await prisma.jit.deleteMany({
       where: {
         createdOn: {
           gte: today,
