@@ -46,18 +46,13 @@ model Jit {
   notes      String        @default("")
 
   // Relationships
-  users     User[]     @relation("JitParticipants")
-  positions Position[] @relation("PositionJits")
-
-  // Fields that represent foreign keys to improve query performance
-  // Added @map directive to improve database integrity
-  positionName String         @map("position_name")
+  users        User[]         @relation("JitParticipants")
+  positions    Position[]     @relation("PositionJits")
   SequenceJits SequenceJits[]
+  KnownJit     KnownJit[]
 
   // Indexes
-  @@index([category])
-  @@index([percentage])
-  @@index([positionName])
+  @@index([category, percentage])
 }
 
 enum UserRole {
@@ -98,15 +93,16 @@ model KnownJit {
 
   // Relationships
   user User @relation("KnownJits", fields: [userId], references: [id])
+  jit  Jit  @relation(fields: [jitId], references: [id])
 
   // Fields that represent foreign keys to improve query performance
   // Added @map directive to improve database integrity
-  userId  String @map("user_id")
-  jitId   String @map("jit_id")
-  jitName String @map("jit_name")
+  userId String @map("user_id")
+  jitId  String @map("jit_id")
 
-  @@id([userId, jitId, jitName])
+  @@id([userId, jitId])
   @@index([userId])
+  @@index([jitId])
 }
 
 model Sequence {
@@ -128,15 +124,13 @@ model Sequence {
 }
 
 model SequenceJits {
-  id        String   @id @default(cuid())
-  createdOn DateTime @default(now())
-
-  sequenceId String
+  id         String   @id @default(cuid())
+  createdOn  DateTime @default(now())
   sequence   Sequence @relation(fields: [sequenceId], references: [id])
-  jitsId     String
+  sequenceId String
   jit        Jit      @relation(fields: [jitId], references: [id])
-  order      Int
   jitId      String
+  order      Int
 
   // Indexes
   @@index([sequenceId])

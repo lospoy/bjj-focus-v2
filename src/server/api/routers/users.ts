@@ -7,7 +7,7 @@ const ClerkUserSchema = z.object({
   email: z.string(),
   firstName: z.string(),
   lastName: z.string(),
-  role: z.enum(["USER", "GROUP_MANAGER", "ADMIN"]),
+  role: z.enum(["USER", "COACH", "MANAGER", "ADMIN"]),
   timezone: z.string(),
 });
 
@@ -42,7 +42,6 @@ export const usersRouter = createTRPCRouter({
           firstName: input.firstName,
           lastName: input.lastName,
           role: input.role,
-          timezone: input.timezone,
         },
       });
 
