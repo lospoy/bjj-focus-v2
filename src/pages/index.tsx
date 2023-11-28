@@ -12,11 +12,12 @@ import { useDispatch } from "react-redux";
 import { setUser } from "../store/actions/userActions";
 import { useEffect } from "react";
 import Link from "next/link";
+import { JitViewById } from '~/components/jitViewById';
 
 const Home: NextPage = () => {
   // Dispatching user data to Redux store
   const dispatch = useDispatch();
-  const user = useUser().user;
+  const user = useUser().user
 
   useEffect(() => {
     if (user) {
@@ -36,6 +37,7 @@ const Home: NextPage = () => {
 
   // Start fetching asap
   // (React query will use cached data if the data doesn't change)
+  api.knownJits.getAllKnownByThisUser.useQuery();
   api.jits.getAll.useQuery();
 
   // Return empty div if user isn't loaded yet
@@ -59,7 +61,7 @@ const Home: NextPage = () => {
 
         {user && (
           <div>
-            <KnownJitFeed userId={user.id} />
+            {/* <JitViewById jitId={"clphbfazb0001t9797u599m7i"} /> */}
           </div>
         )}
         <Button
@@ -68,9 +70,6 @@ const Home: NextPage = () => {
         >
           <Plus className="h-10 w-10 text-accent" />
         </Button>
-        <Link href="/notifications/">
-          <Button>notifications</Button>
-        </Link>
       </div>
     </PageLayout>
   );

@@ -22,6 +22,7 @@ export const jitsRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const jit = await ctx.prisma.jit.findUnique({
         where: { id: input.id },
+        include: { position: true } // Important, otherwise no position data
       });
 
       if (!jit) throw new TRPCError({ code: "NOT_FOUND" });
@@ -33,7 +34,8 @@ export const jitsRouter = createTRPCRouter({
     .query(async ({ ctx }) => {
       const jits = await ctx.prisma.jit.findMany({
         take: 200,
-        orderBy: [{ createdOn: "desc" }], //descending, newest first
+        orderBy: [{ createdOn: "desc" }], // Newest first
+        include: { position: true } // Important, otherwise no position data
       });
 
     return jits;

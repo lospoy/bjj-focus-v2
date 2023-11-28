@@ -44,11 +44,8 @@ export const knownJitsRouter = createTRPCRouter({
   getByJitId: privateProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
-      const userId = ctx.userId
-      const jitId = input.id
-
       const knownJit = await ctx.prisma.knownJit.findUnique({
-        where: { userId_jitId: { userId, jitId } },
+        where: { userId_jitId: { userId: ctx.userId, jitId: input.id } },
       });
 
       if (!knownJit) throw new TRPCError({ code: "NOT_FOUND" });
