@@ -17,4 +17,7 @@
 > _Focus._
 <br>
 
+### DB Schema
+![image](https://github.com/lospoy/bjj-focus-v2/assets/36555654/b0f9edeb-dfaf-489e-b154-bb71471bd14d)
+
 
