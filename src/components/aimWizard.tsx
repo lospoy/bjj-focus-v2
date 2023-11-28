@@ -5,15 +5,15 @@ import toast from "react-hot-toast";
 import { api } from "~/utils/api";
 import type { RouterOutputs } from "~/utils/api";
 
-type AimData = RouterOutputs["aims"]["getById"];
+type JitData = RouterOutputs["jits"]["getById"];
 
-const useAimData = (id: string): AimData | undefined => {
-  const { data } = api.aims.getById.useQuery({ id });
+const useJitData = (id: string): JitData | undefined => {
+  const { data } = api.jits.getById.useQuery({ id });
 
   return data;
 };
 
-const AimWizard = () => {
+const JitWizard = () => {
   const { user } = useUser();
   // In a pro app we could use Zod and React Hook form to invalidate input in-client
   // Also we'd use React Hook form to manage the input state
@@ -21,10 +21,10 @@ const AimWizard = () => {
   const [input, setInput] = useState("");
 
   const ctx = api.useContext();
-  const { mutate, isLoading: isSaving } = api.aims.create.useMutation({
+  const { mutate, isLoading: isSaving } = api.jits.create.useMutation({
     onSuccess: () => {
       setInput("");
-      void ctx.aims.getAll.invalidate(); // adding void to tell TS we just want this to happen in the background
+      void ctx.jits.getAll.invalidate(); // adding void to tell TS we just want this to happen in the background
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.title;
@@ -41,7 +41,7 @@ const AimWizard = () => {
   return (
     <div className="flex w-full gap-3 rounded border bg-white p-2">
       <input
-        placeholder="Write your intent here"
+        placeholder="Write your knownJit here"
         className="grow bg-transparent outline-none"
         type="text"
         value={input}
@@ -57,7 +57,7 @@ const AimWizard = () => {
         disabled={isSaving}
       />
       {input !== "" && !isSaving && (
-        <button onClick={() => mutate({ title: input })}>Aim</button>
+        <button onClick={() => mutate({ title: input })}>Jit</button>
       )}
 
       {isSaving && (
@@ -69,4 +69,4 @@ const AimWizard = () => {
   );
 };
 
-export { AimWizard, useAimData };
+export { JitWizard, useJitData };

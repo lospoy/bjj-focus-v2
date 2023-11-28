@@ -1,23 +1,23 @@
-// AimViewById
-// Handles displaying a single Aim when passed an ID
+// JitViewById
+// Handles displaying a single Jit when passed an ID
 
 // Used in:
-// ~/aimView
+// ~/jitView
 
-import { useAimData } from "./aimWizard";
+import { useJitData } from "./jitWizard";
 
-export const AimViewById = ({ aimId }: { aimId: string }) => {
-  const aimData = useAimData(aimId);
+export const JitViewById = ({ jitId }: { jitId: string }) => {
+  const jitData = useJitData(jitId);
 
-  if (!aimData) {
+  if (!jitData) {
     return <div>Loading...</div>;
   }
 
-  const { aim } = aimData;
+  const { jit } = jitData;
   return (
-    <div key={aim.id} className="flex flex-col">
-      <span className="flex text-2xl">{aim.title}</span>
-      <span className="flex text-sm">{aim.notes}</span>
+    <div key={jit.id} className="flex flex-col">
+      <span className="flex text-2xl">{jit.title}</span>
+      <span className="flex text-sm">{jit.notes}</span>
     </div>
   );
 };

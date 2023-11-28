@@ -1,24 +1,24 @@
-// IntentViewById
-// Handles displaying a single Intent when passed an ID
+// KnownJitViewById
+// Handles displaying a single KnownJit when passed an ID
 
 // Used in:
-// ~/intentView
+// ~/knownJitView
 
-import { useIntentData } from "./intentWizard";
+import { useKnownJitData } from "./knownJitWizard";
 
-export const IntentViewById = ({ intentId }: { intentId: string }) => {
-  const intentData = useIntentData(intentId);
+export const KnownJitViewById = ({ knownJitId }: { knownJitId: string }) => {
+  const knownJitData = useKnownJitData(knownJitId);
 
-  if (!intentData) {
+  if (!knownJitData) {
     return <div>Loading...</div>;
   }
 
-  const { intent } = intentData;
+  const { knownJit } = knownJitData;
   return (
-    <div key={intent.id} className="flex flex-col">
-      <span className="flex text-2xl">{intent.creatorId}</span>
+    <div key={knownJit.id} className="flex flex-col">
+      <span className="flex text-2xl">{knownJit.creatorId}</span>
       <span className="flex text-sm">
-        {intent.reminders ? JSON.stringify(intent.reminders) : "no reminders"}
+        {knownJit.reminders ? JSON.stringify(knownJit.reminders) : "no reminders"}
       </span>
     </div>
   );

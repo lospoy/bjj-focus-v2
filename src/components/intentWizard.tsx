@@ -1,8 +1,8 @@
-// IntentWizard
-// Handles creating and (not yet editing) Intents
+// KnownJitWizard
+// Handles creating and (not yet editing) KnownJits
 
 // Used in:
-// ~../pages/intent
+// ~../pages/knownJit
 import { useForm } from "react-hook-form";
 import { api } from "~/utils/api";
 import { DatePickerWithRange } from "./ui/datepickerRange";
@@ -25,47 +25,47 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { useUser } from "@clerk/nextjs";
-import { IntentStatus } from "@prisma/client";
+import { KnownJitStatus } from "@prisma/client";
 import { useRouter } from "next/router";
-import { useAimData } from "./aimWizard";
+import { useJitData } from "./jitWizard";
 
-type IntentFormSchema = RouterOutputs["intents"]["create"];
+type KnownJitFormSchema = RouterOutputs["knownJits"]["create"];
 
-// type IntentData = RouterOutputs["intents"]["getById"];
-// const useIntentData = (id: string): IntentData | undefined => {
-//   const { data } = api.intents.getById.useQuery({ id });
-
-//   return data;
-// };
-
-// const getIntentData = (id: string): IntentData | undefined => {
-//   const { data } = api.intents.getById.useQuery({ id });
+// type KnownJitData = RouterOutputs["knownJits"]["getById"];
+// const useKnownJitData = (id: string): KnownJitData | undefined => {
+//   const { data } = api.knownJits.getById.useQuery({ id });
 
 //   return data;
 // };
-type IntentData = RouterOutputs["intents"]["getById"];
 
-export const useIntentData = (id: string): IntentData | undefined => {
-  const { data } = api.intents.getById.useQuery({ id });
+// const getKnownJitData = (id: string): KnownJitData | undefined => {
+//   const { data } = api.knownJits.getById.useQuery({ id });
+
+//   return data;
+// };
+type KnownJitData = RouterOutputs["knownJits"]["getById"];
+
+export const useKnownJitData = (id: string): KnownJitData | undefined => {
+  const { data } = api.knownJits.getById.useQuery({ id });
 
   return data;
 };
 
-interface IntentWizardProps {
-  intentId?: string; // Pass intentId to edit an existing intent
-  aimId?: string; // Pass aimId either to edit existing intent or as suggestion for new intent
+interface KnownJitWizardProps {
+  knownJitId?: string; // Pass knownJitId to edit an existing knownJit
+  jitId?: string; // Pass jitId either to edit existing knownJit or as suggestion for new knownJit
 }
 
-export function IntentWizard({ intentId }: IntentWizardProps) {
+export function KnownJitWizard({ knownJitId }: KnownJitWizardProps) {
   const { user } = useUser();
   const router = useRouter();
-  // const { mutateAsync } = api.intents.create.useMutation();
+  // const { mutateAsync } = api.knownJits.create.useMutation();
 
-  // grabs aimId from URL slug
-  // defined @ src\components\aimFeed.tsx
-  const aimId = router.query.aimId as string;
-  const aimTitle = useAimData(aimId)?.aim.title;
-  const aimNotes = useAimData(aimId)?.aim.notes;
+  // grabs jitId from URL slug
+  // defined @ src\components\jitFeed.tsx
+  const jitId = router.query.jitId as string;
+  const jitTitle = useJitData(jitId)?.jit.title;
+  const jitNotes = useJitData(jitId)?.jit.notes;
 
   // some date calculations
   const today = new Date(Date.now()); // UTC time so that it's synced with the server time
@@ -82,10 +82,10 @@ export function IntentWizard({ intentId }: IntentWizardProps) {
     999, // Milliseconds
   );
 
-  const form = useForm<IntentFormSchema>({
+  const form = useForm<KnownJitFormSchema>({
     defaultValues: {
-      status: IntentStatus.ACTIVE,
-      aimId: aimId,
+      status: KnownJitStatus.ACTIVE,
+      jitId: jitId,
       startDate: today,
       endDate: lastDateOfMonth,
     },
@@ -94,12 +94,12 @@ export function IntentWizard({ intentId }: IntentWizardProps) {
   function onSubmit() {
     const formValues = { ...form.getValues() };
 
-    if (intentId) {
-      // Handle edit logic for an existing intent
-      console.log("edit intent", formValues);
+    if (knownJitId) {
+      // Handle edit logic for an existing knownJit
+      console.log("edit knownJit", formValues);
     } else {
-      // Handle save logic for a new intent
-      console.log("new intent", formValues);
+      // Handle save logic for a new knownJit
+      console.log("new knownJit", formValues);
 
       // await mutateAsync(formValues);
       console.log(formValues);
@@ -123,19 +123,19 @@ export function IntentWizard({ intentId }: IntentWizardProps) {
     </Button>
   );
 
-  // Fetch existing intent data if intentId is provided
+  // Fetch existing knownJit data if knownJitId is provided
   // useEffect(() => {
-  //   if (intentId) {
-  //     // Replace with your API request to fetch intent data by ID
-  //     useIntentData
+  //   if (knownJitId) {
+  //     // Replace with your API request to fetch knownJit data by ID
+  //     useKnownJitData
 
   //       // Populate form fields with existing data
-  //       Object.keys(existingIntentData).forEach((key) => {
-  //         setValue(key, existingIntentData[key]);
+  //       Object.keys(existingKnownJitData).forEach((key) => {
+  //         setValue(key, existingKnownJitData[key]);
   //       });
   //     });
   //   }
-  // }, [intentId, setValue]);
+  // }, [knownJitId, setValue]);
 
   if (!user) return null;
 
@@ -146,8 +146,8 @@ export function IntentWizard({ intentId }: IntentWizardProps) {
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <CardHeader className="space-y-0">
             <Card className="p-6">
-              <CardTitle className="text-2xl">{aimTitle}</CardTitle>
-              <CardDescription>{aimNotes}</CardDescription>
+              <CardTitle className="text-2xl">{jitTitle}</CardTitle>
+              <CardDescription>{jitNotes}</CardDescription>
             </Card>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -184,7 +184,7 @@ export function IntentWizard({ intentId }: IntentWizardProps) {
           </CardContent>
           <CardFooter className=" flex flex-col">
             <Button className="flex w-2/5 items-center bg-accent" type="submit">
-              Create Intent
+              Create KnownJit
             </Button>
           </CardFooter>
         </form>

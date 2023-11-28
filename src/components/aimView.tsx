@@ -1,11 +1,11 @@
-// AimView
-// Handles displaying a single Aim
+// JitView
+// Handles displaying a single Jit
 
 // Used in:
-// ~/aimFeed
+// ~/jitFeed
 
 import type { RouterOutputs } from "~/utils/api";
-type AimWithUser = RouterOutputs["aims"]["getAll"][number];
+type JitWithUser = RouterOutputs["jits"]["getAll"][number];
 
 import {
   Card,
@@ -14,8 +14,8 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 
-export const AimView = (props: AimWithUser & { isSelected: boolean }) => {
-  const { aim, isSelected } = props;
+export const JitView = (props: JitWithUser & { isSelected: boolean }) => {
+  const { jit, isSelected } = props;
 
   return (
     <div
@@ -25,10 +25,10 @@ export const AimView = (props: AimWithUser & { isSelected: boolean }) => {
           : "border-solid border-transparent"
       }`}
     >
-      <Card key={aim.id}>
+      <Card key={jit.id}>
         <CardHeader className="space-y-0">
-          <CardTitle className="text-xl">{aim.title}</CardTitle>
-          <CardDescription>{aim.notes}</CardDescription>
+          <CardTitle className="text-xl">{jit.title}</CardTitle>
+          <CardDescription>{jit.notes}</CardDescription>
         </CardHeader>
       </Card>
     </div>

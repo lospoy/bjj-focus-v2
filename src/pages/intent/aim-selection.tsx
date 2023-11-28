@@ -1,11 +1,11 @@
-// url/intent/aim-selection
+// url/knownJit/jit-selection
 
 import { type NextPage } from "next";
 import { useUser } from "@clerk/nextjs";
 import { PageLayout } from "~/components/ui/layout";
-import { AimFeed } from "~/components/aimFeed";
+import { JitFeed } from "~/components/jitFeed";
 
-const IntentWizardAimSelection: NextPage = () => {
+const KnownJitWizardJitSelection: NextPage = () => {
   const { isLoaded: userLoaded, isSignedIn } = useUser();
 
   // Return empty div if user isn't loaded yet
@@ -13,9 +13,9 @@ const IntentWizardAimSelection: NextPage = () => {
 
   return (
     <PageLayout>
-      <AimFeed />
+      <JitFeed />
     </PageLayout>
   );
 };
 
-export default IntentWizardAimSelection;
+export default KnownJitWizardJitSelection;

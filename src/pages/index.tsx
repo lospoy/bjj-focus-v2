@@ -4,7 +4,7 @@ import { type NextPage } from "next";
 import { api } from "~/utils/api";
 import { SignInButton, useUser } from "@clerk/nextjs";
 import { PageLayout } from "~/components/ui/layout";
-import { IntentFeed } from "~/components/intentFeed";
+import { KnownJitFeed } from "~/components/knownJitFeed";
 import { Button } from "~/components/ui/button";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/router";
@@ -36,13 +36,13 @@ const Home: NextPage = () => {
 
   // Start fetching asap
   // (React query will use cached data if the data doesn't change)
-  api.aims.getAll.useQuery();
+  api.jits.getAll.useQuery();
 
   // Return empty div if user isn't loaded yet
   if (!userLoaded) return <div />;
 
-  const handleNewIntentClick = async () => {
-    const url = `/intent/aim-selection`;
+  const handleNewKnownJitClick = async () => {
+    const url = `/knownJit/jit-selection`;
     await router.push(url);
   };
 
@@ -59,11 +59,11 @@ const Home: NextPage = () => {
 
         {user && (
           <div>
-            <IntentFeed userId={user.id} />
+            <KnownJitFeed userId={user.id} />
           </div>
         )}
         <Button
-          onClick={handleNewIntentClick}
+          onClick={handleNewKnownJitClick}
           className="fixed bottom-2 right-2 z-50 m-4 flex h-20 self-end rounded-full border-4 bg-current p-4 text-white shadow-lg "
         >
           <Plus className="h-10 w-10 text-accent" />

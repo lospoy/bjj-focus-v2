@@ -1,45 +1,45 @@
-// AimFeed
-// Handles displaying all Aims
+// JitFeed
+// Handles displaying all Jits
 
-// Currently also has a next button as this is part of the IntentWizard process
-// Should be separated in the future so that it ONLY displays aims
+// Currently also has a next button as this is part of the KnownJitWizard process
+// Should be separated in the future so that it ONLY displays jits
 
 // Used in:
 // ~../pages/index
 
 import { useRouter } from "next/router";
 import { LoadingPage } from "~/components/ui/loading";
-import { AimView } from "./aimView";
+import { JitView } from "./jitView";
 import { api } from "~/utils/api";
 import { Button } from "./ui/button";
 import { useState } from "react";
 
-export const AimFeed = () => {
+export const JitFeed = () => {
   const router = useRouter();
-  const { data, isLoading: aimsLoading } = api.aims.getAll.useQuery();
-  const [selectedAimId, setSelectedAimId] = useState<string>();
+  const { data, isLoading: jitsLoading } = api.jits.getAll.useQuery();
+  const [selectedJitId, setSelectedJitId] = useState<string>();
 
-  const handleAimClick = (aimId: string) => {
-    setSelectedAimId(aimId);
+  const handleJitClick = (jitId: string) => {
+    setSelectedJitId(jitId);
   };
 
-  // Function to construct and navigate to the URL with the selected aimId
+  // Function to construct and navigate to the URL with the selected jitId
   const handleNextClick = async () => {
-    const url = `/intent/${selectedAimId}`;
+    const url = `/knownJit/${selectedJitId}`;
     await router.push(url);
   };
 
-  if (aimsLoading) return <LoadingPage />;
+  if (jitsLoading) return <LoadingPage />;
   if (!data) return <div>Something went wrong</div>;
 
   return (
     <div className="flex flex-col">
-      {data?.map((fullAim) => (
+      {data?.map((fullJit) => (
         <div
-          key={fullAim.aim.id}
-          onClick={() => handleAimClick(fullAim.aim.id)}
+          key={fullJit.jit.id}
+          onClick={() => handleJitClick(fullJit.jit.id)}
         >
-          <AimView {...fullAim} isSelected={selectedAimId === fullAim.aim.id} />
+          <JitView {...fullJit} isSelected={selectedJitId === fullJit.jit.id} />
         </div>
       ))}
       <Button

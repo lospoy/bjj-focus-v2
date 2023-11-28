@@ -1,11 +1,11 @@
-// url/intent/[aimId]
+// url/knownJit/[jitId]
 
 import { type NextPage } from "next";
 import { useUser } from "@clerk/nextjs";
 import { PageLayout } from "~/components/ui/layout";
-import { IntentWizard } from "~/components/intentWizard";
+import { KnownJitWizard } from "~/components/knownJitWizard";
 
-const IntentWizardSetReminders: NextPage = () => {
+const KnownJitWizardSetReminders: NextPage = () => {
   const { isLoaded: userLoaded, isSignedIn } = useUser();
 
   // Return empty div if user isn't loaded yet
@@ -13,9 +13,9 @@ const IntentWizardSetReminders: NextPage = () => {
 
   return (
     <PageLayout>
-      <IntentWizard />
+      <KnownJitWizard />
     </PageLayout>
   );
 };
 
-export default IntentWizardSetReminders;
+export default KnownJitWizardSetReminders;

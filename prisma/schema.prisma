@@ -87,6 +87,7 @@ model Group {
 }
 
 model KnownJit {
+  activatedOn  DateTime @default(now())
   level        Int
   hitRolling   Int
   hitCompeting Int
