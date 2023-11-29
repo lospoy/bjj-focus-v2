@@ -4,33 +4,104 @@
 // Used in:
 // ~/jitFeed
 
-import type { RouterOutputs } from "~/utils/api";
+import { api, type RouterOutputs } from "~/utils/api";
 type Jit = RouterOutputs["jits"]["getAll"][number];
-
 import {
   Card,
+  CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
+import { Badge } from "~/components/ui/badge";
+import { Button } from "~/components/ui/button";
+import { QuestionMarkIcon } from "@radix-ui/react-icons";
+import toast from "react-hot-toast";
+import { useState } from "react";
 
-export const JitView = (props: Jit & { isSelected: boolean }) => {
-  const { id, name, isSelected, position } = props;
+export const JitView = (props: { jit: Jit; isSelected: boolean }) => {
+  const { jit } = props;
+  const ctx = api.useContext();
+
+  const [buttonState, setButtonState] = useState<
+    "ACTIVATE" | "CONFIRM ACTIVATION" | "ACTIVATING"
+  >("ACTIVATE");
+
+  const { mutate, isLoading: isSaving } = api.knownJits.create.useMutation({
+    onSuccess: () => {
+      void ctx.knownJits.getAllKnownByThisUser.invalidate();
+      toast.success("Jit activated successfully");
+      setButtonState("ACTIVATE");
+    },
+    onError: (e) => {
+      const errorMessage = e.data?.zodError?.fieldErrors.title;
+      if (errorMessage?.[0]) {
+        toast.error(errorMessage[0]);
+      } else {
+        toast.error("Failed to activate. Please try again later.");
+      }
+      setButtonState("ACTIVATE");
+    },
+  });
+
+  const handleButtonClick = () => {
+    if (buttonState === "ACTIVATE") {
+      setButtonState("CONFIRM ACTIVATION");
+    } else if (buttonState === "CONFIRM ACTIVATION") {
+      setButtonState("ACTIVATING");
+      // Trigger the trpc mutation code
+      mutate({ jitId: jit.id });
+
+      // Delay the transition back to 'ACTIVATE' state
+      setTimeout(() => {
+        setButtonState("ACTIVATE");
+      }, 3000); // Adjust the time as needed (2000 milliseconds = 2 seconds)
+    }
+  };
 
   return (
-    <div
-      className={`rounded-3xl border-8 ${
-        isSelected
-          ? "border-secondary bg-secondary"
-          : "border-solid border-transparent"
-      }`}
-    >
-      <Card key={id}>
-        <CardHeader className="space-y-0">
-          <CardTitle className="text-xl">{name}</CardTitle>
-          <CardDescription>{position.name}</CardDescription>
+    <Card key={jit.id} className="relative mb-9">
+      <div className="flex h-[90px]">
+        {/* Add the interrogation mark icon */}
+        <div className="absolute -left-2 -top-2 flex bg-white p-1">
+          <QuestionMarkIcon className="h-5 w-5" />
+          <QuestionMarkIcon className="-ml-2 h-4 w-4" />
+        </div>
+        <CardHeader className="w-8/12 p-0 pl-6">
+          <div className="mt-3 flex h-full flex-col justify-center -space-y-1">
+            <CardTitle className="-mt-2 text-2xl leading-5">
+              {jit.name}
+            </CardTitle>
+            <CardDescription className="text-xl">
+              {jit.position.name}
+            </CardDescription>
+          </div>
         </CardHeader>
-      </Card>
-    </div>
+        <CardContent className="w-4/12 p-0">
+          <div className="flex h-full flex-col justify-center space-y-0 pr-6 text-right">
+            <a>
+              <Badge variant="outline">{jit.category}</Badge>
+            </a>
+            <a>
+              <Badge variant="outline">{jit.percentage} %</Badge>
+            </a>
+          </div>
+        </CardContent>
+      </div>
+      <CardFooter className="flex h-0 items-start justify-center">
+        <Button
+          className={`mt-1 font-mono font-semibold
+            ${buttonState === "ACTIVATING" ? "bg-green-900" : ""}
+            ${buttonState === "CONFIRM ACTIVATION" ? "bg-green-700" : ""}
+            ${buttonState === "ACTIVATE" ? "bg-accent" : ""}
+          `}
+          onClick={handleButtonClick}
+          disabled={buttonState === "ACTIVATING"}
+        >
+          {buttonState}
+        </Button>
+      </CardFooter>
+    </Card>
   );
 };

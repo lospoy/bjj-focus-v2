@@ -1,8 +1,5 @@
 // JitFeed
-// Handles displaying all Jits
-
-// Currently also has a next button as this is part of the KnownJitWizard process
-// Should be separated in the future so that it ONLY displays jits
+// Handles displaying all Jits (known and unknown)
 
 // Used in:
 // ~../pages/index
@@ -11,7 +8,6 @@ import { useRouter } from "next/router";
 import { LoadingPage } from "~/components/ui/loading";
 import { JitView } from "./jitView";
 import { api } from "~/utils/api";
-import { Button } from "./ui/button";
 import { useState } from "react";
 
 export const JitFeed = () => {
@@ -23,31 +19,22 @@ export const JitFeed = () => {
     setSelectedJitId(jitId);
   };
 
-  // Function to construct and navigate to the URL with the selected jitId
-  const handleNextClick = async () => {
-    const url = `/knownJit/${selectedJitId}`;
-    await router.push(url);
-  };
-
   if (jitsLoading) return <LoadingPage />;
   if (!data) return <div>Something went wrong</div>;
 
   return (
     <div className="flex flex-col">
-      {data?.map((fullJit) => (
+      {data?.map((jitWithPosition) => (
         <div
-          key={fullJit.id}
-          onClick={() => handleJitClick(fullJit.id)}
+          key={jitWithPosition.id}
+          onClick={() => handleJitClick(jitWithPosition.id)}
         >
-          <JitView {...fullJit} isSelected={selectedJitId === fullJit.id} />
+          <JitView
+            jit={jitWithPosition}
+            isSelected={selectedJitId === jitWithPosition.id}
+          />
         </div>
       ))}
-      <Button
-        className="mt-3 w-2/5 self-end bg-accent"
-        onClick={handleNextClick}
-      >
-        Next
-      </Button>
     </div>
   );
 };
