@@ -4,7 +4,7 @@ import { type NextPage } from "next";
 import { api } from "~/utils/api";
 import { SignInButton, useUser } from "@clerk/nextjs";
 import { PageLayout } from "~/components/ui/layout";
-import { IntentFeed } from "~/components/intentFeed";
+import { KnownJitFeed } from "~/components/knownJitFeed";
 import { Button } from "~/components/ui/button";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/router";
@@ -12,11 +12,12 @@ import { useDispatch } from "react-redux";
 import { setUser } from "../store/actions/userActions";
 import { useEffect } from "react";
 import Link from "next/link";
+import { JitViewById } from '~/components/jitViewById';
 
 const Home: NextPage = () => {
   // Dispatching user data to Redux store
   const dispatch = useDispatch();
-  const user = useUser().user;
+  const user = useUser().user
 
   useEffect(() => {
     if (user) {
@@ -36,13 +37,14 @@ const Home: NextPage = () => {
 
   // Start fetching asap
   // (React query will use cached data if the data doesn't change)
-  api.aims.getAll.useQuery();
+  api.knownJits.getAllKnownByThisUser.useQuery();
+  api.jits.getAll.useQuery();
 
   // Return empty div if user isn't loaded yet
   if (!userLoaded) return <div />;
 
-  const handleNewIntentClick = async () => {
-    const url = `/intent/aim-selection`;
+  const handleNewKnownJitClick = async () => {
+    const url = `/knownJit/jit-selection`;
     await router.push(url);
   };
 
@@ -59,18 +61,15 @@ const Home: NextPage = () => {
 
         {user && (
           <div>
-            <IntentFeed userId={user.id} />
+            {/* <JitViewById jitId={"clphbfazb0001t9797u599m7i"} /> */}
           </div>
         )}
         <Button
-          onClick={handleNewIntentClick}
+          onClick={handleNewKnownJitClick}
           className="fixed bottom-2 right-2 z-50 m-4 flex h-20 self-end rounded-full border-4 bg-current p-4 text-white shadow-lg "
         >
           <Plus className="h-10 w-10 text-accent" />
         </Button>
-        <Link href="/notifications/">
-          <Button>notifications</Button>
-        </Link>
       </div>
     </PageLayout>
   );

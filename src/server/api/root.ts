@@ -1,6 +1,6 @@
 import { createTRPCRouter } from "~/server/api/trpc";
-import { aimsRouter } from "./routers/aims";
-import { intentsRouter } from "./routers/intents";
+import { jitsRouter } from "./routers/jits";
+import { knownJitsRouter } from "./routers/knownJits";
 import { usersRouter } from "./routers/users";
 
 /**
@@ -9,8 +9,8 @@ import { usersRouter } from "./routers/users";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  aims: aimsRouter,
-  intents: intentsRouter,
+  jits: jitsRouter,
+  knownJits: knownJitsRouter,
   users: usersRouter,
 });
 

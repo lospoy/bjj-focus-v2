@@ -7,7 +7,7 @@
   "scope": "/",
   "background_color": "#fff",
   "theme_color": "#eb5683",
-  "description": "An intent setting and tracking app",
+  "description": "An knownJit setting and tracking app",
   "icons": [
     {
       "src": "/maskable.png",
