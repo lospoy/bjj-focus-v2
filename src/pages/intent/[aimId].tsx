@@ -1,11 +1,11 @@
-// url/knownJit/[jitId]
+// url/activeJit/[jitId]
 
 import { type NextPage } from "next";
 import { useUser } from "@clerk/nextjs";
 import { PageLayout } from "~/components/ui/layout";
-import { KnownJitWizard } from "~/components/knownJitWizard";
+import { ActiveJitWizard } from "~/components/activeJitWizard";
 
-const KnownJitWizardSetReminders: NextPage = () => {
+const ActiveJitWizardSetReminders: NextPage = () => {
   const { isLoaded: userLoaded, isSignedIn } = useUser();
 
   // Return empty div if user isn't loaded yet
@@ -13,9 +13,9 @@ const KnownJitWizardSetReminders: NextPage = () => {
 
   return (
     <PageLayout>
-      <KnownJitWizard />
+      <ActiveJitWizard />
     </PageLayout>
   );
 };
 
-export default KnownJitWizardSetReminders;
+export default ActiveJitWizardSetReminders;

@@ -1,11 +1,11 @@
-// url/knownJit/jit-selection
+// url/activeJit/jit-selection
 
 import { type NextPage } from "next";
 import { useUser } from "@clerk/nextjs";
 import { PageLayout } from "~/components/ui/layout";
 import { JitFeed } from "~/components/jitFeed";
 
-const KnownJitWizardJitSelection: NextPage = () => {
+const ActiveJitWizardJitSelection: NextPage = () => {
   const { isLoaded: userLoaded, isSignedIn } = useUser();
 
   // Return empty div if user isn't loaded yet
@@ -18,4 +18,4 @@ const KnownJitWizardJitSelection: NextPage = () => {
   );
 };
 
-export default KnownJitWizardJitSelection;
+export default ActiveJitWizardJitSelection;

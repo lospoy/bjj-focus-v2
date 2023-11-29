@@ -47,7 +47,7 @@ model Jit {
   users        User[]         @relation("JitParticipants")
   position     Position       @relation("PositionJits", fields: [positionId], references: [id])
   SequenceJits SequenceJits[]
-  KnownJit     KnownJit[]
+  ActiveJit     ActiveJit[]
   positionId   String         @default("")
 
   // Indexes
@@ -71,7 +71,7 @@ model User {
 
   // Relationships
   jits      Jit[]      @relation("JitParticipants")
-  knownJits KnownJit[] @relation("KnownJits")
+  activeJits ActiveJit[] @relation("ActiveJits")
   groups    Group[]    @relation("GroupMembers")
   sequences Sequence[] @relation("UserSequences")
 }
@@ -86,7 +86,7 @@ model Group {
   members User[] @relation("GroupMembers")
 }
 
-model KnownJit {
+model ActiveJit {
   activatedOn  DateTime @default(now())
   lastUpdated  DateTime @default(now()) @updatedAt
   level        Int      @default(1)
@@ -95,7 +95,7 @@ model KnownJit {
   notes        String   @default("")
 
   // Relationships
-  user User @relation("KnownJits", fields: [userId], references: [id])
+  user User @relation("ActiveJits", fields: [userId], references: [id])
   jit  Jit  @relation(fields: [jitId], references: [id])
 
   // Fields that represent foreign keys to improve query performance

@@ -20,43 +20,44 @@ import { QuestionMarkIcon } from "@radix-ui/react-icons";
 import toast from "react-hot-toast";
 import { useState } from "react";
 
+type ActiveJit = RouterOutputs["activeJits"]["getByJitId"];
+
 export const JitView = (props: { jit: Jit; isSelected: boolean }) => {
   const { jit } = props;
   const ctx = api.useContext();
+
+  const activeJitQuery = api.activeJits.getByJitId.useQuery({ id: jit.id });
+  const activeJit: ActiveJit | undefined = activeJitQuery.data;
+  console.log("heres your damn QUery", activeJit);
 
   const [buttonState, setButtonState] = useState<
     "ACTIVATE" | "CONFIRM ACTIVATION" | "ACTIVATING"
   >("ACTIVATE");
 
-  const { mutate, isLoading: isSaving } = api.knownJits.create.useMutation({
-    onSuccess: () => {
-      void ctx.knownJits.getAllKnownByThisUser.invalidate();
-      toast.success("Jit activated successfully");
-      setButtonState("ACTIVATE");
-    },
-    onError: (e) => {
-      const errorMessage = e.data?.zodError?.fieldErrors.title;
-      if (errorMessage?.[0]) {
-        toast.error(errorMessage[0]);
-      } else {
-        toast.error("Failed to activate. Please try again later.");
-      }
-      setButtonState("ACTIVATE");
-    },
-  });
+  const { mutate, isLoading: isSaving } = api.activeJits.create.useMutation();
 
-  const handleButtonClick = () => {
+  const handleButtonClick = async () => {
     if (buttonState === "ACTIVATE") {
       setButtonState("CONFIRM ACTIVATION");
     } else if (buttonState === "CONFIRM ACTIVATION") {
       setButtonState("ACTIVATING");
-      // Trigger the trpc mutation code
-      mutate({ jitId: jit.id });
 
-      // Delay the transition back to 'ACTIVATE' state
-      setTimeout(() => {
+      try {
+        await mutate({ jitId: jit.id });
+        // If mutate succeeds, update UI and invalidate the data
+        void ctx.activeJits.getAllKnownByThisUser.invalidate();
+        toast.success("Jit activated successfully");
         setButtonState("ACTIVATE");
-      }, 3000); // Adjust the time as needed (2000 milliseconds = 2 seconds)
+      } catch (e: any) {
+        // If an error occurs, handle it and update UI
+        const errorMessage = e.data?.zodError?.fieldErrors.title;
+        if (errorMessage?.[0]) {
+          toast.error(errorMessage[0]);
+        } else {
+          toast.error("Failed to activate. Please try again later.");
+        }
+        setButtonState("ACTIVATE");
+      }
     }
   };
 
@@ -89,19 +90,26 @@ export const JitView = (props: { jit: Jit; isSelected: boolean }) => {
           </div>
         </CardContent>
       </div>
-      <CardFooter className="flex h-0 items-start justify-center">
-        <Button
-          className={`mt-1 font-mono font-semibold
+
+      {activeJit ? (
+        // ACTIVE JIT
+        <span>active jit</span>
+      ) : (
+        // INACTIVE JIT
+        <CardFooter className="flex h-0 items-start justify-center">
+          <Button
+            className={`mt-1 font-mono font-semibold
             ${buttonState === "ACTIVATING" ? "bg-green-900" : ""}
             ${buttonState === "CONFIRM ACTIVATION" ? "bg-green-700" : ""}
             ${buttonState === "ACTIVATE" ? "bg-accent" : ""}
           `}
-          onClick={handleButtonClick}
-          disabled={buttonState === "ACTIVATING"}
-        >
-          {buttonState}
-        </Button>
-      </CardFooter>
+            onClick={handleButtonClick}
+            disabled={buttonState === "ACTIVATING"}
+          >
+            {buttonState}
+          </Button>
+        </CardFooter>
+      )}
     </Card>
   );
 };

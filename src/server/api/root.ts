@@ -1,6 +1,6 @@
 import { createTRPCRouter } from "~/server/api/trpc";
 import { jitsRouter } from "./routers/jits";
-import { knownJitsRouter } from "./routers/knownJits";
+import { activeJitsRouter } from "./routers/activeJits";
 import { usersRouter } from "./routers/users";
 
 /**
@@ -10,7 +10,7 @@ import { usersRouter } from "./routers/users";
  */
 export const appRouter = createTRPCRouter({
   jits: jitsRouter,
-  knownJits: knownJitsRouter,
+  activeJits: activeJitsRouter,
   users: usersRouter,
 });
 

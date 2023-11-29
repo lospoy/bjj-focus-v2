@@ -1,10 +1,10 @@
-// KnownJitView
-// Handles displaying a single KnownJit
+// ActiveJitView
+// Handles displaying a single ActiveJit
 
 // Used in:
-// ~/knownJitFeed
+// ~/activeJitFeed
 
-import type {  RouterOutputs } from "~/utils/api";
+import type { RouterOutputs } from "~/utils/api";
 import { JitViewById } from "./jitViewById";
 import { useState } from "react";
 import { Progress } from "~/components/ui/progress";
@@ -18,14 +18,14 @@ import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Card } from "./ui/card";
 
-type KnownJit = RouterOutputs["knownJits"]["getAllKnownByThisUser"][number];
+type ActiveJit = RouterOutputs["activeJits"]["getAllKnownByThisUser"][number];
 
-export const KnownJitView = (props: KnownJit) => {
-  const  knownJit  = props;
+export const ActiveJitView = (props: ActiveJit) => {
+  const activeJit = props;
   const [progress, setProgress] = useState(5);
 
   return (
-    <Card key={knownJit.jitId} className="flex">
+    <Card key={activeJit.jitId} className="flex">
       <div className="flex w-full flex-col">
         <Dialog>
           <DialogTrigger>
@@ -35,13 +35,13 @@ export const KnownJitView = (props: KnownJit) => {
                 className="-mb-2 rounded-xl rounded-b-none"
               />
               <div className="p-3">
-                <JitViewById jitId={knownJit.jitId} />
+                <JitViewById jitId={activeJit.jitId} />
               </div>
             </div>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <JitViewById jitId={knownJit.jitId} />
+              <JitViewById jitId={activeJit.jitId} />
               <Progress
                 value={progress}
                 id="progress"
@@ -53,10 +53,10 @@ export const KnownJitView = (props: KnownJit) => {
                 <Label htmlFor="dates">Dates</Label>
                 <Input id="dates" autoFocus={false} />
               </div>
-              {knownJit.notes && (
+              {activeJit.notes && (
                 <div className="mb-3 space-y-1">
                   <Label htmlFor="Notes">Notes</Label>
-                  <Input id="Notes" defaultValue={knownJit.notes} />
+                  <Input id="Notes" defaultValue={activeJit.notes} />
                 </div>
               )}
             </div>
