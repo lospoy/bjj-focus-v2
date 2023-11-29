@@ -11,7 +11,7 @@ const newKnownJitSchema = z.object({
 
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(3, "1 m"),
+  limiter: Ratelimit.slidingWindow(30, "1 m"),
   analytics: true,
 });
 
