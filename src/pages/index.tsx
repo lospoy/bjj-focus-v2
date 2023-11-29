@@ -13,6 +13,8 @@ import { setUser } from "../store/actions/userActions";
 import { useEffect } from "react";
 import Link from "next/link";
 import { JitViewById } from '~/components/jitViewById';
+import { Card, CardContent } from '~/components/ui/card';
+import { JitFeed } from '~/components/jitFeed';
 
 const Home: NextPage = () => {
   // Dispatching user data to Redux store
@@ -43,10 +45,10 @@ const Home: NextPage = () => {
   // Return empty div if user isn't loaded yet
   if (!userLoaded) return <div />;
 
-  const handleNewKnownJitClick = async () => {
-    const url = `/knownJit/jit-selection`;
-    await router.push(url);
-  };
+  // const handleNewSequence = async () => {
+  //   const url = `/knownJit/jit-selection`;
+  //   await router.push(url);
+  // };
 
   return (
     <PageLayout>
@@ -60,16 +62,20 @@ const Home: NextPage = () => {
         </div>
 
         {user && (
-          <div>
-            {/* <JitViewById jitId={"clphbfazb0001t9797u599m7i"} /> */}
-          </div>
+<>
+          {/* <CardContent>
+            <JitViewById jitId={"clphbfazb0001t9797u599m7i"} />
+          </CardContent> */}
+
+            <JitFeed />
+</>
         )}
-        <Button
-          onClick={handleNewKnownJitClick}
+        {/* <Button
+          onClick={handleNewSequence}
           className="fixed bottom-2 right-2 z-50 m-4 flex h-20 self-end rounded-full border-4 bg-current p-4 text-white shadow-lg "
         >
           <Plus className="h-10 w-10 text-accent" />
-        </Button>
+        </Button> */}
       </div>
     </PageLayout>
   );

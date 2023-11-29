@@ -12,7 +12,7 @@ datasource db {
 
 enum JitCategory {
   ESCAPE
-  SUB
+  SUBMISSION
   SWEEP
   PASS
   CONTROL
