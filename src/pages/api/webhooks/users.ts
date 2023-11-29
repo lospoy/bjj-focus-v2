@@ -41,7 +41,6 @@ export default async function handler(
           firstName: user.first_name,
           lastName: user.last_name,
           role: "USER",
-          timezone: "",
         },
       });
       console.log("User created in the database:", newUser);

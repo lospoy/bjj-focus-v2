@@ -42,7 +42,6 @@ model Jit {
   name       String        @default("")
   category   JitCategory
   percentage JitPercentage
-  notes      String        @default("")
 
   // Relationships
   users        User[]         @relation("JitParticipants")
@@ -89,9 +88,11 @@ model Group {
 
 model KnownJit {
   activatedOn  DateTime @default(now())
+  lastUpdated  DateTime @default(now()) @updatedAt
   level        Int
   hitRolling   Int
   hitCompeting Int
+  notes        String   @default("")
 
   // Relationships
   user User @relation("KnownJits", fields: [userId], references: [id])

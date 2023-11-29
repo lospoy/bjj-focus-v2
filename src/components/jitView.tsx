@@ -5,7 +5,7 @@
 // ~/jitFeed
 
 import type { RouterOutputs } from "~/utils/api";
-type JitWithUser = RouterOutputs["jits"]["getAll"][number];
+type Jit = RouterOutputs["jits"]["getAll"][number];
 
 import {
   Card,
@@ -14,8 +14,8 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 
-export const JitView = (props: JitWithUser & { isSelected: boolean }) => {
-  const { jit, isSelected } = props;
+export const JitView = (props: Jit & { isSelected: boolean }) => {
+  const { id, name, isSelected, position } = props;
 
   return (
     <div
@@ -25,10 +25,10 @@ export const JitView = (props: JitWithUser & { isSelected: boolean }) => {
           : "border-solid border-transparent"
       }`}
     >
-      <Card key={jit.id}>
+      <Card key={id}>
         <CardHeader className="space-y-0">
-          <CardTitle className="text-xl">{jit.title}</CardTitle>
-          <CardDescription>{jit.notes}</CardDescription>
+          <CardTitle className="text-xl">{name}</CardTitle>
+          <CardDescription>{position.name}</CardDescription>
         </CardHeader>
       </Card>
     </div>

@@ -25,11 +25,8 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { useUser } from "@clerk/nextjs";
-import { KnownJitStatus } from "@prisma/client";
 import { useRouter } from "next/router";
 import { useJitData } from "./jitWizard";
-
-type KnownJitFormSchema = RouterOutputs["knownJits"]["create"];
 
 // type KnownJitData = RouterOutputs["knownJits"]["getById"];
 // const useKnownJitData = (id: string): KnownJitData | undefined => {
@@ -43,13 +40,6 @@ type KnownJitFormSchema = RouterOutputs["knownJits"]["create"];
 
 //   return data;
 // };
-type KnownJitData = RouterOutputs["knownJits"]["getById"];
-
-export const useKnownJitData = (id: string): KnownJitData | undefined => {
-  const { data } = api.knownJits.getById.useQuery({ id });
-
-  return data;
-};
 
 interface KnownJitWizardProps {
   knownJitId?: string; // Pass knownJitId to edit an existing knownJit
@@ -64,8 +54,8 @@ export function KnownJitWizard({ knownJitId }: KnownJitWizardProps) {
   // grabs jitId from URL slug
   // defined @ src\components\jitFeed.tsx
   const jitId = router.query.jitId as string;
-  const jitTitle = useJitData(jitId)?.jit.title;
-  const jitNotes = useJitData(jitId)?.jit.notes;
+  const jitCategory = useJitData(jitId)?.category;
+  const jitName = useJitData(jitId)?.name;
 
   // some date calculations
   const today = new Date(Date.now()); // UTC time so that it's synced with the server time
@@ -82,12 +72,9 @@ export function KnownJitWizard({ knownJitId }: KnownJitWizardProps) {
     999, // Milliseconds
   );
 
-  const form = useForm<KnownJitFormSchema>({
+  const form = useForm({
     defaultValues: {
-      status: KnownJitStatus.ACTIVE,
       jitId: jitId,
-      startDate: today,
-      endDate: lastDateOfMonth,
     },
   });
 
@@ -146,42 +133,10 @@ export function KnownJitWizard({ knownJitId }: KnownJitWizardProps) {
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <CardHeader className="space-y-0">
             <Card className="p-6">
-              <CardTitle className="text-2xl">{jitTitle}</CardTitle>
-              <CardDescription>{jitNotes}</CardDescription>
+              <CardTitle className="text-2xl">{jitName}</CardTitle>
+              <CardDescription>{jitCategory}</CardDescription>
             </Card>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <FormField
-              control={form.control}
-              name="startDate"
-              render={() => (
-                <FormItem>
-                  <FormLabel>Dates</FormLabel>
-                  <FormControl>
-                    <DatePickerWithRange />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </CardContent>
-          <CardContent>
-            <FormField
-              control={form.control}
-              name="reminders"
-              render={({ field }) => (
-                <FormItem className="space-x-3" {...field}>
-                  <ButtonDay value="SUN" label="S" />
-                  <ButtonDay value="MON" label="M" />
-                  <ButtonDay value="TUE" label="T" />
-                  <ButtonDay value="WED" label="W" />
-                  <ButtonDay value="THU" label="T" />
-                  <ButtonDay value="FRI" label="F" />
-                  <ButtonDay value="SAT" label="S" />
-                </FormItem>
-              )}
-            />
-          </CardContent>
           <CardFooter className=" flex flex-col">
             <Button className="flex w-2/5 items-center bg-accent" type="submit">
               Create KnownJit

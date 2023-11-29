@@ -36,10 +36,10 @@ export const JitFeed = () => {
     <div className="flex flex-col">
       {data?.map((fullJit) => (
         <div
-          key={fullJit.jit.id}
-          onClick={() => handleJitClick(fullJit.jit.id)}
+          key={fullJit.id}
+          onClick={() => handleJitClick(fullJit.id)}
         >
-          <JitView {...fullJit} isSelected={selectedJitId === fullJit.jit.id} />
+          <JitView {...fullJit} isSelected={selectedJitId === fullJit.id} />
         </div>
       ))}
       <Button

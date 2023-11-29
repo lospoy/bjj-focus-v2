@@ -1,25 +1,29 @@
 // KnownJitViewById
 // Handles displaying a single KnownJit when passed an ID
 
+import { RouterOutputs, api } from '~/utils/api';
+
 // Used in:
 // ~/knownJitView
 
-import { useKnownJitData } from "./knownJitWizard";
+type KnownJitData = RouterOutputs["knownJits"]["getByJitId"];
+
+const useKnownJitData = (id: string): KnownJitData | undefined => {
+  const { data } = api.knownJits.getByJitId.useQuery({ id });
+
+  return data;
+};
 
 export const KnownJitViewById = ({ knownJitId }: { knownJitId: string }) => {
-  const knownJitData = useKnownJitData(knownJitId);
+  const knownJit = useKnownJitData(knownJitId);
 
-  if (!knownJitData) {
+  if (!knownJit) {
     return <div>Loading...</div>;
   }
 
-  const { knownJit } = knownJitData;
   return (
-    <div key={knownJit.id} className="flex flex-col">
-      <span className="flex text-2xl">{knownJit.creatorId}</span>
-      <span className="flex text-sm">
-        {knownJit.reminders ? JSON.stringify(knownJit.reminders) : "no reminders"}
-      </span>
+    <div key={knownJit.jitId} className="flex flex-col">
+      <span className="flex text-2xl">JIT LEVEL{knownJit.level}</span>
     </div>
   );
 };
