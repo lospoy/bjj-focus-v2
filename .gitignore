@@ -42,8 +42,8 @@ yarn-error.log*
 *.tsbuildinfo
 
 # local scripts
-pokeCode.bat
-pokeCode.vbs
+*.bat
+*.vbs
 
 # PWA
 /public/sw.js
