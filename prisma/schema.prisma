@@ -89,9 +89,9 @@ model Group {
 model KnownJit {
   activatedOn  DateTime @default(now())
   lastUpdated  DateTime @default(now()) @updatedAt
-  level        Int
-  hitRolling   Int
-  hitCompeting Int
+  level        Int      @default(1)
+  hitRolling   Int      @default(0)
+  hitCompeting Int      @default(0)
   notes        String   @default("")
 
   // Relationships

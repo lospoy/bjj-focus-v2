@@ -4,9 +4,8 @@
 // Used in:
 // ~/jitFeed
 
-import type { RouterOutputs } from "~/utils/api";
+import { api, type RouterOutputs } from "~/utils/api";
 type Jit = RouterOutputs["jits"]["getAll"][number];
-
 import {
   Card,
   CardContent,
@@ -18,9 +17,26 @@ import {
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { QuestionMarkIcon } from "@radix-ui/react-icons";
+import toast from "react-hot-toast";
 
 export const JitView = (props: { jit: Jit; isSelected: boolean }) => {
   const { jit } = props;
+  const ctx = api.useContext();
+
+  const { mutate, isLoading: isSaving } = api.knownJits.create.useMutation({
+    onSuccess: () => {
+      void ctx.knownJits.getAllKnownByThisUser.invalidate(); // adding void to tell TS we just want this to happen in the background
+      toast.success("Jit activated successfully");
+    },
+    onError: (e) => {
+      const errorMessage = e.data?.zodError?.fieldErrors.title;
+      if (errorMessage?.[0]) {
+        toast.error(errorMessage[0]);
+      } else {
+        toast.error("Failed to activate. Please try again later.");
+      }
+    },
+  });
 
   return (
     <Card key={jit.id} className="relative mb-9">
@@ -52,7 +68,10 @@ export const JitView = (props: { jit: Jit; isSelected: boolean }) => {
         </CardContent>
       </div>
       <CardFooter className="flex h-0 items-start justify-center">
-        <Button className="mt-1 bg-accent font-mono font-semibold">
+        <Button
+          className="mt-1 bg-accent font-mono font-semibold"
+          onClick={() => mutate({ jitId: jit.id })}
+        >
           ACTIVATE
         </Button>
       </CardFooter>
