@@ -19,6 +19,7 @@ import { Button } from "~/components/ui/button";
 import { QuestionMarkIcon } from "@radix-ui/react-icons";
 import toast from "react-hot-toast";
 import { useState } from "react";
+import { EyeIcon } from "lucide-react";
 
 export const InactiveJitView = (props: { jit: Jit }) => {
   const { jit } = props;
@@ -104,6 +105,7 @@ export const InactiveJitView = (props: { jit: Jit }) => {
           disabled={buttonState === "ACTIVATING"}
         >
           {buttonState}
+          <EyeIcon className="ml-1" />
         </Button>
       </CardFooter>
     </Card>
