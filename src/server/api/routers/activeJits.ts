@@ -84,37 +84,4 @@ export const activeJitsRouter = createTRPCRouter({
 
       return activeJit;
     }),
-
-  // // *******GET ALL (this user's activeJits)
-
-  // // *******SOFT DELETE
-  // softDelete: privateProcedure
-  //   .input(z.object({ id: z.string() }))
-  //   .mutation(async ({ ctx, input }) => {
-  //     const currentUser = ctx.userId;
-  //     const activeJitId = input.id;
-
-  //     // Check if the user has permission to update this activeJit
-  //     const activeJit = await ctx.prisma.activeJit.findUnique({
-  //       where: { id: activeJitId },
-  //     });
-
-  //     if (!activeJit) {
-  //       throw new TRPCError({ code: "NOT_FOUND" });
-  //     }
-
-  //     if (activeJit.creatorId !== currentUser) {
-  //       throw new TRPCError({ code: "FORBIDDEN" });
-  //     }
-
-  //     // Perform the update
-  //     const softDeletedActiveJit = await ctx.prisma.activeJit.update({
-  //       where: { id: activeJitId },
-  //       data: {
-  //         status: ActiveJitStatus.DELETED,
-  //       },
-  //     });
-
-  //     return softDeletedActiveJit;
-  //   }),
 });
