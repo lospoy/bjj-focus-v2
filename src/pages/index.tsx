@@ -4,11 +4,10 @@ import { type NextPage } from "next";
 import { api } from "~/utils/api";
 import { SignInButton, useUser } from "@clerk/nextjs";
 import { PageLayout } from "~/components/ui/layout";
-import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import { setUser } from "../store/actions/userActions";
 import { useEffect } from "react";
-import { JitFeed } from "~/components/jitFeed";
+import { FullJitFeed } from "~/components/FullJitFeed";
 
 const Home: NextPage = () => {
   // Dispatching user data to Redux store
@@ -61,7 +60,7 @@ const Home: NextPage = () => {
             <JitViewById jitId={"clphbfazb0001t9797u599m7i"} />
           </CardContent> */}
 
-            <JitFeed />
+            <FullJitFeed />
           </>
         )}
         {/* <Button

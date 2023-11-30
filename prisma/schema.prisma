@@ -37,22 +37,24 @@ model Position {
 }
 
 model Jit {
-  id         String        @id @default(cuid())
-  createdOn  DateTime      @default(now())
-  name       String        @default("")
-  category   JitCategory
-  percentage JitPercentage
+  id           String        @id @default(cuid())
+  createdOn    DateTime      @default(now())
+  uniqueNumber Int           @default(0)
+  name         String        @default("")
+  category     JitCategory
+  percentage   JitPercentage
 
   // Relationships
   users        User[]         @relation("JitParticipants")
   position     Position       @relation("PositionJits", fields: [positionId], references: [id])
   SequenceJits SequenceJits[]
-  ActiveJit     ActiveJit[]
+  ActiveJit    ActiveJit[]
   positionId   String         @default("")
 
   // Indexes
   @@index([category, percentage])
   @@index([positionId])
+  @@index([uniqueNumber])
 }
 
 enum UserRole {
@@ -70,10 +72,10 @@ model User {
   createdOn DateTime @default(now())
 
   // Relationships
-  jits      Jit[]      @relation("JitParticipants")
+  jits       Jit[]       @relation("JitParticipants")
   activeJits ActiveJit[] @relation("ActiveJits")
-  groups    Group[]    @relation("GroupMembers")
-  sequences Sequence[] @relation("UserSequences")
+  groups     Group[]     @relation("GroupMembers")
+  sequences  Sequence[]  @relation("UserSequences")
 }
 
 model Group {

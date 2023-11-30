@@ -3,7 +3,7 @@
 import { type NextPage } from "next";
 import { useUser } from "@clerk/nextjs";
 import { PageLayout } from "~/components/ui/layout";
-import { JitFeed } from "~/components/jitFeed";
+import { JitFeed } from "~/components/FullJitFeed";
 
 const ActiveJitWizardJitSelection: NextPage = () => {
   const { isLoaded: userLoaded, isSignedIn } = useUser();

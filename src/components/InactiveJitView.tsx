@@ -1,4 +1,4 @@
-// JitView
+// InactiveJitview
 // Handles displaying a single Jit
 
 // Used in:
@@ -20,15 +20,9 @@ import { QuestionMarkIcon } from "@radix-ui/react-icons";
 import toast from "react-hot-toast";
 import { useState } from "react";
 
-type ActiveJit = RouterOutputs["activeJits"]["getByJitId"];
-
-export const JitView = (props: { jit: Jit; isSelected: boolean }) => {
+export const InactiveJitView = (props: { jit: Jit }) => {
   const { jit } = props;
   const ctx = api.useContext();
-
-  const activeJitQuery = api.activeJits.getByJitId.useQuery({ id: jit.id });
-  const activeJit: ActiveJit | undefined = activeJitQuery.data;
-  console.log("heres your damn QUery", activeJit);
 
   const [buttonState, setButtonState] = useState<
     "ACTIVATE" | "CONFIRM ACTIVATION" | "ACTIVATING"
@@ -74,7 +68,6 @@ export const JitView = (props: { jit: Jit; isSelected: boolean }) => {
   return (
     <Card key={jit.id} className="relative mb-9">
       <div className="flex h-[90px]">
-        {/* Add the interrogation mark icon */}
         <div className="absolute -left-2 -top-2 flex bg-white p-1">
           <QuestionMarkIcon className="h-5 w-5" />
           <QuestionMarkIcon className="-ml-2 h-4 w-4" />
@@ -100,26 +93,19 @@ export const JitView = (props: { jit: Jit; isSelected: boolean }) => {
           </div>
         </CardContent>
       </div>
-
-      {activeJit ? (
-        // ACTIVE JIT
-        <span>active jit</span>
-      ) : (
-        // INACTIVE JIT
-        <CardFooter className="flex h-0 items-start justify-center">
-          <Button
-            className={`mt-1 font-mono font-semibold
+      <CardFooter className="flex h-0 items-start justify-center">
+        <Button
+          className={`mt-1 font-mono font-semibold
             ${buttonState === "ACTIVATING" ? "bg-green-900" : ""}
             ${buttonState === "CONFIRM ACTIVATION" ? "bg-green-700" : ""}
             ${buttonState === "ACTIVATE" ? "bg-accent" : ""}
           `}
-            onClick={handleButtonClick}
-            disabled={buttonState === "ACTIVATING"}
-          >
-            {buttonState}
-          </Button>
-        </CardFooter>
-      )}
+          onClick={handleButtonClick}
+          disabled={buttonState === "ACTIVATING"}
+        >
+          {buttonState}
+        </Button>
+      </CardFooter>
     </Card>
   );
 };
