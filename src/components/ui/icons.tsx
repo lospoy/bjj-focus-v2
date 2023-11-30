@@ -139,4 +139,42 @@ export const Icons = {
       <path d="M21 12a9 9 0 1 1-6.219-8.56" />
     </svg>
   ),
+  // I made this thing :D
+  // sweet, sweet dopamine release
+  eyeHalf: (props: IconProps) => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={24}
+      height={24}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.7}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="lucide lucide-eye"
+      {...props}
+    >
+      <path d="M 2 12 C 2 12 5.271 10.036 12.271 10.036 C 19.271 10.036 22 12 22 12 C 22 12 19 19 12 19 C 5 19 2 12 2 12 Z" />
+      <circle cx="12" cy="13" r="2.3" strokeWidth={3} />
+    </svg>
+  ),
+  eyeFull: (props: IconProps) => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={24}
+      height={24}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="lucide lucide-eye"
+      {...props}
+    >
+      <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+      <circle cx={12} cy={12} r={2} strokeWidth={2} fill="currentColor" />
+    </svg>
+  ),
 };

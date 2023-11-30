@@ -10,13 +10,17 @@ const ratelimit = new Ratelimit({
   analytics: true,
 });
 
-const FullActiveJitSchema = z.object({
-  userId: z.string(),
+// UserId always taken from context, so not needed here
+const ActiveJitSchema = z.object({
   jitId: z.string(),
-  level: z.number(),
-  hitRolling: z.number(),
-  hitCompeting: z.number(),
-  notes: z.string(),
+  level: z.optional(z.number()),
+  hitRolling: z.optional(
+    z.number().refine((value) => value === undefined || value >= 0, {
+      message: "hitRolling must be a non-negative number",
+    }),
+  ),
+  hitCompeting: z.optional(z.number()),
+  notes: z.optional(z.string()),
 });
 
 export const activeJitsRouter = createTRPCRouter({
@@ -43,15 +47,15 @@ export const activeJitsRouter = createTRPCRouter({
   }),
 
   updateByJitId: privateProcedure
-    .input(FullActiveJitSchema)
-    .query(async ({ ctx, input }) => {
+    .input(ActiveJitSchema)
+    .mutation(async ({ ctx, input }) => {
       const currentUser = ctx.userId;
       const { success } = await ratelimit.limit(currentUser);
 
       if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
 
       const activeJit = await ctx.prisma.activeJit.update({
-        where: { userId_jitId: { userId: ctx.userId, jitId: input.jitId } },
+        where: { userId_jitId: { userId: currentUser, jitId: input.jitId } },
         data: {
           userId: currentUser,
           jitId: input.jitId,

@@ -23,7 +23,7 @@ import { EyeIcon } from "lucide-react";
 
 export const InactiveJitView = (props: { jit: Jit }) => {
   const { jit } = props;
-  const ctx = api.useContext();
+  const ctx = api.useUtils();
 
   const [buttonState, setButtonState] = useState<
     "ACTIVATE" | "CONFIRM ACTIVATION" | "ACTIVATING"
