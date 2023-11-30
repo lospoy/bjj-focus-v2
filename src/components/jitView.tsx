@@ -36,23 +36,26 @@ export const JitView = (props: { jit: Jit; isSelected: boolean }) => {
 
   const { mutate, isLoading: isSaving } = api.activeJits.create.useMutation();
 
-  const handleButtonClick = async () => {
+  const handleButtonClick = () => {
     if (buttonState === "ACTIVATE") {
       setButtonState("CONFIRM ACTIVATION");
     } else if (buttonState === "CONFIRM ACTIVATION") {
       setButtonState("ACTIVATING");
 
       try {
-        await mutate({ jitId: jit.id });
+        mutate({ jitId: jit.id });
         // If mutate succeeds, update UI and invalidate the data
         void ctx.activeJits.getAllKnownByThisUser.invalidate();
         toast.success("Jit activated successfully");
         setButtonState("ACTIVATE");
-      } catch (e: any) {
-        // If an error occurs, handle it and update UI
-        const errorMessage = e.data?.zodError?.fieldErrors.title;
-        if (errorMessage?.[0]) {
-          toast.error(errorMessage[0]);
+      } catch (e: unknown) {
+        if (isZodError(e)) {
+          const errorMessage = e.fieldErrors.title;
+          if (errorMessage?.[0]) {
+            toast.error(errorMessage[0]);
+          } else {
+            toast.error("Failed to activate. Please try again later.");
+          }
         } else {
           toast.error("Failed to activate. Please try again later.");
         }
@@ -60,6 +63,13 @@ export const JitView = (props: { jit: Jit; isSelected: boolean }) => {
       }
     }
   };
+
+  // Type guard for ZodError
+  function isZodError(
+    obj: unknown,
+  ): obj is { fieldErrors: { title?: string[] } } {
+    return typeof obj === "object" && obj !== null && "fieldErrors" in obj;
+  }
 
   return (
     <Card key={jit.id} className="relative mb-9">

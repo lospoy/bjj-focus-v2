@@ -4,16 +4,10 @@ import { type NextPage } from "next";
 import { api } from "~/utils/api";
 import { SignInButton, useUser } from "@clerk/nextjs";
 import { PageLayout } from "~/components/ui/layout";
-import { ActiveJitFeed } from "~/components/activeJitFeed";
-import { Button } from "~/components/ui/button";
-import { Plus } from "lucide-react";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import { setUser } from "../store/actions/userActions";
 import { useEffect } from "react";
-import Link from "next/link";
-import { JitViewById } from "~/components/jitViewById";
-import { Card, CardContent } from "~/components/ui/card";
 import { JitFeed } from "~/components/jitFeed";
 
 const Home: NextPage = () => {
@@ -34,7 +28,7 @@ const Home: NextPage = () => {
     }
   }, [dispatch, user]);
 
-  const router = useRouter();
+  // const router = useRouter();
   const { isLoaded: userLoaded, isSignedIn } = useUser();
 
   // Start fetching asap
