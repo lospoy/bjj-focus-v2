@@ -28,9 +28,9 @@ export const ActiveJitView = (props: { jit: Jit }) => {
   return (
     <Card key={jit.id} className="relative mb-9">
       <div className="flex h-[90px]">
-        <div className="absolute -left-2 -top-2 flex bg-white p-1">
-          <span className="-ml-2 h-4 w-4">#</span>
-          <span className="h-5 w-5">{jit.uniqueNumber}</span>
+        <div className="absolute -left-2 -top-5 flex bg-white px-2 py-2">
+          <span className="-mr-[1px] -mt-[1px] h-4 font-serif text-lg">#</span>
+          <span className="h-5 font-mono text-2xl">{jit.uniqueNumber}</span>
         </div>
         <CardHeader className="w-8/12 p-0 pl-6">
           <div className="mt-3 flex h-full flex-col justify-center -space-y-1">
