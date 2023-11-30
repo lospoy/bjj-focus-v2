@@ -4,14 +4,19 @@ import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 
-const newActiveJitSchema = z.object({
-  jitId: z.string(),
-});
-
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(30, "1 m"),
+  limiter: Ratelimit.slidingWindow(20, "1 m"),
   analytics: true,
+});
+
+const FullActiveJitSchema = z.object({
+  userId: z.string(),
+  jitId: z.string(),
+  level: z.number(),
+  hitRolling: z.number(),
+  hitCompeting: z.number(),
+  notes: z.string(),
 });
 
 export const activeJitsRouter = createTRPCRouter({
@@ -37,11 +42,35 @@ export const activeJitsRouter = createTRPCRouter({
     return activeJits;
   }),
 
+  updateByJitId: privateProcedure
+    .input(FullActiveJitSchema)
+    .query(async ({ ctx, input }) => {
+      const currentUser = ctx.userId;
+      const { success } = await ratelimit.limit(currentUser);
+
+      if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
+
+      const activeJit = await ctx.prisma.activeJit.update({
+        where: { userId_jitId: { userId: ctx.userId, jitId: input.jitId } },
+        data: {
+          userId: currentUser,
+          jitId: input.jitId,
+          level: input.level ?? undefined, // optional field
+          hitRolling: input.hitRolling ?? undefined, // optional field
+          hitCompeting: input.hitCompeting ?? undefined, // optional field
+          notes: input.notes ?? undefined, // optional field
+        },
+      });
+
+      if (!activeJit) throw new TRPCError({ code: "NOT_FOUND" });
+
+      return activeJit;
+    }),
+
   create: privateProcedure
-    .input(newActiveJitSchema)
+    .input(z.object({ jitId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const currentUser = ctx.userId;
-
       const { success } = await ratelimit.limit(currentUser);
 
       if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
