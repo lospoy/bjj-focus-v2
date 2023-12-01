@@ -66,14 +66,34 @@ export const ActiveJitView = (props: { jit: Jit }) => {
     return eyes;
   };
 
+  // The function increases updatedLevel based on hitRolling
+  //    with a somewhat direct relationship at the beginning
+  //    the ratio then tapers off as hitRolling gets bigger
+  const calculateUpdatedLevel = (hitRolling: number) => {
+    if (hitRolling <= 0) {
+      return 7;
+    } else if (hitRolling >= 15) {
+      return 32;
+    } else {
+      return [7, 12, 15, 18, 20, 22, 24, 25, 26, 27, 28, 29, 30, 31, 32][
+        Math.floor(hitRolling)
+      ];
+    }
+  };
+
+  // hitRolling should always increase by 1
+  // e.g. if hitRolling is 3, the function will return 4
+  const getNextHitRollingValue = (currentValue: number | undefined) =>
+    currentValue !== undefined ? currentValue + 1 : undefined;
+
   const handleHitRollingClick = () => {
-    const getNextHitRollingValue = (currentValue: number | undefined) =>
-      currentValue !== undefined ? currentValue + 1 : undefined;
+    const preUpdateHitRollingValue = activeJit!.hitRolling;
 
     try {
       mutate({
         jitId: jit.id,
-        hitRolling: getNextHitRollingValue(activeJit!.hitRolling),
+        hitRolling: getNextHitRollingValue(preUpdateHitRollingValue),
+        level: calculateUpdatedLevel(preUpdateHitRollingValue),
       });
       // If mutate succeeds, update UI and invalidate the data
       void ctx.activeJits.getAllKnownByThisUser.invalidate();
@@ -89,19 +109,6 @@ export const ActiveJitView = (props: { jit: Jit }) => {
       });
     } catch (e: unknown) {
       toast.error("Failed to update. Please try again later.");
-    }
-  };
-
-  // The function increases updatedLevel based on hitRolling
-  //    with a somewhat direct relationship at the beginning
-  //    the ratio then tapers off as hitRolling gets bigger
-  const calculateUpdatedLevel = (hitRolling: ActiveJit["hitRolling"]) => {
-    if (hitRolling <= 0) {
-      return 1;
-    } else if (hitRolling >= 15) {
-      return 32;
-    } else {
-      return Math.min(7 + Math.floor(hitRolling ** 1.5), 32);
     }
   };
 
