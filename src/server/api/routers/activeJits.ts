@@ -38,7 +38,13 @@ export const activeJitsRouter = createTRPCRouter({
     const activeJits = await ctx.prisma.activeJit.findMany({
       where: { userId: ctx.userId },
       take: 200,
-      orderBy: [{ activatedOn: "desc" }], //descending, newest first
+      orderBy: [{ level: "desc" }], //descending, newest first
+      select: {
+        jitId: true,
+        level: true,
+        hitRolling: true,
+        jit: { include: { position: { select: { name: true } } } },
+      },
     });
 
     return activeJits;

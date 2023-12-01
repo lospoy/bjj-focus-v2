@@ -1,11 +1,11 @@
 // InactiveJitview
-// Handles displaying a single Jit
+// Handles displaying a single inactive Jit
 
 // Used in:
 // ~/jitFeed
 
 import { api, type RouterOutputs } from "~/utils/api";
-type Jit = RouterOutputs["jits"]["getAll"][number];
+type JitWithPosition = RouterOutputs["jits"]["getAll"][number];
 import {
   Card,
   CardContent,
@@ -20,7 +20,7 @@ import { QuestionMarkIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 
-export const InactiveJitView = (props: { jit: Jit }) => {
+export const InactiveJitView = (props: { jit: JitWithPosition }) => {
   const { jit } = props;
   const ctx = api.useUtils();
 
@@ -40,7 +40,7 @@ export const InactiveJitView = (props: { jit: Jit }) => {
         mutate({ jitId: jit.id });
         // If mutate succeeds, update UI and invalidate the data
         void ctx.activeJits.getAllKnownByThisUser.invalidate();
-        toast.info("🦄 HIT ROLLING", {
+        toast.info("JIT ACTIVATED", {
           position: "bottom-center",
           autoClose: 2500,
           hideProgressBar: false,
@@ -56,13 +56,6 @@ export const InactiveJitView = (props: { jit: Jit }) => {
       }
     }
   };
-
-  // Type guard for ZodError
-  function isZodError(
-    obj: unknown,
-  ): obj is { fieldErrors: { title?: string[] } } {
-    return typeof obj === "object" && obj !== null && "fieldErrors" in obj;
-  }
 
   return (
     <Card key={jit.id} className="relative mb-9 bg-inherit">
