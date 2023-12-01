@@ -1,11 +1,11 @@
 // ActiveJitView
-// Handles displaying a single Jit
+// Handles displaying a single Active Jit
 
 // Used in:
 // ~/jitFeed
 
 import { api, type RouterOutputs } from "~/utils/api";
-type Jit = RouterOutputs["jits"]["getAll"][number];
+type JitWithPosition = RouterOutputs["jits"]["getAll"][number];
 import {
   Card,
   CardContent,
@@ -20,20 +20,18 @@ import { Icons } from "./ui/icons";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-type ActiveJit = RouterOutputs["activeJits"]["getByJitId"];
+type ActiveJitWithPosition =
+  RouterOutputs["activeJits"]["getAllKnownByThisUser"][number];
 
-export const ActiveJitView = (props: { jit: Jit }) => {
-  const { jit } = props;
+export const ActiveJitView = (props: { activeJit: ActiveJitWithPosition }) => {
+  const { activeJit } = props;
   const ctx = api.useUtils();
   const { mutate, isLoading: isSaving } =
     api.activeJits.updateByJitId.useMutation();
 
-  const activeJitQuery = api.activeJits.getByJitId.useQuery({ id: jit.id });
-  const activeJit: ActiveJit | undefined = activeJitQuery.data;
-
   const renderEyeIcons = () => {
     const eyes = [];
-    const hitRolling = activeJit!.hitRolling;
+    const hitRolling = activeJit.hitRolling;
 
     // hitRolling values between 0 and 5 will open the eyes one by one
     if (hitRolling <= 5) {
@@ -87,11 +85,11 @@ export const ActiveJitView = (props: { jit: Jit }) => {
     currentValue !== undefined ? currentValue + 1 : undefined;
 
   const handleHitRollingClick = () => {
-    const preUpdateHitRollingValue = activeJit!.hitRolling;
+    const preUpdateHitRollingValue = activeJit.hitRolling;
 
     try {
       mutate({
-        jitId: jit.id,
+        jitId: activeJit.jitId,
         hitRolling: getNextHitRollingValue(preUpdateHitRollingValue),
         level: calculateUpdatedLevel(preUpdateHitRollingValue),
       });
@@ -119,22 +117,22 @@ export const ActiveJitView = (props: { jit: Jit }) => {
   }
 
   return (
-    <Card key={jit.id} className="relative mb-9 bg-inherit pl-4">
+    <Card key={activeJit.jitId} className="relative mb-9 bg-inherit pl-4">
       <div className="flex h-[90px]">
         <div className="absolute -left-2 -top-4 flex bg-gray-50 px-2 py-1">
           <span className="h-4 font-serif text-sm">#</span>
           <span className="text-md h-5 font-mono">
-            {formatNumber(jit.uniqueNumber)}
+            {formatNumber(activeJit.jit.uniqueNumber)}
           </span>
         </div>
         <CardHeader className="w-8/12 p-0 ">
           <div className="mt-3 flex h-full flex-col justify-center -space-y-1">
             <CardTitle className="-mt-2 text-2xl leading-5">
-              {jit.name}
+              {activeJit.jit.name}
             </CardTitle>
             <CardDescription className="text-lg">
               <span className="pr-0.5 text-xs">from</span>
-              {jit.position.name}
+              {activeJit.jit.position.name}
             </CardDescription>
           </div>
         </CardHeader>
@@ -142,12 +140,12 @@ export const ActiveJitView = (props: { jit: Jit }) => {
           <div className="-mt-1 flex h-full flex-col justify-center -space-y-1 pr-6 text-right">
             <a>
               <Badge variant="outline" className="text-[10px]">
-                {jit.category}
+                {activeJit.jit.category}
               </Badge>
             </a>
             <a>
               <Badge variant="outline" className="text-[10px]">
-                {jit.percentage} %
+                {activeJit.jit.percentage} %
               </Badge>
             </a>
           </div>
@@ -184,7 +182,7 @@ export const ActiveJitView = (props: { jit: Jit }) => {
           </div>
         </div>
         <div className="flex w-4/12 justify-end pr-6">
-          <span className="pr-0.5 text-5xl">{activeJit!.level}</span>
+          <span className="pr-0.5 text-5xl">{activeJit.level}</span>
           <span className="self-center text-5xl font-thin">/</span>
           <span className="-mb-1 -ml-1.5 self-end font-serif text-xl">100</span>
         </div>

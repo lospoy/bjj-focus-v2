@@ -20,7 +20,13 @@ export const jitsRouter = createTRPCRouter({
     const jits = await ctx.prisma.jit.findMany({
       take: 200,
       orderBy: [{ createdOn: "desc" }], // Newest first
-      include: { position: true }, // Important, otherwise no position data
+      select: {
+        id: true,
+        name: true,
+        category: true,
+        percentage: true,
+        position: { select: { name: true } },
+      },
     });
 
     return jits;

@@ -1,11 +1,11 @@
 // InactiveJitview
-// Handles displaying a single Jit
+// Handles displaying a single inactive Jit
 
 // Used in:
 // ~/jitFeed
 
 import { api, type RouterOutputs } from "~/utils/api";
-type Jit = RouterOutputs["jits"]["getAll"][number];
+type JitWithPosition = RouterOutputs["jits"]["getAll"][number];
 import {
   Card,
   CardContent,
@@ -20,7 +20,7 @@ import { QuestionMarkIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 
-export const InactiveJitView = (props: { jit: Jit }) => {
+export const InactiveJitView = (props: { jit: JitWithPosition }) => {
   const { jit } = props;
   const ctx = api.useUtils();
 
