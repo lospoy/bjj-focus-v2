@@ -70,8 +70,8 @@ export const InactiveJitView = (props: { jit: Jit }) => {
     <Card key={jit.id} className="relative mb-9">
       <div className="flex h-[90px]">
         <div className="absolute -left-2 -top-2 flex bg-white p-1">
-          <QuestionMarkIcon className="h-5 w-5" />
-          <QuestionMarkIcon className="-ml-2 h-4 w-4" />
+          <QuestionMarkIcon className="h-4 w-4" />
+          <QuestionMarkIcon className="-ml-2 h-3 w-3" />
         </div>
         <CardHeader className="w-8/12 p-0 pl-6">
           <div className="mt-3 flex h-full flex-col justify-center -space-y-1">
@@ -84,12 +84,16 @@ export const InactiveJitView = (props: { jit: Jit }) => {
           </div>
         </CardHeader>
         <CardContent className="w-4/12 p-0">
-          <div className="flex h-full flex-col justify-center space-y-0 pr-6 text-right">
+          <div className="-mt-1 flex h-full flex-col justify-center -space-y-1 pr-6 text-right">
             <a>
-              <Badge variant="outline">{jit.category}</Badge>
+              <Badge variant="outline" className="text-[9px]">
+                {jit.category}
+              </Badge>
             </a>
             <a>
-              <Badge variant="outline">{jit.percentage} %</Badge>
+              <Badge variant="outline" className="text-[9px]">
+                {jit.percentage} %
+              </Badge>
             </a>
           </div>
         </CardContent>
