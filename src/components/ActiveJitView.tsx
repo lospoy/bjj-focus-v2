@@ -101,15 +101,16 @@ export const ActiveJitView = (props: { jit: Jit }) => {
     return typeof obj === "object" && obj !== null && "fieldErrors" in obj;
   }
 
-  const calculateLevelAndUpdate = (hitRolling: ActiveJit["hitRolling"]) => {
-    let newLevel = 0;
+  const calculateAndUpdateLevel = (hitRolling: ActiveJit["hitRolling"]) => {
+    let updatedLevel = 0;
 
-    if (hitRolling === 1) newLevel = 1;
-    if (hitRolling === 2) newLevel = 1.5;
-    if (hitRolling === 1) newLevel = 1;
-    if (hitRolling === 1) newLevel = 1;
+    if (hitRolling > 1) updatedLevel = 1;
+    if (hitRolling === 2) updatedLevel = 1.5;
+    if (hitRolling === 1) updatedLevel = 1;
+    if (hitRolling === 1) updatedLevel = 1;
+    if (hitRolling === 1) updatedLevel = 1;
 
-    return newLevel;
+    return updatedLevel;
   };
 
   // Formats numbers to always be XXX
@@ -119,9 +120,9 @@ export const ActiveJitView = (props: { jit: Jit }) => {
   }
 
   return (
-    <Card key={jit.id} className="relative mb-9 pl-4 ">
+    <Card key={jit.id} className="relative mb-9 bg-inherit pl-4">
       <div className="flex h-[90px]">
-        <div className="absolute -left-2 -top-4 flex bg-white px-2 py-1">
+        <div className="absolute -left-2 -top-4 flex bg-gray-50 px-2 py-1">
           <span className="h-4 font-serif text-sm">#</span>
           <span className="text-md h-5 font-mono">
             {formatNumber(jit.uniqueNumber)}
@@ -132,7 +133,8 @@ export const ActiveJitView = (props: { jit: Jit }) => {
             <CardTitle className="-mt-2 text-2xl leading-5">
               {jit.name}
             </CardTitle>
-            <CardDescription className="text-xl">
+            <CardDescription className="text-lg">
+              <span className="pr-0.5 text-xs">from</span>
               {jit.position.name}
             </CardDescription>
           </div>
@@ -140,12 +142,12 @@ export const ActiveJitView = (props: { jit: Jit }) => {
         <CardContent className="w-4/12 p-0">
           <div className="-mt-1 flex h-full flex-col justify-center -space-y-1 pr-6 text-right">
             <a>
-              <Badge variant="outline" className="text-[9px]">
+              <Badge variant="outline" className="text-[10px]">
                 {jit.category}
               </Badge>
             </a>
             <a>
-              <Badge variant="outline" className="text-[9px]">
+              <Badge variant="outline" className="text-[10px]">
                 {jit.percentage} %
               </Badge>
             </a>

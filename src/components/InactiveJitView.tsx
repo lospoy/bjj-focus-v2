@@ -67,31 +67,32 @@ export const InactiveJitView = (props: { jit: Jit }) => {
   }
 
   return (
-    <Card key={jit.id} className="relative mb-9">
-      <div className="flex h-[90px]">
-        <div className="absolute -left-2 -top-2 flex bg-white p-1">
-          <QuestionMarkIcon className="h-4 w-4" />
-          <QuestionMarkIcon className="-ml-2 h-3 w-3" />
+    <Card key={jit.id} className="relative mb-9 bg-inherit">
+      <div className="bg- flex h-[90px] ">
+        <div className="absolute -left-2 -top-2 flex bg-gray-50 p-1 ">
+          <QuestionMarkIcon className="h-4 w-4 opacity-30" />
+          <QuestionMarkIcon className="-ml-2 h-3 w-3 opacity-30" />
         </div>
-        <CardHeader className="w-8/12 p-0 pl-6">
+        <CardHeader className="w-8/12 p-0 pl-6 opacity-30">
           <div className="mt-3 flex h-full flex-col justify-center -space-y-1">
             <CardTitle className="-mt-2 text-2xl leading-5">
               {jit.name}
             </CardTitle>
-            <CardDescription className="text-xl">
+            <CardDescription className="text-lg">
+              <span className="pr-0.5 text-xs ">from</span>
               {jit.position.name}
             </CardDescription>
           </div>
         </CardHeader>
-        <CardContent className="w-4/12 p-0">
+        <CardContent className="w-4/12 p-0 opacity-30">
           <div className="-mt-1 flex h-full flex-col justify-center -space-y-1 pr-6 text-right">
             <a>
-              <Badge variant="outline" className="text-[9px]">
+              <Badge variant="outline" className="text-[10px]">
                 {jit.category}
               </Badge>
             </a>
             <a>
-              <Badge variant="outline" className="text-[9px]">
+              <Badge variant="outline" className="text-[10px]">
                 {jit.percentage} %
               </Badge>
             </a>
@@ -109,7 +110,6 @@ export const InactiveJitView = (props: { jit: Jit }) => {
           disabled={buttonState === "ACTIVATING"}
         >
           {buttonState}
-          <EyeIcon className="ml-1" />
         </Button>
       </CardFooter>
     </Card>
