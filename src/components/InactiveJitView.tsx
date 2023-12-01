@@ -18,6 +18,7 @@ import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { QuestionMarkIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
 
 export const InactiveJitView = (props: { jit: Jit }) => {
   const { jit } = props;
@@ -39,19 +40,18 @@ export const InactiveJitView = (props: { jit: Jit }) => {
         mutate({ jitId: jit.id });
         // If mutate succeeds, update UI and invalidate the data
         void ctx.activeJits.getAllKnownByThisUser.invalidate();
-        toast.success("Jit activated successfully");
+        toast.info("🦄 HIT ROLLING", {
+          position: "bottom-center",
+          autoClose: 2500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
         setButtonState("ACTIVATE");
       } catch (e: unknown) {
-        if (isZodError(e)) {
-          const errorMessage = e.fieldErrors.title;
-          if (errorMessage?.[0]) {
-            toast.error(errorMessage[0]);
-          } else {
-            toast.error("Failed to activate. Please try again later.");
-          }
-        } else {
-          toast.error("Failed to activate. Please try again later.");
-        }
         setButtonState("ACTIVATE");
       }
     }
@@ -109,6 +109,18 @@ export const InactiveJitView = (props: { jit: Jit }) => {
         >
           {buttonState}
         </Button>
+        <ToastContainer
+          position="bottom-center"
+          autoClose={2500}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </CardFooter>
     </Card>
   );
