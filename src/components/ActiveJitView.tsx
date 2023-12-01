@@ -66,11 +66,6 @@ export const ActiveJitView = (props: { jit: Jit }) => {
     return eyes;
   };
 
-  const toastIt = () => {
-    toast("this is the toasts");
-    console.log("toasting");
-  };
-
   const handleHitRollingClick = () => {
     const getNextHitRollingValue = (currentValue: number | undefined) =>
       currentValue !== undefined ? currentValue + 1 : undefined;
@@ -151,21 +146,6 @@ export const ActiveJitView = (props: { jit: Jit }) => {
           </div>
         </CardContent>
       </div>
-      <button onClick={toastIt}>
-        <Icons.paypal className="w-10" />
-        <ToastContainer
-          position="bottom-center"
-          autoClose={2500}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
-      </button>
 
       <CardFooter className="h-16 items-start justify-center p-0">
         <div className="flex w-8/12">
@@ -182,6 +162,18 @@ export const ActiveJitView = (props: { jit: Jit }) => {
             >
               {renderEyeIcons()}
             </button>
+            <ToastContainer
+              position="bottom-center"
+              autoClose={2500}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="light"
+            />
           </div>
         </div>
         <div className="flex w-4/12 justify-end pr-6">
