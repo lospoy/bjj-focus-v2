@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { LoadingSpinner } from "~/components/ui/loading";
 import { useUser } from "@clerk/nextjs";
-import toast from "react-hot-toast";
+
 import { api } from "~/utils/api";
 import type { RouterOutputs } from "~/utils/api";
 

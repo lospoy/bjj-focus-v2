@@ -17,9 +17,7 @@ import {
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { QuestionMarkIcon } from "@radix-ui/react-icons";
-import toast from "react-hot-toast";
 import { useState } from "react";
-import { EyeIcon } from "lucide-react";
 
 export const InactiveJitView = (props: { jit: Jit }) => {
   const { jit } = props;

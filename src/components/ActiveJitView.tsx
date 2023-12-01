@@ -16,8 +16,9 @@ import {
 } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
 import { EyeClosedIcon } from "@radix-ui/react-icons";
-import toast from "react-hot-toast";
 import { Icons } from "./ui/icons";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 type ActiveJit = RouterOutputs["activeJits"]["getByJitId"];
 
@@ -65,52 +66,48 @@ export const ActiveJitView = (props: { jit: Jit }) => {
     return eyes;
   };
 
-  const handleButtonClick = () => {
+  const toastIt = () => {
+    toast("this is the toasts");
+    console.log("toasting");
+  };
+
+  const handleHitRollingClick = () => {
     const getNextHitRollingValue = (currentValue: number | undefined) =>
       currentValue !== undefined ? currentValue + 1 : undefined;
 
-    if (false) {
-    } else if (true) {
-      try {
-        mutate({
-          jitId: jit.id,
-          hitRolling: getNextHitRollingValue(activeJit!.hitRolling),
-        });
-        // If mutate succeeds, update UI and invalidate the data
-        void ctx.activeJits.getAllKnownByThisUser.invalidate();
-        toast.success("HIT ROLLING!!");
-      } catch (e: unknown) {
-        if (isZodError(e)) {
-          const errorMessage = e.fieldErrors.title;
-          if (errorMessage?.[0]) {
-            toast.error(errorMessage[0]);
-          } else {
-            toast.error("Failed to update. Please try again later.");
-          }
-        } else {
-          toast.error("Failed to update. Please try again later.");
-        }
-      }
+    try {
+      mutate({
+        jitId: jit.id,
+        hitRolling: getNextHitRollingValue(activeJit!.hitRolling),
+      });
+      // If mutate succeeds, update UI and invalidate the data
+      void ctx.activeJits.getAllKnownByThisUser.invalidate();
+      toast.info("🦄 HIT ROLLING", {
+        position: "bottom-center",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } catch (e: unknown) {
+      toast.error("Failed to update. Please try again later.");
     }
   };
 
-  // Type guard for ZodError
-  function isZodError(
-    obj: unknown,
-  ): obj is { fieldErrors: { title?: string[] } } {
-    return typeof obj === "object" && obj !== null && "fieldErrors" in obj;
-  }
-
-  const calculateAndUpdateLevel = (hitRolling: ActiveJit["hitRolling"]) => {
-    let updatedLevel = 0;
-
-    if (hitRolling > 1) updatedLevel = 1;
-    if (hitRolling === 2) updatedLevel = 1.5;
-    if (hitRolling === 1) updatedLevel = 1;
-    if (hitRolling === 1) updatedLevel = 1;
-    if (hitRolling === 1) updatedLevel = 1;
-
-    return updatedLevel;
+  // The function increases updatedLevel based on hitRolling
+  //    with a somewhat direct relationship at the beginning
+  //    the ratio then tapers off as hitRolling gets bigger
+  const calculateUpdatedLevel = (hitRolling: ActiveJit["hitRolling"]) => {
+    if (hitRolling <= 0) {
+      return 1;
+    } else if (hitRolling >= 15) {
+      return 32;
+    } else {
+      return Math.min(7 + Math.floor(hitRolling ** 1.5), 32);
+    }
   };
 
   // Formats numbers to always be XXX
@@ -154,15 +151,33 @@ export const ActiveJitView = (props: { jit: Jit }) => {
           </div>
         </CardContent>
       </div>
+      <button onClick={toastIt}>
+        <Icons.paypal className="w-10" />
+        <ToastContainer
+          position="bottom-center"
+          autoClose={2500}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
+      </button>
 
       <CardFooter className="h-16 items-start justify-center p-0">
         <div className="flex w-8/12">
           <div>
-            <button onClick={handleButtonClick} className="font-mono text-xs">
+            <button
+              onClick={handleHitRollingClick}
+              className="font-mono text-xs"
+            >
               hit rolling
             </button>
             <button
-              onClick={handleButtonClick}
+              onClick={handleHitRollingClick}
               className="flex flex-row space-x-2"
             >
               {renderEyeIcons()}

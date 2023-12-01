@@ -31,8 +31,6 @@ export const activeJitsRouter = createTRPCRouter({
         where: { userId_jitId: { userId: ctx.userId, jitId: input.id } },
       });
 
-      if (!activeJit) throw new TRPCError({ code: "NOT_FOUND" });
-
       return activeJit;
     }),
 
