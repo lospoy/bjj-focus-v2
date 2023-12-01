@@ -39,7 +39,12 @@ export const activeJitsRouter = createTRPCRouter({
       where: { userId: ctx.userId },
       take: 200,
       orderBy: [{ level: "desc" }], //descending, newest first
-      include: { jit: { include: { position: { select: { name: true } } } } },
+      select: {
+        jitId: true,
+        level: true,
+        hitRolling: true,
+        jit: { include: { position: { select: { name: true } } } },
+      },
     });
 
     return activeJits;

@@ -5,7 +5,6 @@
 // ~/jitFeed
 
 import { api, type RouterOutputs } from "~/utils/api";
-type JitWithPosition = RouterOutputs["jits"]["getAll"][number];
 import {
   Card,
   CardContent,
@@ -94,7 +93,10 @@ export const ActiveJitView = (props: { activeJit: ActiveJitWithPosition }) => {
         level: calculateUpdatedLevel(preUpdateHitRollingValue),
       });
       // If mutate succeeds, update UI and invalidate the data
-      void ctx.activeJits.getAllKnownByThisUser.invalidate();
+      setTimeout(() => {
+        void ctx.activeJits.getAllKnownByThisUser.invalidate();
+      }, 2000);
+
       toast.info("🦄 HIT ROLLING", {
         position: "bottom-center",
         autoClose: 2500,
