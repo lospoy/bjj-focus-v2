@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { LoadingSpinner } from "~/components/ui/loading";
 import { useUser } from "@clerk/nextjs";
-import toast from "react-hot-toast";
+
 import { api } from "~/utils/api";
 import type { RouterOutputs } from "~/utils/api";
 
@@ -41,7 +41,7 @@ const useJitData = (id: string): JitData | undefined => {
 //   return (
 //     <div className="flex w-full gap-3 rounded border bg-white p-2">
 //       <input
-//         placeholder="Write your knownJit here"
+//         placeholder="Write your activeJit here"
 //         className="grow bg-transparent outline-none"
 //         type="text"
 //         value={input}

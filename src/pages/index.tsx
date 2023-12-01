@@ -4,22 +4,15 @@ import { type NextPage } from "next";
 import { api } from "~/utils/api";
 import { SignInButton, useUser } from "@clerk/nextjs";
 import { PageLayout } from "~/components/ui/layout";
-import { KnownJitFeed } from "~/components/knownJitFeed";
-import { Button } from "~/components/ui/button";
-import { Plus } from "lucide-react";
-import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import { setUser } from "../store/actions/userActions";
 import { useEffect } from "react";
-import Link from "next/link";
-import { JitViewById } from '~/components/jitViewById';
-import { Card, CardContent } from '~/components/ui/card';
-import { JitFeed } from '~/components/jitFeed';
+import { FullJitFeed } from "~/components/FullJitFeed";
 
 const Home: NextPage = () => {
   // Dispatching user data to Redux store
   const dispatch = useDispatch();
-  const user = useUser().user
+  const user = useUser().user;
 
   useEffect(() => {
     if (user) {
@@ -34,19 +27,19 @@ const Home: NextPage = () => {
     }
   }, [dispatch, user]);
 
-  const router = useRouter();
+  // const router = useRouter();
   const { isLoaded: userLoaded, isSignedIn } = useUser();
 
   // Start fetching asap
   // (React query will use cached data if the data doesn't change)
-  api.knownJits.getAllKnownByThisUser.useQuery();
+  api.activeJits.getAllKnownByThisUser.useQuery();
   api.jits.getAll.useQuery();
 
   // Return empty div if user isn't loaded yet
   if (!userLoaded) return <div />;
 
   // const handleNewSequence = async () => {
-  //   const url = `/knownJit/jit-selection`;
+  //   const url = `/activeJit/jit-selection`;
   //   await router.push(url);
   // };
 
@@ -62,13 +55,13 @@ const Home: NextPage = () => {
         </div>
 
         {user && (
-<>
-          {/* <CardContent>
+          <>
+            {/* <CardContent>
             <JitViewById jitId={"clphbfazb0001t9797u599m7i"} />
           </CardContent> */}
 
-            <JitFeed />
-</>
+            <FullJitFeed />
+          </>
         )}
         {/* <Button
           onClick={handleNewSequence}
