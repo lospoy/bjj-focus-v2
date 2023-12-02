@@ -11,12 +11,18 @@ import { InactiveJitView } from "./InactiveJitView";
 // ... (other imports and code)
 
 export const FullJitFeed = () => {
-  const allJits = api.jits.getAll.useQuery().data;
+  let allJits = api.jits.getAll.useQuery().data;
   const allActiveJits = api.activeJits.getAllKnownByThisUser.useQuery().data;
 
   const [searchTerm, setSearchTerm] = useState("");
 
   if (!allJits) return <div>Something went wrong</div>;
+
+  if (allActiveJits) {
+    const activeJitIds = allActiveJits.map((activeJit) => activeJit.jitId);
+    // Filter out Jits whose id is in activeJitIds
+    allJits = allJits.filter((jit) => !activeJitIds.includes(jit.id));
+  }
 
   // Convert search term to lowercase for case-insensitive comparison
   const lowerCaseSearchTerm = searchTerm.toLowerCase();
