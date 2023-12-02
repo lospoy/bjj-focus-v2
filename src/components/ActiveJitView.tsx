@@ -2,7 +2,7 @@
 // Handles displaying a single Active Jit
 
 // Used in:
-// ~/jitFeed
+// ~/FullJitFeed
 
 import { api, type RouterOutputs } from "~/utils/api";
 import {
