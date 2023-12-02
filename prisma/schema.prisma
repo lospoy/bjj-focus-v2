@@ -39,7 +39,7 @@ model Position {
 model Jit {
   id           String        @id @default(cuid())
   createdOn    DateTime      @default(now())
-  uniqueNumber Int           @default(0)
+  uniqueNumber Int           @unique @default(0)
   name         String        @default("")
   category     JitCategory
   percentage   JitPercentage
