@@ -2,7 +2,7 @@
 // Handles displaying a single inactive Jit
 
 // Used in:
-// ~/jitFeed
+// ~/FullJitFeed
 
 import { api, type RouterOutputs } from "~/utils/api";
 type JitWithPosition = RouterOutputs["jits"]["getAll"][number];
