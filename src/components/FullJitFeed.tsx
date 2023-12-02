@@ -7,6 +7,7 @@ import { useState } from "react";
 import { api } from "~/utils/api";
 import { ActiveJitView } from "./ActiveJitView";
 import { InactiveJitView } from "./InactiveJitView";
+import { Search } from "lucide-react";
 
 // ... (other imports and code)
 
@@ -43,13 +44,19 @@ export const FullJitFeed = () => {
   return (
     <div className="flex flex-col">
       {/* Search Input */}
-      <input
-        type="text"
-        placeholder="Search Jits..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="mb-4 flex h-10 w-full rounded bg-gray-400/10 pl-[14px] text-2xl placeholder-gray-400 placeholder:font-mono focus:border-none focus:outline-none focus:ring-0"
-      />
+      <div className="relative">
+        <Search
+          className="absolute right-[14px] top-1/2 h-4 w-4 -translate-y-4 transform text-gray-400"
+          strokeWidth={2.2}
+        />
+        <input
+          type="text"
+          placeholder="search jits..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="text-md mb-4 flex h-10 w-full rounded bg-gray-400/10 pl-[14px] placeholder-gray-400 placeholder:font-mono placeholder:uppercase focus:border-none focus:outline-none focus:ring-0"
+        />
+      </div>
 
       {/* Render ActiveJitViews based on the filtered results */}
       {filteredActiveJits?.map((activeJit) => (
