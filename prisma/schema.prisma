@@ -1,4 +1,4 @@
-// Useful Prisma Schema visualizer https://prisma-editor.vercel.app
+// Useful Prisma Schema visualizer https://prisma-editor.vercel.
 
 generator client {
   provider = "prisma-client-js"
@@ -10,135 +10,112 @@ datasource db {
   relationMode = "prisma"
 }
 
-enum JitCategory {
-  ESCAPE
-  SUBMISSION
-  SWEEP
-  PASS
-  CONTROL
-  GUARD
-  TAKEDOWN
-}
+model User {
+  id             String           @id @default(uuid())
+  createdAt      DateTime         @default(now())
+  metadata       Json
+  firstName      String
+  lastName       String
+  DOB            DateTime
+  role           String
+  jit            Jit[]
+  userCurriculum UserCurriculum[]
 
-enum JitPercentage {
-  LOW
-  HIGH
-}
-
-model Position {
-  id   String @id @default(cuid())
-  name String @unique
-
-  // Relationships
-  jits Jit[] @relation("PositionJits")
-
-  // Indexes
-  @@index([name])
+  @@index([id])
 }
 
 model Jit {
-  id           String        @id @default(cuid())
-  createdOn    DateTime      @default(now())
-  uniqueNumber Int           @unique @default(0)
-  name         String        @default("")
-  category     JitCategory
-  percentage   JitPercentage
+  id           String        @id @default(uuid())
+  createdAt    DateTime      @default(now())
+  metadata     Json
+  session      Session[]
+  user         User          @relation(fields: [userId], references: [id])
+  userId       String
+  curriculum   Curriculum    @relation(fields: [curriculumId], references: [id])
+  curriculumId String
+  isFavorite   Boolean
+  isGoal       Boolean
+  jitCategory  JitCategory[]
+  jitPosition  JitPosition[]
+  jitMove      JitMove[]
 
-  // Relationships
-  users        User[]         @relation("JitParticipants")
-  position     Position       @relation("PositionJits", fields: [positionId], references: [id])
-  SequenceJits SequenceJits[]
-  ActiveJit    ActiveJit[]
-  positionId   String         @default("")
-
-  // Indexes
-  @@index([category, percentage])
-  @@index([positionId])
-  @@index([uniqueNumber])
-}
-
-enum UserRole {
-  USER
-  COACH
-  MANAGER
-  ADMIN
-}
-
-model User {
-  id        String   @id @default(cuid())
-  firstName String
-  lastName  String
-  role      UserRole
-  createdOn DateTime @default(now())
-
-  // Relationships
-  jits       Jit[]       @relation("JitParticipants")
-  activeJits ActiveJit[] @relation("ActiveJits")
-  groups     Group[]     @relation("GroupMembers")
-  sequences  Sequence[]  @relation("UserSequences")
-}
-
-model Group {
-  id        String   @id @default(cuid())
-  title     String
-  createdOn DateTime @default(now())
-  creatorId String
-
-  // Relationships
-  members User[] @relation("GroupMembers")
-}
-
-model ActiveJit {
-  activatedOn  DateTime @default(now())
-  lastUpdated  DateTime @default(now()) @updatedAt
-  level        Int      @default(1)
-  hitRolling   Int      @default(0)
-  hitCompeting Int      @default(0)
-  notes        String   @default("")
-
-  // Relationships
-  user User @relation("ActiveJits", fields: [userId], references: [id])
-  jit  Jit  @relation(fields: [jitId], references: [id])
-
-  // Fields that represent foreign keys to improve query performance
-  // Added @map directive to improve database integrity
-  userId String @map("user_id")
-  jitId  String @map("jit_id")
-
-  @@id([userId, jitId])
   @@index([userId])
-  @@index([jitId])
+  @@index([curriculumId])
 }
 
-model Sequence {
-  id        String   @id @default(cuid())
-  createdOn DateTime @default(now())
-  name      String?
-
-  // Relationships
-  user User @relation("UserSequences", fields: [ownerId], references: [id])
-
-  // Fields that represent foreign keys to improve query performance
-  // Added @map directive to improve database integrity
-  ownerId      String         @map("owner_id")
-  jitName      String         @map("jit_name")
-  SequenceJits SequenceJits[]
-
-  // Indexes
-  @@index([ownerId])
-  @@index([jitName])
+model Category {
+  id          String        @id @default(uuid())
+  name        String
+  jitCategory JitCategory[]
 }
 
-model SequenceJits {
-  id         String   @id @default(cuid())
-  createdOn  DateTime @default(now())
-  sequence   Sequence @relation(fields: [sequenceId], references: [id])
-  sequenceId String
-  jit        Jit      @relation(fields: [jitId], references: [id])
+model Position {
+  id          String        @id @default(uuid())
+  name        String
+  jitPosition JitPosition[]
+}
+
+model Move {
+  id      String    @id @default(uuid())
+  name    String
+  jitMove JitMove[]
+}
+
+model Curriculum {
+  id             String           @id @default(uuid())
+  userCurriculum UserCurriculum[]
+  Jit            Jit[]
+}
+
+model UserCurriculum {
+  id           String     @id @default(uuid())
+  user         User       @relation(fields: [userId], references: [id])
+  userId       String
+  curriculum   Curriculum @relation(fields: [curriculumId], references: [id])
+  curriculumId String
+  isActive     Boolean
+
+  @@index([userId])
+  @@index([curriculumId])
+}
+
+model JitCategory {
   jitId      String
-  order      Int
+  categoryId String
+  Jit        Jit      @relation(fields: [jitId], references: [id])
+  Category   Category @relation(fields: [categoryId], references: [id])
 
-  // Indexes
-  @@index([sequenceId])
+  @@id([jitId])
+  @@index([jitId])
+  @@index([categoryId])
+}
+
+model JitPosition {
+  jitId      String
+  positionId String
+  Jit        Jit      @relation(fields: [jitId], references: [id])
+  Position   Position @relation(fields: [positionId], references: [id])
+
+  @@id([jitId, positionId])
+  @@index([jitId])
+  @@index([positionId])
+}
+
+model JitMove {
+  jitId  String
+  moveId String
+  Jit    Jit    @relation(fields: [jitId], references: [id])
+  Move   Move   @relation(fields: [moveId], references: [id])
+
+  @@id([jitId, moveId])
+  @@index([jitId])
+  @@index([moveId])
+}
+
+model Session {
+  id    String @id @default(uuid())
+  jit   Jit    @relation(fields: [jitId], references: [id])
+  jitId String
+
   @@index([jitId])
 }
