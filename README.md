@@ -15,9 +15,14 @@
 
 ## 🛠️ Under development ##
 > _Focus._
+- 2023/11/26 start of the project
+- 2023/12/01 finished [functional app prototype](https://github.com/lospoy/bjj-focus-v2/issues/4) (jit-based-schema)
+- 2023/12/02 showed app prototype to pro BJJ coach and athlete to get product feedback
+- 2023/12/04 showed app to potential user and fellow dev. Discussed MVP functionality, UX and DB schema.
+- 2023/12/05 start of the rework (flexible jit)
 <br>
 
 ### DB Schema
-![image](https://github.com/lospoy/bjj-focus-v2/assets/36555654/485452bd-5c8a-485c-a536-fd22c53e600f)
+![image]()
 
 
