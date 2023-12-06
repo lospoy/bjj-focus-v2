@@ -11,64 +11,79 @@ datasource db {
 }
 
 model User {
-  id             String           @id @default(uuid())
-  createdAt      DateTime         @default(now())
-  metadata       Json
-  firstName      String
-  lastName       String
-  DOB            DateTime
-  role           String
-  jit            Jit[]
-  userCurriculum UserCurriculum[]
+  id              String           @id @default(uuid())
+  createdAt       DateTime         @default(now())
+  metadata        Json
+  firstName       String
+  lastName        String
+  DOB             DateTime
+  role            String
+  jits            Jit[]
+  userCurriculums UserCurriculum[]
 
   @@index([id])
 }
 
 model Jit {
-  id           String        @id @default(uuid())
-  createdAt    DateTime      @default(now())
-  metadata     Json
-  session      Session[]
-  user         User          @relation(fields: [userId], references: [id])
-  userId       String
-  curriculum   Curriculum    @relation(fields: [curriculumId], references: [id])
-  curriculumId String
-  isFavorite   Boolean
-  isGoal       Boolean
-  jitCategory  JitCategory[]
-  jitPosition  JitPosition[]
-  jitMove      JitMove[]
+  id            String        @id @default(uuid())
+  createdAt     DateTime      @default(now())
+  metadata      Json
+  sessions      Session[]
+  user          User          @relation(fields: [userId], references: [id])
+  userId        String
+  curriculum    Curriculum    @relation(fields: [curriculumId], references: [id])
+  curriculumId  String
+  isFavorite    Boolean
+  isGoal        Boolean
+  jitCategories JitCategory[]
+  jitPositions  JitPosition[]
+  jitMoves      JitMove[]
+  notes         String
 
   @@index([userId])
   @@index([curriculumId])
 }
 
 model Category {
-  id          String        @id @default(uuid())
-  name        String
-  jitCategory JitCategory[]
+  id            String        @id @default(uuid())
+  name          String
+  metadata      Json
+  jitCategories JitCategory[]
 }
 
 model Position {
-  id          String        @id @default(uuid())
-  name        String
-  jitPosition JitPosition[]
+  id           String        @id @default(uuid())
+  name         String
+  metadata     Json
+  jitPositions JitPosition[]
 }
 
 model Move {
-  id      String    @id @default(uuid())
-  name    String
-  jitMove JitMove[]
+  id       String    @id @default(uuid())
+  name     String
+  metadata Json
+  jitMoves JitMove[]
 }
 
 model Curriculum {
-  id             String           @id @default(uuid())
-  userCurriculum UserCurriculum[]
-  Jit            Jit[]
+  id              String           @id @default(uuid())
+  metadata        Json
+  userCurriculums UserCurriculum[]
+  jits            Jit[]
+}
+
+model Session {
+  id       String @id @default(uuid())
+  jit      Jit    @relation(fields: [jitId], references: [id])
+  jitId    String
+  metadata Json
+
+  @@index([jitId])
 }
 
 model UserCurriculum {
   id           String     @id @default(uuid())
+  metadata     Json
   user         User       @relation(fields: [userId], references: [id])
   userId       String
   curriculum   Curriculum @relation(fields: [curriculumId], references: [id])
@@ -110,12 +125,4 @@ model JitMove {
   @@id([jitId, moveId])
   @@index([jitId])
   @@index([moveId])
-}
-
-model Session {
-  id    String @id @default(uuid())
-  jit   Jit    @relation(fields: [jitId], references: [id])
-  jitId String
-
-  @@index([jitId])
 }
