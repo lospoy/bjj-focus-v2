@@ -13,10 +13,12 @@ datasource db {
 model User {
   id              String           @id @default(uuid())
   createdAt       DateTime         @default(now())
-  metadata        Json
-  firstName       String
-  lastName        String
-  DOB             DateTime
+  updatedAt       DateTime         @updatedAt
+  metadata        Json?
+  firstName       String?
+  lastName        String?
+  userName        String?
+  DOB             DateTime?
   role            String
   jits            Jit[]
   userCurriculums UserCurriculum[]
@@ -27,18 +29,19 @@ model User {
 model Jit {
   id            String        @id @default(uuid())
   createdAt     DateTime      @default(now())
-  metadata      Json
+  updatedAt     DateTime      @updatedAt
+  metadata      Json?
   sessions      Session[]
   user          User          @relation(fields: [userId], references: [id])
   userId        String
-  curriculum    Curriculum    @relation(fields: [curriculumId], references: [id])
-  curriculumId  String
-  isFavorite    Boolean
-  isGoal        Boolean
+  curriculum    Curriculum?   @relation(fields: [curriculumId], references: [id])
+  curriculumId  String?
+  isFavorite    Boolean       @default(false)
+  isGoal        Boolean       @default(false)
   jitCategories JitCategory[]
   jitPositions  JitPosition[]
   jitMoves      JitMove[]
-  notes         String
+  notes         String?
 
   @@index([userId])
   @@index([curriculumId])
@@ -46,49 +49,61 @@ model Jit {
 
 model Category {
   id            String        @id @default(uuid())
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
   name          String
-  metadata      Json
+  metadata      Json?
   jitCategories JitCategory[]
 }
 
 model Position {
   id           String        @id @default(uuid())
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
   name         String
-  metadata     Json
+  metadata     Json?
   jitPositions JitPosition[]
+  customNames  CustomName[]
 }
 
 model Move {
-  id       String    @id @default(uuid())
-  name     String
-  metadata Json
-  jitMoves JitMove[]
+  id          String       @id @default(uuid())
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  name        String
+  customName  String?
+  metadata    Json?
+  jitMoves    JitMove[]
+  customNames CustomName[]
 }
 
 model Curriculum {
   id              String           @id @default(uuid())
-  metadata        Json
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  metadata        Json?
   userCurriculums UserCurriculum[]
   jits            Jit[]
 }
 
 model Session {
-  id       String @id @default(uuid())
-  jit      Jit    @relation(fields: [jitId], references: [id])
-  jitId    String
-  metadata Json
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  jit       Jit      @relation(fields: [jitId], references: [id])
+  jitId     String
+  metadata  Json?
 
   @@index([jitId])
 }
 
 model UserCurriculum {
   id           String     @id @default(uuid())
-  metadata     Json
   user         User       @relation(fields: [userId], references: [id])
   userId       String
   curriculum   Curriculum @relation(fields: [curriculumId], references: [id])
   curriculumId String
-  isActive     Boolean
+  metadata     Json?
 
   @@index([userId])
   @@index([curriculumId])
@@ -99,6 +114,7 @@ model JitCategory {
   categoryId String
   Jit        Jit      @relation(fields: [jitId], references: [id])
   Category   Category @relation(fields: [categoryId], references: [id])
+  metadata   Json?
 
   @@id([jitId])
   @@index([jitId])
@@ -110,6 +126,7 @@ model JitPosition {
   positionId String
   Jit        Jit      @relation(fields: [jitId], references: [id])
   Position   Position @relation(fields: [positionId], references: [id])
+  metadata   Json?
 
   @@id([jitId, positionId])
   @@index([jitId])
@@ -117,12 +134,32 @@ model JitPosition {
 }
 
 model JitMove {
-  jitId  String
-  moveId String
-  Jit    Jit    @relation(fields: [jitId], references: [id])
-  Move   Move   @relation(fields: [moveId], references: [id])
+  jitId    String
+  moveId   String
+  Jit      Jit    @relation(fields: [jitId], references: [id])
+  Move     Move   @relation(fields: [moveId], references: [id])
+  metadata Json?
 
   @@id([jitId, moveId])
   @@index([jitId])
   @@index([moveId])
+}
+
+model CustomName {
+  id         String               @id @default(uuid())
+  name       String
+  entityType AssociatedEntityType @default(Position)
+  position   Position?            @relation(fields: [positionId], references: [id])
+  positionId String?
+  move       Move?                @relation(fields: [moveId], references: [id])
+  moveId     String?
+  metadata   Json?
+
+  @@index([positionId])
+  @@index([moveId])
+}
+
+enum AssociatedEntityType {
+  Position
+  Move
 }
