@@ -19,7 +19,7 @@ export const jitsRouter = createTRPCRouter({
   getAll: privateProcedure.query(async ({ ctx }) => {
     const jits = await ctx.prisma.jit.findMany({
       take: 200,
-      orderBy: [{ createdOn: "desc" }], // Newest first
+      orderBy: [{ createdAt: "desc" }], // Newest first
       select: {
         id: true,
         name: true,
@@ -50,7 +50,7 @@ export const jitsRouter = createTRPCRouter({
   //           creatorId: input.userId,
   //         },
   //         take: 100,
-  //         orderBy: [{ createdOn: "desc" }],
+  //         orderBy: [{ createdAt: "desc" }],
   //       })
   //       .then(addUserDataToJits),
   //   ),

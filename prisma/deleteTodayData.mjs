@@ -15,7 +15,7 @@ async function clearDataSavedToday() {
     // Replace ".jit" with any other model that needs a file deletion
     const deletedRecords = await prisma.jit.deleteMany({
       where: {
-        createdOn: {
+        createdAt: {
           gte: today,
           lt: tomorrow,
         },
