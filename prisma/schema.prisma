@@ -21,6 +21,7 @@ model User {
   id              String           @id @default(uuid())
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
+  email           String           @unique
   metadata        Json?
   firstName       String?
   lastName        String?
