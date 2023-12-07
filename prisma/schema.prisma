@@ -35,24 +35,33 @@ model User {
 }
 
 model Jit {
-  id            String        @id @default(uuid())
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  metadata      Json?
-  sessions      Session[]
-  user          User          @relation(fields: [userId], references: [id])
-  userId        String
-  curriculum    Curriculum?   @relation(fields: [curriculumId], references: [id])
-  curriculumId  String?
-  isFavorite    Boolean       @default(false)
-  isGoal        Boolean       @default(false)
-  jitCategories JitCategory[]
-  jitPositions  JitPosition[]
-  jitMoves      JitMove[]
-  notes         String?
+  id           String        @id @default(uuid())
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  metadata     Json?
+  sessions     Session[]
+  user         User          @relation(fields: [userId], references: [id])
+  userId       String
+  curriculum   Curriculum?   @relation(fields: [curriculumId], references: [id])
+  curriculumId String?
+  isFavorite   Boolean       @default(false)
+  isGoal       Boolean       @default(false)
+  category     Category?     @relation(fields: [categoryId], references: [id])
+  categoryId   String?
+  position     Position?     @relation(fields: [positionId], references: [id])
+  positionId   String?
+  move         Move?         @relation(fields: [moveId], references: [id])
+  moveId       String?
+  notes        String?
+  JitCategory  JitCategory[]
+  JitPosition  JitPosition[]
+  JitMove      JitMove[]
 
   @@index([userId])
   @@index([curriculumId])
+  @@index([categoryId])
+  @@index([positionId])
+  @@index([moveId])
 }
 
 model Category {
@@ -62,6 +71,7 @@ model Category {
   name          String
   metadata      Json?
   jitCategories JitCategory[]
+  Jit           Jit[]
 }
 
 model Position {
@@ -72,6 +82,7 @@ model Position {
   metadata     Json?
   jitPositions JitPosition[]
   customNames  CustomName[]
+  Jit          Jit[]
 }
 
 model Move {
@@ -83,6 +94,7 @@ model Move {
   metadata    Json?
   jitMoves    JitMove[]
   customNames CustomName[]
+  Jit         Jit[]
 }
 
 model Curriculum {
