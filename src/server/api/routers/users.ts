@@ -34,6 +34,16 @@ export const usersRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const user = await ctx.prisma.user.findUnique({
         where: { id: input.id },
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+          userName: true,
+          role: true,
+          DOB: true,
+          metadata: true,
+        },
       });
 
       if (!user) throw new TRPCError({ code: "NOT_FOUND" });
@@ -44,6 +54,16 @@ export const usersRouter = createTRPCRouter({
   getAll: privateProcedure.query(async ({ ctx }) => {
     const users = await ctx.prisma.user.findMany({
       orderBy: [{ createdAt: "desc" }], //descending, newest first
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        userName: true,
+        role: true,
+        DOB: true,
+        metadata: true,
+      },
     });
 
     return users;
