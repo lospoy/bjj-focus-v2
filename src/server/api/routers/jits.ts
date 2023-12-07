@@ -51,9 +51,15 @@ export const jitsRouter = createTRPCRouter({
           isFavorite: true,
           isGoal: true,
           notes: true,
-          category: { select: { name: true, metadata: true } },
-          position: { select: { name: true, metadata: true } },
-          move: { select: { name: true, metadata: true } },
+          JitCategory: {
+            select: { Category: { select: { name: true, metadata: true } } },
+          },
+          JitPosition: {
+            select: { Position: { select: { name: true, metadata: true } } },
+          },
+          JitMove: {
+            select: { Move: { select: { name: true, metadata: true } } },
+          },
         },
       });
 
@@ -103,9 +109,15 @@ export const jitsRouter = createTRPCRouter({
         isFavorite: true,
         isGoal: true,
         notes: true,
-        category: { select: { name: true, metadata: true } },
-        position: { select: { name: true, metadata: true } },
-        move: { select: { name: true, metadata: true } },
+        JitCategory: {
+          select: { Category: { select: { name: true, metadata: true } } },
+        },
+        JitPosition: {
+          select: { Position: { select: { name: true, metadata: true } } },
+        },
+        JitMove: {
+          select: { Move: { select: { name: true, metadata: true } } },
+        },
       },
     });
 
@@ -137,11 +149,11 @@ export const jitsRouter = createTRPCRouter({
           userId: ctx.userId,
         },
         data: {
-          metadata: input.metadata ?? undefined,
-          notes: input.notes ?? undefined,
-          curriculumId: input.curriculumId ?? undefined,
-          isFavorite: input.isFavorite ?? undefined,
-          isGoal: input.isGoal ?? undefined,
+          metadata: input.metadata ?? { set: null },
+          notes: input.notes ?? null,
+          curriculumId: input.curriculumId ?? null,
+          isFavorite: input.isFavorite ?? null,
+          isGoal: input.isGoal ?? null,
         },
       });
 
@@ -158,14 +170,14 @@ export const jitsRouter = createTRPCRouter({
     const newJit = await ctx.prisma.jit.create({
       data: {
         userId: ctx.userId,
-        categoryId: input.categoryId ?? undefined,
-        positionId: input.positionId ?? undefined,
-        moveId: input.moveId ?? undefined,
-        metadata: input.metadata ?? undefined,
-        notes: input.notes ?? undefined,
-        curriculumId: input.curriculumId ?? undefined,
-        isFavorite: input.isFavorite ?? undefined,
-        isGoal: input.isGoal ?? undefined,
+        categoryId: input.categoryId ?? null,
+        positionId: input.positionId ?? null,
+        moveId: input.moveId ?? null,
+        metadata: input.metadata ?? { set: null },
+        notes: input.notes ?? null,
+        curriculumId: input.curriculumId ?? null,
+        isFavorite: input.isFavorite ?? null,
+        isGoal: input.isGoal ?? null,
       },
     });
 
