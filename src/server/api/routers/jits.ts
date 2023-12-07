@@ -71,7 +71,7 @@ export const jitsRouter = createTRPCRouter({
       return { ...jit, sessionCount, firstSession };
     }),
 
-  getAllSessionsByJitId: privateProcedure
+  getAllSessionsById: privateProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       const jitSessions = await ctx.prisma.jit.findUnique({
@@ -124,7 +124,7 @@ export const jitsRouter = createTRPCRouter({
     return jitsWithSessionCount;
   }),
 
-  updateByJitId: privateProcedure
+  updateById: privateProcedure
     .input(JitSchema)
     .mutation(async ({ ctx, input }) => {
       const { success } = await ratelimit.limit(ctx.userId);
