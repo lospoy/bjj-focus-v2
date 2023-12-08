@@ -35,27 +35,26 @@ model User {
 }
 
 model Jit {
-  id           String        @id @default(uuid())
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  metadata     Json?
+  id         String   @id @default(uuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  isFavorite Boolean  @default(false)
+  isGoal     Boolean  @default(false)
+  notes      String?
+  metadata   Json?
+
+  // Relationships
   sessions     Session[]
-  user         User          @relation(fields: [userId], references: [id])
+  user         User        @relation(fields: [userId], references: [id])
   userId       String
-  curriculum   Curriculum?   @relation(fields: [curriculumId], references: [id])
+  curriculum   Curriculum? @relation(fields: [curriculumId], references: [id])
   curriculumId String?
-  isFavorite   Boolean       @default(false)
-  isGoal       Boolean       @default(false)
-  category     Category?     @relation(fields: [categoryId], references: [id])
+  category     Category?   @relation(fields: [categoryId], references: [id])
   categoryId   String?
-  position     Position?     @relation(fields: [positionId], references: [id])
+  position     Position?   @relation(fields: [positionId], references: [id])
   positionId   String?
-  move         Move?         @relation(fields: [moveId], references: [id])
+  move         Move?       @relation(fields: [moveId], references: [id])
   moveId       String?
-  notes        String?
-  JitCategory  JitCategory[]
-  JitPosition  JitPosition[]
-  JitMove      JitMove[]
 
   @@index([userId])
   @@index([curriculumId])
@@ -65,24 +64,22 @@ model Jit {
 }
 
 model Category {
-  id            String        @id @default(uuid())
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  name          String
-  metadata      Json?
-  jitCategories JitCategory[]
-  Jit           Jit[]
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  metadata  Json?
+  Jit       Jit[]
 }
 
 model Position {
-  id           String        @id @default(uuid())
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  name         String
-  metadata     Json?
-  jitPositions JitPosition[]
-  customNames  CustomName[]
-  Jit          Jit[]
+  id          String       @id @default(uuid())
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  name        String
+  metadata    Json?
+  customNames CustomName[]
+  Jit         Jit[]
 }
 
 model Move {
@@ -92,7 +89,6 @@ model Move {
   name        String
   customName  String?
   metadata    Json?
-  jitMoves    JitMove[]
   customNames CustomName[]
   Jit         Jit[]
 }
@@ -101,6 +97,7 @@ model Curriculum {
   id              String           @id @default(uuid())
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
+  name            String?
   metadata        Json?
   userCurriculums UserCurriculum[]
   jits            Jit[]
@@ -127,42 +124,6 @@ model UserCurriculum {
 
   @@index([userId])
   @@index([curriculumId])
-}
-
-model JitCategory {
-  jitId      String
-  categoryId String
-  Jit        Jit      @relation(fields: [jitId], references: [id])
-  Category   Category @relation(fields: [categoryId], references: [id])
-  metadata   Json?
-
-  @@id([jitId])
-  @@index([jitId])
-  @@index([categoryId])
-}
-
-model JitPosition {
-  jitId      String
-  positionId String
-  Jit        Jit      @relation(fields: [jitId], references: [id])
-  Position   Position @relation(fields: [positionId], references: [id])
-  metadata   Json?
-
-  @@id([jitId, positionId])
-  @@index([jitId])
-  @@index([positionId])
-}
-
-model JitMove {
-  jitId    String
-  moveId   String
-  Jit      Jit    @relation(fields: [jitId], references: [id])
-  Move     Move   @relation(fields: [moveId], references: [id])
-  metadata Json?
-
-  @@id([jitId, moveId])
-  @@index([jitId])
-  @@index([moveId])
 }
 
 model CustomName {
