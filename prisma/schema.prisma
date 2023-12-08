@@ -40,7 +40,6 @@ model Jit {
   updatedAt  DateTime @updatedAt
   isFavorite Boolean  @default(false)
   isGoal     Boolean  @default(false)
-  notes      String?
   metadata   Json?
 
   // Relationships
@@ -110,6 +109,7 @@ model Session {
   jit       Jit      @relation(fields: [jitId], references: [id])
   jitId     String
   metadata  Json?
+  notes     String?
 
   @@index([jitId])
 }

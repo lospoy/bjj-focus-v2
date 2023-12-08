@@ -30,7 +30,6 @@ const JitSchema = z.object({
   categoryId: z.string().optional(),
   positionId: z.string().optional(),
   moveId: z.string().optional(),
-  notes: z.string().optional(),
 });
 
 export const jitsRouter = createTRPCRouter({
@@ -50,16 +49,11 @@ export const jitsRouter = createTRPCRouter({
           curriculum: true,
           isFavorite: true,
           isGoal: true,
-          notes: true,
-          JitCategory: {
-            select: { Category: { select: { name: true, metadata: true } } },
+          category: {
+            select: { name: true, metadata: true },
           },
-          JitPosition: {
-            select: { Position: { select: { name: true, metadata: true } } },
-          },
-          JitMove: {
-            select: { Move: { select: { name: true, metadata: true } } },
-          },
+          position: { select: { name: true, metadata: true } },
+          move: { select: { name: true, metadata: true } },
         },
       });
 
@@ -108,16 +102,11 @@ export const jitsRouter = createTRPCRouter({
         curriculum: true,
         isFavorite: true,
         isGoal: true,
-        notes: true,
-        JitCategory: {
-          select: { Category: { select: { name: true, metadata: true } } },
+        category: {
+          select: { name: true, metadata: true },
         },
-        JitPosition: {
-          select: { Position: { select: { name: true, metadata: true } } },
-        },
-        JitMove: {
-          select: { Move: { select: { name: true, metadata: true } } },
-        },
+        position: { select: { name: true, metadata: true } },
+        move: { select: { name: true, metadata: true } },
       },
     });
 
@@ -150,7 +139,6 @@ export const jitsRouter = createTRPCRouter({
         },
         data: {
           metadata: input.metadata ?? { set: null },
-          notes: input.notes ?? null,
           curriculumId: input.curriculumId ?? null,
           isFavorite: input.isFavorite ?? null,
           isGoal: input.isGoal ?? null,
