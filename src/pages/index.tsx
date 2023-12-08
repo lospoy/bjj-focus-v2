@@ -32,7 +32,6 @@ const Home: NextPage = () => {
 
   // Start fetching asap
   // (React query will use cached data if the data doesn't change)
-  api.activeJits.getAllKnownByThisUser.useQuery();
   api.jits.getAll.useQuery();
 
   // Return empty div if user isn't loaded yet

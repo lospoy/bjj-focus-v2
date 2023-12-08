@@ -74,7 +74,7 @@ export const jitsRouter = createTRPCRouter({
   getAllSessionsById: privateProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
-      const jitSessions = await ctx.prisma.jit.findUnique({
+      const jitSessions = await ctx.prisma.jit.findMany({
         where: {
           id: input.id,
           userId: ctx.userId,
