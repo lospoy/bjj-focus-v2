@@ -162,7 +162,6 @@ export const jitsRouter = createTRPCRouter({
         positionId: input.positionId ?? null,
         moveId: input.moveId ?? null,
         metadata: input.metadata ?? { set: null },
-        notes: input.notes ?? null,
         curriculumId: input.curriculumId ?? null,
         isFavorite: input.isFavorite ?? null,
         isGoal: input.isGoal ?? null,

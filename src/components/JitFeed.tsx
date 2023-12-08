@@ -5,17 +5,19 @@
 // ~../pages/index
 import { useState } from "react";
 import { api } from "~/utils/api";
-import { ActiveJitView } from "./ActiveJitView";
+import { JitView } from "./JitView";
 import { Search } from "lucide-react";
 
 // ... (other imports and code)
 
-export const FullJitFeed = () => {
+export const JitFeed = () => {
   const allJits = api.jits.getAll.useQuery().data;
 
   const [searchTerm, setSearchTerm] = useState("");
 
   if (!allJits) return <div>Something went wrong</div>;
+
+  console.log("allJits", allJits);
 
   // Convert search term to lowercase for case-insensitive comparison
   const lowerCaseSearchTerm = searchTerm.toLowerCase();
@@ -48,7 +50,7 @@ export const FullJitFeed = () => {
       {/* Render JitViews based on the filtered results */}
       {filteredJits?.map((jit) => (
         <div key={jit.id}>
-          <ActiveJitView jit={jit} />
+          <JitView jit={jit} />
         </div>
       ))}
     </div>

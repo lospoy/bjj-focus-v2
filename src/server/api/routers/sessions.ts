@@ -11,7 +11,6 @@ const ratelimit = new Ratelimit({
 });
 
 const SessionSchema = z.object({
-  id: z.string(),
   metadata: z
     .record(
       z.union([
