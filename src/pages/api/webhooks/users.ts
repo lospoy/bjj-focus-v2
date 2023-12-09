@@ -44,7 +44,6 @@ export default async function handler(
           email: userFromClerk.email_addresses[0]!.email_address,
           firstName: userFromClerk.first_name,
           lastName: userFromClerk.last_name,
-          DOB: userFromClerk.birthday,
         },
       });
       console.log("User created in the database:", newUser);

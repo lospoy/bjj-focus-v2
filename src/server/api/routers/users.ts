@@ -5,11 +5,11 @@ import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 const ClerkUserSchema = z.object({
   id: z.string(),
   email: z.string().email(),
-  firstName: z.string() ?? null,
-  lastName: z.string() ?? null,
-  userName: z.string() ?? null,
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+  userName: z.string().optional(),
   role: z.enum(["USER", "COACH", "MANAGER", "ADMIN"]),
-  DOB: z.date() ?? null,
+  DOB: z.date().optional(),
   metadata: z
     .record(
       z.union([
