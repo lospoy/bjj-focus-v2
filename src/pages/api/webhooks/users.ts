@@ -30,17 +30,21 @@ export default async function handler(
   if (eventType === "user.created") {
     console.log(`User ${id} was ${eventType}`);
 
-    const user = evt.data;
+    const userFromClerk = evt.data;
+
+    console.log("user from Clerk", userFromClerk);
 
     // Insert the new user into your database using Prisma
     const prisma = new PrismaClient();
     try {
       const newUser = await prisma.user.create({
         data: {
-          id: user.id,
-          firstName: user.first_name,
-          lastName: user.last_name,
-          role: "USER",
+          id: userFromClerk.id,
+          // assuming any account used to sign up will have a valid email address
+          email: userFromClerk.email_addresses[0]!.email_address,
+          firstName: userFromClerk.first_name,
+          lastName: userFromClerk.last_name,
+          DOB: userFromClerk.birthday,
         },
       });
       console.log("User created in the database:", newUser);
