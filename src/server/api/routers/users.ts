@@ -2,10 +2,6 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 
-type Json = {
-  [key: string]: string | number | boolean | null | Json | Json[];
-};
-
 const ClerkUserSchema = z.object({
   id: z.string(),
   email: z.string().email(),
@@ -76,12 +72,12 @@ export const usersRouter = createTRPCRouter({
         data: {
           id: input.id,
           email: input.email,
-          firstName: input.firstName,
-          lastName: input.lastName,
-          userName: input.userName,
-          role: input.role,
-          DOB: input.DOB,
-          metadata: input.metadata as Json,
+          firstName: input.firstName ?? null,
+          lastName: input.lastName ?? null,
+          userName: input.userName ?? null,
+          role: input.role ?? "USER",
+          DOB: input.DOB ?? null,
+          metadata: input.metadata ?? { set: null },
         },
       });
 
