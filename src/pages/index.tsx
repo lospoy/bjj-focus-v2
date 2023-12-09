@@ -7,7 +7,7 @@ import { PageLayout } from "~/components/ui/layout";
 import { useDispatch } from "react-redux";
 import { setUser } from "../store/actions/userActions";
 import { useEffect } from "react";
-import { FullJitFeed } from "~/components/FullJitFeed";
+import { JitFeed } from "~/components/JitFeed";
 
 const Home: NextPage = () => {
   // Dispatching user data to Redux store
@@ -32,7 +32,6 @@ const Home: NextPage = () => {
 
   // Start fetching asap
   // (React query will use cached data if the data doesn't change)
-  api.activeJits.getAllKnownByThisUser.useQuery();
   api.jits.getAll.useQuery();
 
   // Return empty div if user isn't loaded yet
@@ -60,7 +59,7 @@ const Home: NextPage = () => {
             <JitViewById jitId={"clphbfazb0001t9797u599m7i"} />
           </CardContent> */}
 
-            <FullJitFeed />
+            <JitFeed />
           </>
         )}
         {/* <Button

@@ -5,40 +5,29 @@
 // ~../pages/index
 import { useState } from "react";
 import { api } from "~/utils/api";
-import { ActiveJitView } from "./ActiveJitView";
-import { InactiveJitView } from "./InactiveJitView";
+import { JitView } from "./JitView";
 import { Search } from "lucide-react";
 
 // ... (other imports and code)
 
-export const FullJitFeed = () => {
-  let allJits = api.jits.getAll.useQuery().data;
-  const allActiveJits = api.activeJits.getAllKnownByThisUser.useQuery().data;
+export const JitFeed = () => {
+  const allJits = api.jits.getAll.useQuery().data;
 
   const [searchTerm, setSearchTerm] = useState("");
 
   if (!allJits) return <div>Something went wrong</div>;
 
-  if (allActiveJits) {
-    const activeJitIds = allActiveJits.map((activeJit) => activeJit.jitId);
-    // Filter out Jits whose id is in activeJitIds
-    allJits = allJits.filter((jit) => !activeJitIds.includes(jit.id));
-  }
+  console.log("allJits", allJits);
 
   // Convert search term to lowercase for case-insensitive comparison
   const lowerCaseSearchTerm = searchTerm.toLowerCase();
 
   // Filter jits based on the search term
-  const filteredActiveJits = allActiveJits?.filter(
-    (activeJit) =>
-      activeJit.jit.name.toLowerCase().includes(lowerCaseSearchTerm) ||
-      activeJit.jit.position.name.toLowerCase().includes(lowerCaseSearchTerm),
-  );
-
-  const filteredJits = allJits.filter(
+  const filteredJits = allJits?.filter(
     (jit) =>
-      jit.name.toLowerCase().includes(lowerCaseSearchTerm) ||
-      jit.position.name.toLowerCase().includes(lowerCaseSearchTerm),
+      jit.category?.name.toLowerCase().includes(lowerCaseSearchTerm) ??
+      jit.position?.name.toLowerCase().includes(lowerCaseSearchTerm) ??
+      jit.move?.name.toLowerCase().includes(lowerCaseSearchTerm),
   );
 
   return (
@@ -58,17 +47,10 @@ export const FullJitFeed = () => {
         />
       </div>
 
-      {/* Render ActiveJitViews based on the filtered results */}
-      {filteredActiveJits?.map((activeJit) => (
-        <div key={activeJit.jitId}>
-          <ActiveJitView activeJit={activeJit} />
-        </div>
-      ))}
-
-      {/* Render InactiveJitViews based on the filtered results */}
-      {filteredJits.map((jit) => (
+      {/* Render JitViews based on the filtered results */}
+      {filteredJits?.map((jit) => (
         <div key={jit.id}>
-          <InactiveJitView jit={jit} />
+          <JitView jit={jit} />
         </div>
       ))}
     </div>

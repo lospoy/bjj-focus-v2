@@ -1,4 +1,4 @@
-// Useful Prisma Schema visualizer https://prisma-editor.vercel.app
+// Useful Prisma Schema visualizer https://prisma-editor.vercel.
 
 generator client {
   provider = "prisma-client-js"
@@ -10,135 +10,137 @@ datasource db {
   relationMode = "prisma"
 }
 
-enum JitCategory {
-  ESCAPE
-  SUBMISSION
-  SWEEP
-  PASS
-  CONTROL
-  GUARD
-  TAKEDOWN
-}
-
-enum JitPercentage {
-  LOW
-  HIGH
-}
-
-model Position {
-  id   String @id @default(cuid())
-  name String @unique
-
-  // Relationships
-  jits Jit[] @relation("PositionJits")
-
-  // Indexes
-  @@index([name])
-}
-
-model Jit {
-  id           String        @id @default(cuid())
-  createdOn    DateTime      @default(now())
-  uniqueNumber Int           @unique @default(0)
-  name         String        @default("")
-  category     JitCategory
-  percentage   JitPercentage
-
-  // Relationships
-  users        User[]         @relation("JitParticipants")
-  position     Position       @relation("PositionJits", fields: [positionId], references: [id])
-  SequenceJits SequenceJits[]
-  ActiveJit    ActiveJit[]
-  positionId   String         @default("")
-
-  // Indexes
-  @@index([category, percentage])
-  @@index([positionId])
-  @@index([uniqueNumber])
-}
-
-enum UserRole {
-  USER
-  COACH
-  MANAGER
-  ADMIN
+enum userRole {
+  ADMIN // Full control over the system
+  USER // Normal user, manages their own jits, sequences, etc
+  COACH // Same as User + can manage curriculums, manage groups
+  MANAGER // Same as Coach + can manage coaches
 }
 
 model User {
-  id        String   @id @default(cuid())
-  firstName String
-  lastName  String
-  role      UserRole
-  createdOn DateTime @default(now())
+  id              String           @id @default(uuid())
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  email           String           @unique
+  metadata        Json?
+  firstName       String?
+  lastName        String?
+  userName        String?
+  DOB             DateTime?
+  role            userRole         @default(USER)
+  jits            Jit[]
+  userCurriculums UserCurriculum[]
 
-  // Relationships
-  jits       Jit[]       @relation("JitParticipants")
-  activeJits ActiveJit[] @relation("ActiveJits")
-  groups     Group[]     @relation("GroupMembers")
-  sequences  Sequence[]  @relation("UserSequences")
+  @@index([id])
 }
 
-model Group {
-  id        String   @id @default(cuid())
-  title     String
-  createdOn DateTime @default(now())
-  creatorId String
+model Jit {
+  id         String   @id @default(uuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  isFavorite Boolean  @default(false)
+  isGoal     Boolean  @default(false)
+  metadata   Json?
 
   // Relationships
-  members User[] @relation("GroupMembers")
-}
+  sessions     Session[]
+  user         User        @relation(fields: [userId], references: [id])
+  userId       String
+  curriculum   Curriculum? @relation(fields: [curriculumId], references: [id])
+  curriculumId String?
+  category     Category?   @relation(fields: [categoryId], references: [id])
+  categoryId   String?
+  position     Position?   @relation(fields: [positionId], references: [id])
+  positionId   String?
+  move         Move?       @relation(fields: [moveId], references: [id])
+  moveId       String?
 
-model ActiveJit {
-  activatedOn  DateTime @default(now())
-  lastUpdated  DateTime @default(now()) @updatedAt
-  level        Int      @default(1)
-  hitRolling   Int      @default(0)
-  hitCompeting Int      @default(0)
-  notes        String   @default("")
-
-  // Relationships
-  user User @relation("ActiveJits", fields: [userId], references: [id])
-  jit  Jit  @relation(fields: [jitId], references: [id])
-
-  // Fields that represent foreign keys to improve query performance
-  // Added @map directive to improve database integrity
-  userId String @map("user_id")
-  jitId  String @map("jit_id")
-
-  @@id([userId, jitId])
   @@index([userId])
+  @@index([curriculumId])
+  @@index([categoryId])
+  @@index([positionId])
+  @@index([moveId])
+}
+
+model Category {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  metadata  Json?
+  Jit       Jit[]
+}
+
+model Position {
+  id          String       @id @default(uuid())
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  name        String
+  metadata    Json?
+  customNames CustomName[]
+  Jit         Jit[]
+}
+
+model Move {
+  id          String       @id @default(uuid())
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  name        String
+  customName  String?
+  metadata    Json?
+  customNames CustomName[]
+  Jit         Jit[]
+}
+
+model Curriculum {
+  id              String           @id @default(uuid())
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  name            String?
+  metadata        Json?
+  userCurriculums UserCurriculum[]
+  jits            Jit[]
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  jit       Jit      @relation(fields: [jitId], references: [id])
+  jitId     String
+  metadata  Json?
+  notes     String?
+
   @@index([jitId])
 }
 
-model Sequence {
-  id        String   @id @default(cuid())
-  createdOn DateTime @default(now())
-  name      String?
+model UserCurriculum {
+  id           String     @id @default(uuid())
+  user         User       @relation(fields: [userId], references: [id])
+  userId       String
+  curriculum   Curriculum @relation(fields: [curriculumId], references: [id])
+  curriculumId String
+  metadata     Json?
 
-  // Relationships
-  user User @relation("UserSequences", fields: [ownerId], references: [id])
-
-  // Fields that represent foreign keys to improve query performance
-  // Added @map directive to improve database integrity
-  ownerId      String         @map("owner_id")
-  jitName      String         @map("jit_name")
-  SequenceJits SequenceJits[]
-
-  // Indexes
-  @@index([ownerId])
-  @@index([jitName])
+  @@index([userId])
+  @@index([curriculumId])
 }
 
-model SequenceJits {
-  id         String   @id @default(cuid())
-  createdOn  DateTime @default(now())
-  sequence   Sequence @relation(fields: [sequenceId], references: [id])
-  sequenceId String
-  jit        Jit      @relation(fields: [jitId], references: [id])
-  jitId      String
-  order      Int
+model CustomName {
+  id         String               @id @default(uuid())
+  name       String
+  entityType AssociatedEntityType @default(Position)
+  position   Position?            @relation(fields: [positionId], references: [id])
+  positionId String?
+  move       Move?                @relation(fields: [moveId], references: [id])
+  moveId     String?
+  metadata   Json?
 
-  // Indexes
-  @@index([sequenceId])
-  @@index([jitId])
+  @@index([positionId])
+  @@index([moveId])
+}
+
+enum AssociatedEntityType {
+  Position
+  Move
 }
