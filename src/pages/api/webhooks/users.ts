@@ -5,7 +5,7 @@ import type { WebhookEvent } from "@clerk/nextjs/server";
 import { Webhook } from "svix";
 import { PrismaClient } from "@prisma/client";
 
-const webhookSecret: string = process.env.WEBHOOK_SECRET ?? "";
+const webhookSecret: string = process.env.USERS_WEBHOOK_SECRET ?? "";
 
 export default async function handler(
   req: NextApiRequestWithSvixRequiredHeaders,
