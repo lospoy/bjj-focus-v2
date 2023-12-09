@@ -30,8 +30,6 @@ export const JitView = (props: { jit: Jit }) => {
     const eyes = [];
     const sessionCount = jit.sessionCount;
 
-    console.log("sessionCount", sessionCount);
-
     // sessionCount values between 0 and 5 will open the eyes one by one
     if (sessionCount <= 5) {
       for (let i = 0; i < 5; i++) {
@@ -63,9 +61,7 @@ export const JitView = (props: { jit: Jit }) => {
     return eyes;
   };
 
-  // The function increases updatedLevel based on sessionCount
-  //    with a somewhat direct relationship at the beginning
-  //    the ratio then tapers off as sessionCount gets bigger
+  // This should return a specific belt + stripe instead of a number
   const calculateBelt = (sessionCount: number) => {
     if (sessionCount <= 0) {
       return 7;
