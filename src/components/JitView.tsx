@@ -8,17 +8,14 @@ import { api, type RouterOutputs } from "~/utils/api";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { Badge } from "~/components/ui/badge";
 import { EyeClosedIcon } from "@radix-ui/react-icons";
 import { Icons } from "./ui/icons";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Button } from "./ui/button";
 import { BookmarkIcon, LeafyGreenIcon } from "lucide-react";
 
 type Jit = RouterOutputs["jits"]["getAll"][number];
@@ -27,6 +24,7 @@ export const JitView = (props: { jit: Jit }) => {
   const { jit } = props;
   const ctx = api.useUtils();
   const { mutate, isLoading: isSaving } = api.sessions.create.useMutation();
+  const updateJit = api.jits.updateById.useMutation();
 
   const renderEyeIcons = () => {
     const eyes = [];
@@ -101,9 +99,28 @@ export const JitView = (props: { jit: Jit }) => {
     }
   };
 
+  const handleFavoriteClick = () => {
+    try {
+      updateJit.mutate({
+        id: jit.id,
+        isFavorite: !jit.isFavorite,
+      });
+
+      console.log("jit.isFavorite", jit.isFavorite);
+      console.log("jitId", jit.id);
+      // If mutate succeeds, update UI and invalidate the data
+      setTimeout(() => {
+        void ctx.jits.getAll.invalidate();
+      }, 2000);
+    } catch (e: unknown) {
+      toast.error("Failed to update. Please try again later.");
+    }
+  };
+
   return (
     <Card key={jit.id} className="relative mb-9 bg-inherit pl-4">
       <div className="flex h-[90px]">
+        {jit.id}
         <CardHeader className="w-8/12 p-0 ">
           <div className="mt-3 flex h-full flex-col justify-center -space-y-1">
             {/* CARD TITLE */}
@@ -145,13 +162,18 @@ export const JitView = (props: { jit: Jit }) => {
             </CardTitle>
           </div>
         </CardHeader>
-        <CardContent className="w-4/12 p-0 pt-1.5">
-          <div className="flex h-1/2 flex-col items-end justify-center pr-3 pt-1.5">
-            <button>
-              <BookmarkIcon className="h-5 w-5" />
-            </button>
-            <button>
-              <LeafyGreenIcon className="h-5 w-5" />
+
+        <CardContent className="w-4/12 pr-2 pt-1">
+          <div className="flex h-1/2 flex-col items-end justify-center">
+            <button onClick={handleFavoriteClick}>
+              {jit.isFavorite ? (
+                <BookmarkIcon
+                  fill="currentColor"
+                  className="h-5 w-5 text-blue-800"
+                />
+              ) : (
+                <BookmarkIcon className="h-5 w-5 text-blue-800" />
+              )}
             </button>
           </div>
         </CardContent>

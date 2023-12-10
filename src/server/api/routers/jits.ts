@@ -25,8 +25,8 @@ const JitSchema = z.object({
     )
     .optional(),
   curriculumId: z.string().optional(),
-  isFavorite: z.boolean(),
-  isGoal: z.boolean(),
+  isFavorite: z.boolean().optional(),
+  isGoal: z.boolean().optional(),
   categoryId: z.string().optional(),
   positionId: z.string().optional(),
   moveId: z.string().optional(),
@@ -140,8 +140,8 @@ export const jitsRouter = createTRPCRouter({
         data: {
           metadata: input.metadata ?? { set: null },
           curriculumId: input.curriculumId ?? null,
-          isFavorite: input.isFavorite ?? null,
-          isGoal: input.isGoal ?? null,
+          isFavorite: input.isFavorite,
+          isGoal: input.isGoal,
         },
       });
 
