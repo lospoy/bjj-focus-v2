@@ -120,7 +120,6 @@ export const JitView = (props: { jit: Jit }) => {
   return (
     <Card key={jit.id} className="relative mb-9 bg-inherit pl-4">
       <div className="flex h-[90px]">
-        {jit.id}
         <CardHeader className="w-8/12 p-0 ">
           <div className="mt-3 flex h-full flex-col justify-center -space-y-1">
             {/* CARD TITLE */}
