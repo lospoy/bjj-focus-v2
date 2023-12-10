@@ -18,6 +18,8 @@ import { EyeClosedIcon } from "@radix-ui/react-icons";
 import { Icons } from "./ui/icons";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Button } from "./ui/button";
+import { BookmarkIcon, LeafyGreenIcon } from "lucide-react";
 
 type Jit = RouterOutputs["jits"]["getAll"][number];
 
@@ -102,32 +104,55 @@ export const JitView = (props: { jit: Jit }) => {
   return (
     <Card key={jit.id} className="relative mb-9 bg-inherit pl-4">
       <div className="flex h-[90px]">
-        <div className="absolute -left-2 -top-4 flex bg-gray-50 px-2 py-1">
-          <span className="h-4 font-serif text-sm">#</span>
-        </div>
         <CardHeader className="w-8/12 p-0 ">
           <div className="mt-3 flex h-full flex-col justify-center -space-y-1">
-            <CardTitle className="-mt-2 text-2xl leading-5">
-              {jit.category?.name}
+            {/* CARD TITLE */}
+            <CardTitle className="-mt-2 flex flex-col text-2xl leading-5">
+              {/* CATEGORY & MOVE & POSITION */}
+              {jit.category && jit.position && jit.move && (
+                <>
+                  <span className="text-sm">{jit.category.name}</span>
+                  <span>{jit.move.name}</span>
+                  <span className="text-sm">from {jit.position.name}</span>
+                </>
+              )}
+              {/* CATEGORY & POSITION */}
+              {jit.category && jit.position && !jit.move && (
+                <>
+                  <span className="text-sm">any {jit.category.name}</span>
+                  <span>from {jit.position.name}</span>
+                </>
+              )}
+              {/* CATEGORY & MOVE */}
+              {jit.category && !jit.position && jit.move && (
+                <>
+                  <span className="text-sm">{jit.category.name}</span>
+                  <span>{jit.move.name}s</span>
+                </>
+              )}
+              {/* POSITION */}
+              {!jit.category && jit.position && !jit.move && (
+                <>
+                  <span>{jit.position.name}</span>
+                </>
+              )}
+              {/* MOVE */}
+              {!jit.category && !jit.position && jit.move && (
+                <>
+                  <span>{jit.move.name}s</span>
+                </>
+              )}
             </CardTitle>
-            <CardDescription className="text-lg">
-              <span className="pr-0.5 text-xs">from</span>
-              {jit.position?.name}
-            </CardDescription>
           </div>
         </CardHeader>
-        <CardContent className="w-4/12 p-0">
-          <div className="-mt-1 flex h-full flex-col justify-center -space-y-1 pr-6 text-right">
-            <a>
-              <Badge variant="outline" className="text-[10px]">
-                {jit.category?.name}
-              </Badge>
-            </a>
-            <a>
-              <Badge variant="outline" className="text-[10px]">
-                curriculum
-              </Badge>
-            </a>
+        <CardContent className="w-4/12 p-0 pt-1.5">
+          <div className="flex h-1/2 flex-col items-end justify-center pr-3 pt-1.5">
+            <button>
+              <BookmarkIcon className="h-5 w-5" />
+            </button>
+            <button>
+              <LeafyGreenIcon className="h-5 w-5" />
+            </button>
           </div>
         </CardContent>
       </div>
@@ -162,8 +187,8 @@ export const JitView = (props: { jit: Jit }) => {
           </div>
         </div>
         <div className="flex w-4/12 justify-end pr-6">
-          <span className="pr-0.5 text-5xl">belt level</span>
-          <span className="pr-0.5 text-5xl">
+          <span className="pr-0.5 text-xl">belt level</span>
+          <span className="pr-0.5 text-xl">
             {calculateBelt(jit.sessionCount)}
           </span>
         </div>
