@@ -18,8 +18,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { BookmarkIcon } from "lucide-react";
 import { Button } from "./ui/button";
-import { Span } from "next/dist/trace";
 import { Badge } from "./ui/badge";
+import { Belt } from "./ui/belt";
 
 type Jit = RouterOutputs["jits"]["getAll"][number];
 
@@ -87,17 +87,30 @@ export const JitView = (props: { jit: Jit }) => {
     return eyes;
   };
 
-  // This should return a specific belt + stripe instead of a number
-  const calculateBelt = (sessionCount: number) => {
-    if (sessionCount <= 0) {
-      return 7;
-    } else if (sessionCount >= 15) {
-      return 32;
-    } else {
-      return [7, 12, 15, 18, 20, 22, 24, 25, 26, 27, 28, 29, 30, 31, 32][
-        Math.floor(sessionCount)
-      ];
+  const calculateAndRenderBelt = (sessionCount: number) => {
+    let numberOfStripes = 0;
+    let beltColor: "white" | "blue" = "white";
+
+    if (sessionCount === 2) {
+      numberOfStripes = 1;
+    } else if (sessionCount >= 3 && sessionCount < 5) {
+      numberOfStripes = 2;
+    } else if (sessionCount >= 5 && sessionCount < 7) {
+      numberOfStripes = 3;
+    } else if (sessionCount >= 7 && sessionCount < 10) {
+      numberOfStripes = 4;
+    } else if (sessionCount >= 10) {
+      numberOfStripes = 0;
+      beltColor = "blue";
     }
+
+    return (
+      <Belt
+        className="z-10 -mr-1 h-8 w-max rounded-sm drop-shadow-lg"
+        numberOfStripes={numberOfStripes}
+        beltColor={beltColor}
+      />
+    );
   };
 
   const handleAddSessionClick = () => {
@@ -242,7 +255,7 @@ export const JitView = (props: { jit: Jit }) => {
 
         {/* BELT */}
         <div className="flex w-6/12 justify-end">
-          <Icons.purpleBelt className="z-10 -mr-1 h-8 w-max rounded-sm drop-shadow-lg" />
+          {calculateAndRenderBelt(jit.sessionCount)}
         </div>
       </CardContent>
 
@@ -250,7 +263,7 @@ export const JitView = (props: { jit: Jit }) => {
       <CardFooter className="flex h-0 items-start justify-center">
         <Button
           onClick={handleAddSessionClick}
-          className="mt-1 font-mono font-semibold"
+          className="mt-1 h-8 font-mono font-semibold"
         >
           {jit.sessionCount <= 10 ? (
             <span>HIT ROLLING</span>
