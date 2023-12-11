@@ -29,6 +29,7 @@ export const JitView = (props: { jit: Jit }) => {
   const addSession = api.sessions.create.useMutation();
   const updateJit = api.jits.updateById.useMutation();
 
+  // Returns human-readable date based on the difference between the current date and the date passed in
   const formatDate = (date: Date | null | undefined): string => {
     if (!date) {
       return "Unknown";
@@ -225,12 +226,12 @@ export const JitView = (props: { jit: Jit }) => {
       <CardContent className="flex h-16 p-0">
         {/* SESSIONS */}
         {jit.sessionCount <= 10 ? (
-          <div className="flex w-8/12 flex-col">
+          <div className="flex w-6/12 flex-col">
             <h3 className="font-mono text-xs">hit rolling</h3>
             <span className="flex space-x-2">{renderEyeIcons()}</span>
           </div>
         ) : (
-          <div className="flex w-8/12 flex-col ">
+          <div className="flex w-6/12 flex-col ">
             <div className="flex flex-row">
               <Badge className="font-mono text-xs text-accent">
                 hit rolling: {renderEyeIcons()}
@@ -240,8 +241,8 @@ export const JitView = (props: { jit: Jit }) => {
         )}
 
         {/* BELT */}
-        <div className="flex w-4/12 justify-end">
-          <span className="text-xl">belt level</span>
+        <div className="flex w-6/12 justify-end">
+          <Icons.purpleBelt className="z-10 -mr-1 h-8 w-max rounded-sm drop-shadow-lg" />
         </div>
       </CardContent>
 

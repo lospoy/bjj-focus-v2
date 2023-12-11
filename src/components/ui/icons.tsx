@@ -206,4 +206,132 @@ export const Icons = {
       />
     </svg>
   ),
+  whiteBelt: (props: IconProps) => (
+    <svg width={100} height={20} xmlns="http://www.w3.org/2000/svg" {...props}>
+      <rect y={1} width="100%" height="90%" fill="#fdfdfb" />
+      <rect y={1} x={9} width="45%" height="90%" />
+      <rect y={0.5} x={16} width={4} height="94%" fill="#fdfdfb" />
+      <rect y={0.5} x={24} width={4} height="94%" fill="#fdfdfb" />
+      <rect y={0.5} x={32} width={4} height="94%" fill="#fdfdfb" />
+      <rect y={0.5} x={40} width={4} height="94%" fill="#fdfdfb" />
+      <line
+        x1={0}
+        y1="25%"
+        x2="10%"
+        y2="25%"
+        stroke="#000"
+        strokeWidth={0.1}
+        strokeDasharray="2 2"
+      />
+      <line
+        x1={0}
+        y1="50%"
+        x2="10%"
+        y2="50%"
+        stroke="#000"
+        strokeWidth={0.1}
+        strokeDasharray="2 2"
+      />
+      <line
+        x1={0}
+        y1="75%"
+        x2="10%"
+        y2="75%"
+        stroke="#000"
+        strokeWidth={0.1}
+        strokeDasharray="2 2"
+      />
+      <line
+        x1="50%"
+        y1="25%"
+        x2="100%"
+        y2="25%"
+        stroke="#000"
+        strokeWidth={0.1}
+        strokeDasharray="2 2"
+      />
+      <line
+        x1="50%"
+        y1="50%"
+        x2="100%"
+        y2="50%"
+        stroke="#000"
+        strokeWidth={0.1}
+        strokeDasharray="2 2"
+      />
+      <line
+        x1="50%"
+        y1="75%"
+        x2="100%"
+        y2="75%"
+        stroke="#000"
+        strokeWidth={0.1}
+        strokeDasharray="2 2"
+      />
+    </svg>
+  ),
+  purpleBelt: (props: IconProps) => (
+    <svg width={100} height={20} xmlns="http://www.w3.org/2000/svg" {...props}>
+      <rect y={1} width="100%" height="100%" fill="#9a4eaf" />
+      <rect y={1} x={14} width="45%" height="100%" />
+      <rect y={0.5} x={24} width={7} height="100%" fill="#fdfdfb" />
+      <rect y={0.5} x={38} width={7} height="100%" fill="#fdfdfb" />
+      <rect y={0.5} x={50.5} width={7} height="100%" fill="#fdfdfb" />
+      <rect y={0.5} x={64} width={7} height="100%" fill="#fdfdfb" />
+      <line
+        x1={0}
+        y1="25%"
+        x2="10%"
+        y2="25%"
+        stroke="#000"
+        strokeWidth={0.1}
+        strokeDasharray="2 2"
+      />
+      <line
+        x1={0}
+        y1="50%"
+        x2="10%"
+        y2="50%"
+        stroke="#000"
+        strokeWidth={0.1}
+        strokeDasharray="2 2"
+      />
+      <line
+        x1={0}
+        y1="75%"
+        x2="10%"
+        y2="75%"
+        stroke="#000"
+        strokeWidth={0.1}
+        strokeDasharray="2 2"
+      />
+      <line
+        x1="50%"
+        y1="25%"
+        x2="100%"
+        y2="25%"
+        stroke="#000"
+        strokeWidth={0.1}
+        strokeDasharray="2 2"
+      />
+      <line
+        x1="50%"
+        y1="50%"
+        x2="100%"
+        y2="50%"
+        stroke="#000"
+        strokeWidth={0.1}
+        strokeDasharray="2 2"
+      />
+      <line
+        x1="50%"
+        y1="75%"
+        x2="100%"
+        y2="75%"
+        stroke="#000"
+        strokeWidth={0.1}
+        strokeDasharray="2 2"
+      />
+    </svg>
+  ),
 };
