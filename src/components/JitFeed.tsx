@@ -17,8 +17,6 @@ export const JitFeed = () => {
 
   if (!allJits) return <div>Something went wrong</div>;
 
-  console.log("allJits", allJits);
-
   // Convert search term to lowercase for case-insensitive comparison
   const lowerCaseSearchTerm = searchTerm.toLowerCase();
 
