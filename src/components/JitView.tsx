@@ -62,8 +62,8 @@ export const JitView = (props: { jit: Jit }) => {
     if (sessionCount <= 5) {
       for (let i = 0; i < 5; i++) {
         i < sessionCount
-          ? eyes.push(<Icons.eyeHalf key={i} className={`h-5 w-5`} />)
-          : eyes.push(<EyeClosedIcon key={i} className={`h-5 w-5`} />);
+          ? eyes.push(<Icons.eyeHalf key={i} className={`h-6 w-6`} />)
+          : eyes.push(<EyeClosedIcon key={i} className={`h-6 w-6`} />);
       }
     }
     // sessionCount values between 6 and 10 will modify the opened eyes one by one
@@ -71,9 +71,9 @@ export const JitView = (props: { jit: Jit }) => {
       for (let i = 5; i < 10; i++) {
         i < sessionCount
           ? eyes.push(
-              <Icons.eyeFull key={i} className={`h-5 w-5 fill-accent`} />,
+              <Icons.eyeFull key={i} className={`h-6 w-6 fill-accent`} />,
             )
-          : eyes.push(<Icons.eyeHalf key={i} className={`h-5 w-5`} />);
+          : eyes.push(<Icons.eyeHalf key={i} className={`h-6 w-6`} />);
       }
     }
     // sessionCount values over 10 will return one eye
@@ -106,7 +106,7 @@ export const JitView = (props: { jit: Jit }) => {
 
     return (
       <Belt
-        className="z-10 -mr-1 h-8 w-max rounded-sm drop-shadow-lg"
+        className="z-10 -mr-1 h-8 w-full rounded-sm drop-shadow-lg"
         numberOfStripes={numberOfStripes}
         beltColor={beltColor}
       />
@@ -240,8 +240,8 @@ export const JitView = (props: { jit: Jit }) => {
         {/* SESSIONS */}
         {jit.sessionCount <= 10 ? (
           <div className="flex w-6/12 flex-col">
-            <h3 className="font-mono text-xs">hit rolling</h3>
-            <span className="flex space-x-2">{renderEyeIcons()}</span>
+            <h3 className="-mb-1 font-mono text-xs">hit rolling</h3>
+            <span className="flex space-x-1.5">{renderEyeIcons()}</span>
           </div>
         ) : (
           <div className="flex w-6/12 flex-col ">
