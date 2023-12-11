@@ -22,7 +22,6 @@ import {
   DialogTrigger,
 } from "./ui/dialog";
 import { Input } from "./ui/input";
-import { Label } from "./ui/label";
 import { EyeClosedIcon } from "@radix-ui/react-icons";
 import { Icons } from "./ui/icons";
 import { ToastContainer, toast } from "react-toastify";
