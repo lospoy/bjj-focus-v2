@@ -59,7 +59,12 @@ export const Belt = (props: BeltProps) => {
     ];
 
     for (let i = 0; i < linePositions.length; i++) {
-      const { x1, y1, x2, y2 } = linePositions[i];
+      const { x1, y1, x2, y2 } = linePositions[i] as {
+        x1: string | number;
+        y1: string | number;
+        x2: string | number;
+        y2: string | number;
+      };
       lines.push(
         <line
           key={i}
