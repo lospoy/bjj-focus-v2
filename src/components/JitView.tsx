@@ -11,15 +11,28 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "~/components/ui/card";
+} from "./ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
 import { EyeClosedIcon } from "@radix-ui/react-icons";
 import { Icons } from "./ui/icons";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { BookmarkIcon } from "lucide-react";
+import { BookmarkIcon, SaveIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { Belt } from "./ui/belt";
+import { JitNotesFeed } from "./JitNotesFeed";
+import { useState } from "react";
 
 type Jit = RouterOutputs["jits"]["getAll"][number];
 
@@ -28,6 +41,8 @@ export const JitView = (props: { jit: Jit }) => {
   const ctx = api.useUtils();
   const addSession = api.sessions.create.useMutation();
   const updateJit = api.jits.updateById.useMutation();
+  const newNote = api.notes.create.useMutation();
+  const [inputValue, setInputValue] = useState("");
 
   // Returns human-readable date based on the difference between the current date and the date passed in
   const formatDate = (date: Date | null | undefined): string => {
@@ -53,6 +68,45 @@ export const JitView = (props: { jit: Jit }) => {
       return "over a year ago";
     }
   };
+
+  function renderJitTitle(jit: Jit) {
+    if (jit.category && jit.position && jit.move) {
+      return (
+        <>
+          <span className="text-sm">{jit.category.name}</span>
+          <span>{jit.move.name}</span>
+          <span className="text-sm">from {jit.position.name}</span>
+        </>
+      );
+    } else if (jit.category && jit.position && !jit.move) {
+      return (
+        <>
+          <span className="text-sm">any {jit.category.name}</span>
+          <span>from {jit.position.name}</span>
+        </>
+      );
+    } else if (jit.category && !jit.position && jit.move) {
+      return (
+        <>
+          <span className="text-sm">{jit.category.name}</span>
+          <span>{jit.move.name}s</span>
+        </>
+      );
+    } else if (!jit.category && jit.position && !jit.move) {
+      return (
+        <>
+          <span>{jit.position.name}</span>
+        </>
+      );
+    } else if (!jit.category && !jit.position && jit.move) {
+      return (
+        <>
+          <span>{jit.move.name}s</span>
+        </>
+      );
+    }
+    return null;
+  }
 
   const renderEyeIcons = () => {
     const eyes = [];
@@ -168,45 +222,33 @@ export const JitView = (props: { jit: Jit }) => {
     }
   };
 
+  const handleNewNoteInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setInputValue(event.target.value);
+  };
+
+  const handleSaveNewNoteClick = () => {
+    try {
+      newNote.mutate({
+        jitId: jit.id,
+        body: inputValue,
+      });
+      // If mutate succeeds, update UI and invalidate the data
+      setTimeout(() => {
+        void ctx.notes.getNotesByJitId.invalidate();
+      }, 2000);
+    } catch (e: unknown) {
+      toast.error("Failed to create new note. Please try again later.");
+    }
+  };
+
   return (
     <Card key={jit.id} className="relative mb-8 bg-inherit pl-3">
       <CardHeader className="mb-8 flex flex-row p-0 pt-2">
         {/* TITLE */}
         <CardTitle className="flex w-11/12 flex-col text-2xl leading-5">
-          {/* CATEGORY & MOVE & POSITION */}
-          {jit.category && jit.position && jit.move && (
-            <>
-              <span className="text-sm">{jit.category.name}</span>
-              <span>{jit.move.name}</span>
-              <span className="text-sm">from {jit.position.name}</span>
-            </>
-          )}
-          {/* CATEGORY & POSITION */}
-          {jit.category && jit.position && !jit.move && (
-            <>
-              <span className="text-sm">any {jit.category.name}</span>
-              <span>from {jit.position.name}</span>
-            </>
-          )}
-          {/* CATEGORY & MOVE */}
-          {jit.category && !jit.position && jit.move && (
-            <>
-              <span className="text-sm">{jit.category.name}</span>
-              <span>{jit.move.name}s</span>
-            </>
-          )}
-          {/* POSITION */}
-          {!jit.category && jit.position && !jit.move && (
-            <>
-              <span>{jit.position.name}</span>
-            </>
-          )}
-          {/* MOVE */}
-          {!jit.category && !jit.position && jit.move && (
-            <>
-              <span>{jit.move.name}s</span>
-            </>
-          )}
+          {renderJitTitle(jit)}
         </CardTitle>
         {/* FAVORITE / BOOKMARK */}
         <div className="flex w-1/12 flex-col">
@@ -224,15 +266,58 @@ export const JitView = (props: { jit: Jit }) => {
       </CardHeader>
 
       {/* NOTES */}
-      <CardContent className="mb-8 flex p-0">
-        <ul className="flex flex-col">
-          <li className="font-mono text-xs">
-            Consectetur adipisicing elit. Placeat in.
-          </li>
-          <li className="font-mono text-xs">
-            Maxime ipsa omnis provident adipisci sunt ullam.
-          </li>
-        </ul>
+      <CardContent className="mb-8 p-0">
+        <Dialog>
+          <DialogTrigger asChild>
+            <button className="text-left">
+              <ul className="">
+                <li className="font-mono text-xs">
+                  Consectetur adipisicing elit. Placeat in.
+                </li>
+                <li className="font-mono text-xs">
+                  Maxime ipsa omnis provident adipisci sunt ullam.
+                </li>
+              </ul>
+            </button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px] ">
+            <DialogHeader className="pb-6">
+              <DialogTitle className="flex flex-col text-2xl leading-5 ">
+                {renderJitTitle(jit)}
+              </DialogTitle>
+              <DialogDescription>
+                Manage your notes specific to this Focus.
+              </DialogDescription>
+            </DialogHeader>
+
+            {/* NEW NOTE */}
+            <div className="flex items-center pb-4 text-center font-mono">
+              <Input
+                id="new-note"
+                placeholder="New note..."
+                className="mr-2"
+                value={inputValue}
+                onChange={handleNewNoteInputChange}
+              />
+              <Button
+                onClick={handleSaveNewNoteClick}
+                type="submit"
+                className="px-2"
+              >
+                <SaveIcon className="h-5 w-5" />
+              </Button>
+            </div>
+
+            <div className="border-b-2"></div>
+
+            <div className="grid gap-2 pb-0">
+              <div className=" items-center gap-1 font-mono">
+                <JitNotesFeed jit={jit} />
+              </div>
+            </div>
+            <DialogFooter></DialogFooter>
+          </DialogContent>
+        </Dialog>
       </CardContent>
 
       {/* SESSIONS & BELT */}
