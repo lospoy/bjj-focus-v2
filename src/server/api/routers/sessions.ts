@@ -40,7 +40,6 @@ export const sessionsRouter = createTRPCRouter({
           createdAt: true,
           updatedAt: true,
           metadata: true,
-          notes: true,
           jitId: true,
         },
       });
@@ -62,7 +61,6 @@ export const sessionsRouter = createTRPCRouter({
           createdAt: true,
           updatedAt: true,
           metadata: true,
-          notes: true,
           jitId: true,
         },
       });
@@ -82,7 +80,6 @@ export const sessionsRouter = createTRPCRouter({
       const newSession = await ctx.prisma.session.create({
         data: {
           metadata: input.metadata ?? { set: null },
-          notes: input.notes ?? null,
           jitId: input.jitId,
         },
       });
