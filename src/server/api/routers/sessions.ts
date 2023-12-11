@@ -24,7 +24,6 @@ const SessionSchema = z.object({
     )
     .optional(),
   jitId: z.string(),
-  notes: z.string().optional(),
 });
 
 export const sessionsRouter = createTRPCRouter({
