@@ -34,6 +34,7 @@ import { JitNotesFeed } from "./JitNotesFeed";
 import { useState } from "react";
 
 type Jit = RouterOutputs["jits"]["getAll"][number];
+type Note = RouterOutputs["notes"]["getNotesByJitId"][number];
 
 export const JitView = (props: { jit: Jit }) => {
   const { jit } = props;
@@ -42,6 +43,10 @@ export const JitView = (props: { jit: Jit }) => {
   const updateJit = api.jits.updateById.useMutation();
   const newNote = api.notes.create.useMutation();
   const [inputValue, setInputValue] = useState("");
+  const allNotesFromThisJit = api.notes.getNotesByJitId.useQuery({
+    jitId: jit.id,
+  }).data;
+  const favoriteNotes = allNotesFromThisJit?.filter((note) => note.isFavorite);
 
   // Returns human-readable date based on the difference between the current date and the date passed in
   const formatDate = (date: Date | null | undefined): string => {
@@ -66,6 +71,17 @@ export const JitView = (props: { jit: Jit }) => {
     } else {
       return "over a year ago";
     }
+  };
+
+  const renderFavoriteNotes = (favoriteNotes: Note[]) => {
+    return favoriteNotes?.map((note) => (
+      <li
+        key={note.id}
+        className="rounded-md border-2 border-gray-200/50 p-1 font-mono text-xs"
+      >
+        {note.body}
+      </li>
+    ));
   };
 
   function renderJitTitle(jit: Jit) {
@@ -268,15 +284,14 @@ export const JitView = (props: { jit: Jit }) => {
       <CardContent className="mb-8 p-0">
         <Dialog>
           <DialogTrigger asChild>
-            <button className="text-left">
-              <ul className="">
-                <li className="font-mono text-xs">
-                  Consectetur adipisicing elit. Placeat in.
-                </li>
-                <li className="font-mono text-xs">
-                  Maxime ipsa omnis provident adipisci sunt ullam.
-                </li>
-              </ul>
+            <button className="pr-4 text-left">
+              {favoriteNotes?.length === 0 ? (
+                <span>Add notes</span>
+              ) : (
+                <ul className="space-y-2">
+                  {favoriteNotes && renderFavoriteNotes(favoriteNotes)}
+                </ul>
+              )}
             </button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px] ">
