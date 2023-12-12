@@ -108,7 +108,7 @@ export const notesRouter = createTRPCRouter({
         data: {
           metadata: input.metadata ?? { set: null },
           jitId: input.jitId,
-          body: input.body,
+          body: input.body ?? "empty note",
         },
       });
 
