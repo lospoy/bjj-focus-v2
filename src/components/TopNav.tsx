@@ -44,7 +44,7 @@ export default function TopNav() {
       <div className="mx-auto md:max-w-3xl">
         <div className="flex justify-between pt-3">
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+            <DropdownMenuTrigger asChild className="mt-1">
               <Menu />
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56 bg-background">
