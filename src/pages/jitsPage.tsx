@@ -1,34 +1,16 @@
-// Dashboard
+// JitsPage
 
 import { type NextPage } from "next";
 import { api } from "~/utils/api";
 import { SignInButton, useUser } from "@clerk/nextjs";
 import { PageLayout } from "~/components/ui/layout";
-import { useDispatch } from "react-redux";
-import { setUser } from "../store/actions/userActions";
-import { useEffect } from "react";
 import { JitFeed } from "~/components/JitFeed";
 
-const Home: NextPage = () => {
-  // Dispatching user data to Redux store
-  const dispatch = useDispatch();
+const JitsPage: NextPage = () => {
   const user = useUser().user;
-  const { isLoaded: userLoaded, isSignedIn } = useUser();
 
-  useEffect(() => {
-    if (user && userLoaded) {
-      // Ensure user data is not null or undefined before dispatching
-      const userData = {
-        firstName: user.firstName ?? "",
-        lastName: user.lastName ?? "",
-        username: user.username ?? "",
-        imageUrl: user.imageUrl ?? "",
-        email: user.primaryEmailAddress?.emailAddress ?? "",
-        id: user.id ?? "",
-      };
-      dispatch(setUser(userData));
-    }
-  }, [dispatch, user, userLoaded]);
+  // const router = useRouter();
+  const { isLoaded: userLoaded, isSignedIn } = useUser();
 
   // Start fetching asap
   // (React query will use cached data if the data doesn't change)
@@ -55,7 +37,7 @@ const Home: NextPage = () => {
 
         {user && (
           <>
-            <JitFeed dashboard={true} />
+            <JitFeed jitsPage={true} />
           </>
         )}
         {/* <Button
@@ -69,4 +51,4 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+export default JitsPage;

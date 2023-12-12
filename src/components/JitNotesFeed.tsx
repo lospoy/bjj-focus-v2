@@ -1,8 +1,6 @@
-// NoteFeed
-// Handles displaying all Notes
+// JitNotesFeed
+// Handles displaying all Notes related to a Jit
 
-// Used in:
-// ~../pages/index
 import { useState } from "react";
 import { type RouterOutputs, api } from "~/utils/api";
 import { Search } from "lucide-react";

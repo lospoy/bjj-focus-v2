@@ -1,12 +1,12 @@
-// NoteView
-// Handles displaying a single Active Note
+// JitNoteView
+// Handles displaying a single Note
 
 // Used in:
-// ~/FullNoteFeed
+// ~/JitNotesFeed
 
 import { api, type RouterOutputs } from "~/utils/api";
 import { Card, CardContent } from "./ui/card";
-import { BookmarkIcon, HeartIcon } from "lucide-react";
+import { HeartIcon } from "lucide-react";
 import { toast } from "react-toastify";
 
 type Note = RouterOutputs["notes"]["getNotesByJitId"][number];

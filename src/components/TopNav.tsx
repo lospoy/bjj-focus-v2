@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { UserNav } from "./user-nav";
-import { BurgerNav } from "./burger-nav";
+import { UserNav } from "./ui/user-nav";
+import { BurgerNav } from "./ui/burger-nav";
 
-export default function Navbar() {
+export default function TopNav() {
   return (
     <nav className="w-full bg-inherit px-4  md:border-0">
       <div className="mx-auto items-center md:max-w-3xl">
