@@ -6,7 +6,7 @@
 
 import { api, type RouterOutputs } from "~/utils/api";
 import { Card, CardContent } from "./ui/card";
-import { BookmarkIcon } from "lucide-react";
+import { BookmarkIcon, HeartIcon } from "lucide-react";
 import { toast } from "react-toastify";
 
 type Note = RouterOutputs["notes"]["getNotesByJitId"][number];
@@ -40,12 +40,12 @@ export const JitNoteView = (props: { note: Note }) => {
         <div className="flex w-1/12 flex-col">
           <button onClick={handleFavoriteClick}>
             {note.isFavorite ? (
-              <BookmarkIcon
+              <HeartIcon
                 fill="currentColor"
-                className="h-5 w-5 text-blue-800"
+                className="h-5 w-5 text-pink-800"
               />
             ) : (
-              <BookmarkIcon className="h-5 w-5 text-blue-800" />
+              <HeartIcon className="h-5 w-5 text-pink-800" />
             )}
           </button>
         </div>

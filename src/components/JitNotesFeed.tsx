@@ -44,7 +44,7 @@ export const JitNotesFeed = (props: { jit: Jit }) => {
           placeholder="search notes..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="text-md mb-4 flex h-10 w-full rounded bg-gray-400/10 pl-[14px] placeholder-gray-400 placeholder:font-mono placeholder:uppercase focus:border-none focus:outline-none focus:ring-0"
+          className="text-md mb-4 flex h-10 w-full rounded bg-pink-400/10 pl-[14px] placeholder-gray-400 placeholder:font-mono placeholder:uppercase focus:border-none focus:outline-none focus:ring-0"
         />
       </div>
 

@@ -26,7 +26,7 @@ import { EyeClosedIcon } from "@radix-ui/react-icons";
 import { Icons } from "./ui/icons";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { BookmarkIcon, SaveIcon } from "lucide-react";
+import { BookmarkIcon, Heart, SaveIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { Belt } from "./ui/belt";
@@ -77,9 +77,12 @@ export const JitView = (props: { jit: Jit }) => {
     return favoriteNotes?.map((note) => (
       <li
         key={note.id}
-        className="rounded-md border-2 border-gray-200/50 p-1 font-mono text-xs"
+        className="py-.5 flex items-start justify-between rounded-md border-2 border-gray-200/50 px-1 font-mono text-xs"
       >
         {note.body}
+        <div className="flex pt-[3px]">
+          <Heart fill="currentColor" className="h-3 w-3 text-pink-800" />
+        </div>
       </li>
     ));
   };
@@ -284,9 +287,13 @@ export const JitView = (props: { jit: Jit }) => {
       <CardContent className="mb-8 p-0">
         <Dialog>
           <DialogTrigger asChild>
-            <button className="pr-4 text-left">
+            <button className="w-full pr-4 text-center">
               {favoriteNotes?.length === 0 ? (
-                <span>Add notes</span>
+                <div className="w-full rounded-md border-2 border-gray-200/50 py-2 font-mono text-xs">
+                  <Button className="h-6 bg-transparent font-mono text-xs text-gray-700">
+                    ADD NOTES
+                  </Button>
+                </div>
               ) : (
                 <ul className="space-y-2">
                   {favoriteNotes && renderFavoriteNotes(favoriteNotes)}
@@ -316,7 +323,7 @@ export const JitView = (props: { jit: Jit }) => {
               <Button
                 onClick={handleSaveNewNoteClick}
                 type="submit"
-                className="px-2"
+                className="bg-pink-950 px-2"
               >
                 <SaveIcon className="h-5 w-5" />
               </Button>
@@ -343,9 +350,9 @@ export const JitView = (props: { jit: Jit }) => {
             <span className="flex space-x-1.5">{renderEyeIcons()}</span>
           </div>
         ) : (
-          <div className="flex w-6/12 flex-col ">
+          <div className="flex w-6/12 flex-col">
             <div className="flex flex-row">
-              <Badge className="font-mono text-xs text-accent">
+              <Badge className="mt-1 font-mono text-sm text-accent">
                 hit rolling: {renderEyeIcons()}
               </Badge>
             </div>
