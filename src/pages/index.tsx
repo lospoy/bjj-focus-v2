@@ -13,22 +13,22 @@ const Home: NextPage = () => {
   // Dispatching user data to Redux store
   const dispatch = useDispatch();
   const user = useUser().user;
+  const { isLoaded: userLoaded, isSignedIn } = useUser();
 
   useEffect(() => {
-    if (user) {
+    if (user && userLoaded) {
       // Ensure user data is not null or undefined before dispatching
       const userData = {
         firstName: user.firstName ?? "",
+        lastName: user.lastName ?? "",
+        username: user.username ?? "",
         imageUrl: user.imageUrl ?? "",
         email: user.primaryEmailAddress?.emailAddress ?? "",
         id: user.id ?? "",
       };
       dispatch(setUser(userData));
     }
-  }, [dispatch, user]);
-
-  // const router = useRouter();
-  const { isLoaded: userLoaded, isSignedIn } = useUser();
+  }, [dispatch, user, userLoaded]);
 
   // Start fetching asap
   // (React query will use cached data if the data doesn't change)
@@ -55,11 +55,7 @@ const Home: NextPage = () => {
 
         {user && (
           <>
-            {/* <CardContent>
-            <JitViewById jitId={"clphbfazb0001t9797u599m7i"} />
-          </CardContent> */}
-
-            <JitFeed />
+            <JitFeed dashboard={true} />
           </>
         )}
         {/* <Button
