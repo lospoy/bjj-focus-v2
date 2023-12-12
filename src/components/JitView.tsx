@@ -178,7 +178,7 @@ export const JitView = (props: { jit: Jit }) => {
 
     return (
       <Belt
-        className="z-10 -mr-1 h-8 w-full rounded-sm drop-shadow-lg"
+        className="-mr-1 h-8 w-full rounded-sm drop-shadow-lg"
         numberOfStripes={numberOfStripes}
         beltColor={beltColor}
       />
