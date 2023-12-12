@@ -4,8 +4,9 @@ import { api } from "~/utils/api";
 import "~/styles/globals.css";
 import { Provider } from "react-redux";
 import store from "~/store/store";
-import Navbar from "~/components/ui/navbar";
 import Head from "next/head";
+import TopNav from "~/components/TopNav";
+import BottomNav from "~/components/BottomNav";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
@@ -15,8 +16,9 @@ const MyApp: AppType = ({ Component, pageProps }) => {
           <link rel="manifest" href="/manifest.json" />
           <meta name="theme-color" content="#eb5683" />
         </Head>
-        <Navbar />
+        <TopNav />
         <Component {...pageProps} />
+        <BottomNav />
       </ClerkProvider>
     </Provider>
   );
