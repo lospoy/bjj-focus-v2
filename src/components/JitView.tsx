@@ -8,23 +8,123 @@ import { api, type RouterOutputs } from "~/utils/api";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "~/components/ui/card";
-import { Badge } from "~/components/ui/badge";
+} from "./ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
+import { Input } from "./ui/input";
 import { EyeClosedIcon } from "@radix-ui/react-icons";
 import { Icons } from "./ui/icons";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { BookmarkIcon, Heart, SaveIcon } from "lucide-react";
+import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
+import { Belt } from "./ui/belt";
+import { JitNotesFeed } from "./JitNotesFeed";
+import { useState } from "react";
 
 type Jit = RouterOutputs["jits"]["getAll"][number];
+type Note = RouterOutputs["notes"]["getNotesByJitId"][number];
 
 export const JitView = (props: { jit: Jit }) => {
   const { jit } = props;
   const ctx = api.useUtils();
-  const { mutate, isLoading: isSaving } = api.sessions.create.useMutation();
+  const addSession = api.sessions.create.useMutation();
+  const updateJit = api.jits.updateById.useMutation();
+  const newNote = api.notes.create.useMutation();
+  const [inputValue, setInputValue] = useState("");
+  const allNotesFromThisJit = api.notes.getNotesByJitId.useQuery({
+    jitId: jit.id,
+  }).data;
+  const favoriteNotes = allNotesFromThisJit?.filter((note) => note.isFavorite);
+
+  // Returns human-readable date based on the difference between the current date and the date passed in
+  const formatDate = (date: Date | null | undefined): string => {
+    if (!date) {
+      return "Unknown";
+    }
+
+    const currentDate = new Date();
+    const timeDiff = Math.abs(currentDate.getTime() - date.getTime());
+    const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+    if (daysDiff === 1) {
+      return "yesterday";
+    } else if (daysDiff === 0) {
+      return "today";
+    } else if (daysDiff < 30) {
+      return `${daysDiff} days ago`;
+    } else if (daysDiff < 365) {
+      const months = Math.floor(daysDiff / 30);
+      const remainingDays = daysDiff % 30;
+      return `${months} months ${remainingDays} days ago`;
+    } else {
+      return "over a year ago";
+    }
+  };
+
+  const renderFavoriteNotes = (favoriteNotes: Note[]) => {
+    return favoriteNotes?.map((note) => (
+      <li
+        key={note.id}
+        className="py-.5 flex items-start justify-between rounded-md border-2 border-gray-200/50 px-1 font-mono text-xs"
+      >
+        {note.body}
+        <div className="flex pt-[3px]">
+          <Heart fill="currentColor" className="h-3 w-3 text-pink-800" />
+        </div>
+      </li>
+    ));
+  };
+
+  function renderJitTitle(jit: Jit) {
+    if (jit.category && jit.position && jit.move) {
+      return (
+        <>
+          <span className="text-sm">{jit.category.name}</span>
+          <span>{jit.move.name}</span>
+          <span className="text-sm">from {jit.position.name}</span>
+        </>
+      );
+    } else if (jit.category && jit.position && !jit.move) {
+      return (
+        <>
+          <span className="text-sm">any {jit.category.name}</span>
+          <span>from {jit.position.name}</span>
+        </>
+      );
+    } else if (jit.category && !jit.position && jit.move) {
+      return (
+        <>
+          <span className="text-sm">{jit.category.name}</span>
+          <span>{jit.move.name}s</span>
+        </>
+      );
+    } else if (!jit.category && jit.position && !jit.move) {
+      return (
+        <>
+          <span>{jit.position.name}</span>
+        </>
+      );
+    } else if (!jit.category && !jit.position && jit.move) {
+      return (
+        <>
+          <span>{jit.move.name}s</span>
+        </>
+      );
+    }
+    return null;
+  }
 
   const renderEyeIcons = () => {
     const eyes = [];
@@ -34,8 +134,8 @@ export const JitView = (props: { jit: Jit }) => {
     if (sessionCount <= 5) {
       for (let i = 0; i < 5; i++) {
         i < sessionCount
-          ? eyes.push(<Icons.eyeHalf key={i} className={`h-5 w-5`} />)
-          : eyes.push(<EyeClosedIcon key={i} className={`h-5 w-5`} />);
+          ? eyes.push(<Icons.eyeHalf key={i} className={`h-6 w-6`} />)
+          : eyes.push(<EyeClosedIcon key={i} className={`h-6 w-6`} />);
       }
     }
     // sessionCount values between 6 and 10 will modify the opened eyes one by one
@@ -43,40 +143,51 @@ export const JitView = (props: { jit: Jit }) => {
       for (let i = 5; i < 10; i++) {
         i < sessionCount
           ? eyes.push(
-              <Icons.eyeFull key={i} className={`h-5 w-5 fill-accent`} />,
+              <Icons.eyeFull key={i} className={`h-6 w-6 fill-accent`} />,
             )
-          : eyes.push(<Icons.eyeHalf key={i} className={`h-5 w-5`} />);
+          : eyes.push(<Icons.eyeHalf key={i} className={`h-6 w-6`} />);
       }
     }
-    // sessionCount values between 11 and 15 will modify the opened eyes one by one
-    // if (sessionCount >= 11) {
-    //   for (let i = 10; i < 15; i++) {
-    //     i < sessionCount
-    //       ? eyes.push(<Icons.cherryCustom key={i} className={`h-5 w-5`} />)
-    //       : eyes.push(
-    //           <Icons.eyeFull key={i} className={`h-5 w-5 fill-accent`} />,
-    //         );
-    //   }
-    // }
+    // sessionCount values over 10 will return one eye
+    if (sessionCount > 10) {
+      eyes.length = 0;
+      eyes.push(
+        <Icons.eyeFull key={"just me luv"} className={`ml-1 h-4 w-4`} />,
+      );
+    }
+
     return eyes;
   };
 
-  // This should return a specific belt + stripe instead of a number
-  const calculateBelt = (sessionCount: number) => {
-    if (sessionCount <= 0) {
-      return 7;
-    } else if (sessionCount >= 15) {
-      return 32;
-    } else {
-      return [7, 12, 15, 18, 20, 22, 24, 25, 26, 27, 28, 29, 30, 31, 32][
-        Math.floor(sessionCount)
-      ];
+  const calculateAndRenderBelt = (sessionCount: number) => {
+    let numberOfStripes = 0;
+    let beltColor: "white" | "blue" = "white";
+
+    if (sessionCount === 2) {
+      numberOfStripes = 1;
+    } else if (sessionCount >= 3 && sessionCount < 5) {
+      numberOfStripes = 2;
+    } else if (sessionCount >= 5 && sessionCount < 7) {
+      numberOfStripes = 3;
+    } else if (sessionCount >= 7 && sessionCount < 10) {
+      numberOfStripes = 4;
+    } else if (sessionCount >= 10) {
+      numberOfStripes = 0;
+      beltColor = "blue";
     }
+
+    return (
+      <Belt
+        className="z-10 -mr-1 h-8 w-full rounded-sm drop-shadow-lg"
+        numberOfStripes={numberOfStripes}
+        beltColor={beltColor}
+      />
+    );
   };
 
-  const handleHitRollingClick = () => {
+  const handleAddSessionClick = () => {
     try {
-      mutate({
+      addSession.mutate({
         jitId: jit.id,
       });
       // If mutate succeeds, update UI and invalidate the data
@@ -84,89 +195,200 @@ export const JitView = (props: { jit: Jit }) => {
         void ctx.jits.getAll.invalidate();
       }, 2000);
 
-      toast.info("🦄 HIT ROLLING", {
-        position: "bottom-center",
-        autoClose: 2500,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
+      if (jit.sessionCount <= 10) {
+        toast.success("+1 HIT ROLLING", {
+          position: "bottom-center",
+          autoClose: 2500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
+
+      if (jit.sessionCount > 10) {
+        toast.info("SESSION ADDED", {
+          position: "bottom-center",
+          autoClose: 2500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
+    } catch (e: unknown) {
+      toast.error("Failed to add session. Please try again later.");
+    }
+  };
+
+  const handleFavoriteClick = () => {
+    try {
+      updateJit.mutate({
+        id: jit.id,
+        isFavorite: !jit.isFavorite,
       });
+      // If mutate succeeds, update UI and invalidate the data
+      setTimeout(() => {
+        void ctx.jits.getAll.invalidate();
+      }, 2000);
     } catch (e: unknown) {
       toast.error("Failed to update. Please try again later.");
     }
   };
 
-  return (
-    <Card key={jit.id} className="relative mb-9 bg-inherit pl-4">
-      <div className="flex h-[90px]">
-        <div className="absolute -left-2 -top-4 flex bg-gray-50 px-2 py-1">
-          <span className="h-4 font-serif text-sm">#</span>
-        </div>
-        <CardHeader className="w-8/12 p-0 ">
-          <div className="mt-3 flex h-full flex-col justify-center -space-y-1">
-            <CardTitle className="-mt-2 text-2xl leading-5">
-              {jit.category?.name}
-            </CardTitle>
-            <CardDescription className="text-lg">
-              <span className="pr-0.5 text-xs">from</span>
-              {jit.position?.name}
-            </CardDescription>
-          </div>
-        </CardHeader>
-        <CardContent className="w-4/12 p-0">
-          <div className="-mt-1 flex h-full flex-col justify-center -space-y-1 pr-6 text-right">
-            <a>
-              <Badge variant="outline" className="text-[10px]">
-                {jit.category?.name}
-              </Badge>
-            </a>
-            <a>
-              <Badge variant="outline" className="text-[10px]">
-                curriculum
-              </Badge>
-            </a>
-          </div>
-        </CardContent>
-      </div>
+  const handleNewNoteInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setInputValue(event.target.value);
+  };
 
-      <CardFooter className="h-16 items-start justify-center p-0">
-        <div className="flex w-8/12">
-          <div>
-            <button
-              onClick={handleHitRollingClick}
-              className="font-mono text-xs"
-            >
-              hit rolling
+  const handleSaveNewNoteClick = () => {
+    try {
+      newNote.mutate({
+        jitId: jit.id,
+        body: inputValue,
+      });
+      // If mutate succeeds, update UI and invalidate the data
+      setTimeout(() => {
+        void ctx.notes.getNotesByJitId.invalidate();
+      }, 2000);
+    } catch (e: unknown) {
+      toast.error("Failed to create new note. Please try again later.");
+    }
+  };
+
+  return (
+    <Card key={jit.id} className="relative mb-8 bg-inherit pl-3">
+      <CardHeader className="mb-8 flex flex-row p-0 pt-2">
+        {/* TITLE */}
+        <CardTitle className="flex w-11/12 flex-col text-2xl leading-5">
+          {renderJitTitle(jit)}
+        </CardTitle>
+        {/* FAVORITE / BOOKMARK */}
+        <div className="flex w-1/12 flex-col">
+          <button onClick={handleFavoriteClick}>
+            {jit.isFavorite ? (
+              <BookmarkIcon
+                fill="currentColor"
+                className="h-5 w-5 text-blue-800"
+              />
+            ) : (
+              <BookmarkIcon className="h-5 w-5 text-blue-800" />
+            )}
+          </button>
+        </div>
+      </CardHeader>
+
+      {/* NOTES */}
+      <CardContent className="mb-8 p-0">
+        <Dialog>
+          <DialogTrigger asChild>
+            <button className="w-full pr-4 text-center">
+              {favoriteNotes?.length === 0 ? (
+                <div className="w-full rounded-md border-2 border-gray-200/50 py-2 font-mono text-xs">
+                  <Button className="h-6 bg-transparent font-mono text-xs text-gray-700">
+                    ADD NOTES
+                  </Button>
+                </div>
+              ) : (
+                <ul className="space-y-2">
+                  {favoriteNotes && renderFavoriteNotes(favoriteNotes)}
+                </ul>
+              )}
             </button>
-            <button
-              onClick={handleHitRollingClick}
-              className="flex flex-row space-x-2"
-            >
-              {renderEyeIcons()}
-            </button>
-            <ToastContainer
-              position="bottom-center"
-              autoClose={2500}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              theme="light"
-            />
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px] ">
+            <DialogHeader className="pb-6">
+              <DialogTitle className="flex flex-col text-2xl leading-5 ">
+                {renderJitTitle(jit)}
+              </DialogTitle>
+              <DialogDescription>
+                Manage your notes specific to this Focus.
+              </DialogDescription>
+            </DialogHeader>
+
+            {/* NEW NOTE */}
+            <div className="flex items-center pb-4 text-center font-mono">
+              <Input
+                id="new-note"
+                placeholder="New note..."
+                className="mr-2"
+                value={inputValue}
+                onChange={handleNewNoteInputChange}
+              />
+              <Button
+                onClick={handleSaveNewNoteClick}
+                type="submit"
+                className="bg-pink-950 px-2"
+              >
+                <SaveIcon className="h-5 w-5" />
+              </Button>
+            </div>
+
+            <div className="border-b-2"></div>
+
+            <div className="grid gap-2 pb-0">
+              <div className=" items-center gap-1 font-mono">
+                <JitNotesFeed jit={jit} />
+              </div>
+            </div>
+            <DialogFooter></DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </CardContent>
+
+      {/* SESSIONS & BELT */}
+      <CardContent className="flex h-16 p-0">
+        {/* SESSIONS */}
+        {jit.sessionCount <= 10 ? (
+          <div className="flex w-6/12 flex-col">
+            <h3 className="-mb-1 font-mono text-xs">hit rolling</h3>
+            <span className="flex space-x-1.5">{renderEyeIcons()}</span>
           </div>
+        ) : (
+          <div className="flex w-6/12 flex-col">
+            <div className="flex flex-row">
+              <Badge className="mt-1 font-mono text-sm text-accent">
+                hit rolling: {renderEyeIcons()}
+              </Badge>
+            </div>
+          </div>
+        )}
+
+        {/* BELT */}
+        <div className="flex w-6/12 justify-end">
+          {calculateAndRenderBelt(jit.sessionCount)}
         </div>
-        <div className="flex w-4/12 justify-end pr-6">
-          <span className="pr-0.5 text-5xl">belt level</span>
-          <span className="pr-0.5 text-5xl">
-            {calculateBelt(jit.sessionCount)}
-          </span>
-        </div>
+      </CardContent>
+
+      {/* BUTTON */}
+      <CardFooter className="flex h-0 items-start justify-center">
+        <Button
+          onClick={handleAddSessionClick}
+          className="mt-1 h-8 font-mono font-semibold"
+        >
+          {jit.sessionCount <= 10 ? (
+            <span>HIT ROLLING</span>
+          ) : (
+            <span>ADD SESSION</span>
+          )}
+        </Button>
+        <ToastContainer
+          position="bottom-center"
+          autoClose={2500}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </CardFooter>
     </Card>
   );

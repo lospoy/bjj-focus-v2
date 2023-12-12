@@ -1,5 +1,5 @@
-// FullJitFeed
-// Handles displaying all Jits (known and unknown)
+// JitFeed
+// Handles displaying all Jits
 
 // Used in:
 // ~../pages/index
@@ -8,16 +8,12 @@ import { api } from "~/utils/api";
 import { JitView } from "./JitView";
 import { Search } from "lucide-react";
 
-// ... (other imports and code)
-
 export const JitFeed = () => {
   const allJits = api.jits.getAll.useQuery().data;
 
   const [searchTerm, setSearchTerm] = useState("");
 
   if (!allJits) return <div>Something went wrong</div>;
-
-  console.log("allJits", allJits);
 
   // Convert search term to lowercase for case-insensitive comparison
   const lowerCaseSearchTerm = searchTerm.toLowerCase();
@@ -29,6 +25,9 @@ export const JitFeed = () => {
       jit.position?.name.toLowerCase().includes(lowerCaseSearchTerm) ??
       jit.move?.name.toLowerCase().includes(lowerCaseSearchTerm),
   );
+
+  // Sort jits based on the number of sessions, descending order
+  filteredJits?.sort((a, b) => b.sessionCount - a.sessionCount);
 
   return (
     <div className="flex flex-col">

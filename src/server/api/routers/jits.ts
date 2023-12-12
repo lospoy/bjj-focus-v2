@@ -25,8 +25,8 @@ const JitSchema = z.object({
     )
     .optional(),
   curriculumId: z.string().optional(),
-  isFavorite: z.boolean(),
-  isGoal: z.boolean(),
+  isFavorite: z.boolean().optional(),
+  isGoal: z.boolean().optional(),
   categoryId: z.string().optional(),
   positionId: z.string().optional(),
   moveId: z.string().optional(),
@@ -68,7 +68,12 @@ export const jitsRouter = createTRPCRouter({
         orderBy: { createdAt: "asc" },
       });
 
-      return { ...jit, sessionCount, firstSession };
+      const lastSession = await ctx.prisma.session.findFirst({
+        where: { jitId: input.id },
+        orderBy: { createdAt: "desc" },
+      });
+
+      return { ...jit, sessionCount, firstSession, lastSession };
     }),
 
   getAllSessionsById: privateProcedure
@@ -112,17 +117,21 @@ export const jitsRouter = createTRPCRouter({
 
     if (!jits) throw new TRPCError({ code: "NOT_FOUND" });
 
-    const jitsWithSessionCount = await Promise.all(
+    const jitsWithSessionCountAndLastSession = await Promise.all(
       jits.map(async (jit) => {
         const sessionCount = await ctx.prisma.session.count({
           where: { jitId: jit.id },
         });
+        const lastSession = await ctx.prisma.session.findFirst({
+          where: { jitId: jit.id },
+          orderBy: { updatedAt: "desc" },
+        });
 
-        return { ...jit, sessionCount };
+        return { ...jit, sessionCount, lastSession };
       }),
     );
 
-    return jitsWithSessionCount;
+    return jitsWithSessionCountAndLastSession;
   }),
 
   updateById: privateProcedure
@@ -140,8 +149,8 @@ export const jitsRouter = createTRPCRouter({
         data: {
           metadata: input.metadata ?? { set: null },
           curriculumId: input.curriculumId ?? null,
-          isFavorite: input.isFavorite ?? null,
-          isGoal: input.isGoal ?? null,
+          isFavorite: input.isFavorite,
+          isGoal: input.isGoal,
         },
       });
 
@@ -163,8 +172,8 @@ export const jitsRouter = createTRPCRouter({
         moveId: input.moveId ?? null,
         metadata: input.metadata ?? { set: null },
         curriculumId: input.curriculumId ?? null,
-        isFavorite: input.isFavorite ?? null,
-        isGoal: input.isGoal ?? null,
+        isFavorite: input.isFavorite,
+        isGoal: input.isGoal,
       },
     });
 

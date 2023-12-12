@@ -10,7 +10,7 @@ const ratelimit = new Ratelimit({
   analytics: true,
 });
 
-const SessionSchema = z.object({
+const NoteSchema = z.object({
   metadata: z
     .record(
       z.union([
@@ -24,13 +24,16 @@ const SessionSchema = z.object({
     )
     .optional(),
   jitId: z.string(),
+  body: z.string().optional(),
+  id: z.string().optional(),
+  isFavorite: z.boolean().optional(),
 });
 
-export const sessionsRouter = createTRPCRouter({
+export const notesRouter = createTRPCRouter({
   getById: privateProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
-      const session = await ctx.prisma.session.findUnique({
+      const note = await ctx.prisma.note.findUnique({
         where: {
           id: input.id,
         },
@@ -40,18 +43,41 @@ export const sessionsRouter = createTRPCRouter({
           updatedAt: true,
           metadata: true,
           jitId: true,
+          body: true,
+          isFavorite: true,
         },
       });
 
-      if (!session) throw new TRPCError({ code: "NOT_FOUND" });
+      if (!note) throw new TRPCError({ code: "NOT_FOUND" });
 
-      return session;
+      return note;
     }),
 
-  getSessionsByJitId: privateProcedure
+  updateById: privateProcedure
+    .input(NoteSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { success } = await ratelimit.limit(ctx.userId);
+
+      if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
+
+      const updatedNote = await ctx.prisma.note.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          isFavorite: input.isFavorite,
+        },
+      });
+
+      if (!updatedNote) throw new TRPCError({ code: "NOT_FOUND" });
+
+      return updatedNote;
+    }),
+
+  getNotesByJitId: privateProcedure
     .input(z.object({ jitId: z.string() }))
     .query(async ({ ctx, input }) => {
-      const sessionsByJitId = await ctx.prisma.session.findMany({
+      const notesByJitId = await ctx.prisma.note.findMany({
         where: {
           jitId: input.jitId,
         },
@@ -61,28 +87,31 @@ export const sessionsRouter = createTRPCRouter({
           updatedAt: true,
           metadata: true,
           jitId: true,
+          body: true,
+          isFavorite: true,
         },
       });
 
-      if (!sessionsByJitId) throw new TRPCError({ code: "NOT_FOUND" });
+      if (!notesByJitId) throw new TRPCError({ code: "NOT_FOUND" });
 
-      return sessionsByJitId;
+      return notesByJitId;
     }),
 
   create: privateProcedure
-    .input(SessionSchema)
+    .input(NoteSchema)
     .mutation(async ({ ctx, input }) => {
       const { success } = await ratelimit.limit(ctx.userId);
 
       if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
 
-      const newSession = await ctx.prisma.session.create({
+      const newNote = await ctx.prisma.note.create({
         data: {
           metadata: input.metadata ?? { set: null },
           jitId: input.jitId,
+          body: input.body ?? "empty note",
         },
       });
 
-      return newSession;
+      return newNote;
     }),
 });

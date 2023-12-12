@@ -44,6 +44,7 @@ model Jit {
 
   // Relationships
   sessions     Session[]
+  notes        Note[]
   user         User        @relation(fields: [userId], references: [id])
   userId       String
   curriculum   Curriculum? @relation(fields: [curriculumId], references: [id])
@@ -109,7 +110,6 @@ model Session {
   jit       Jit      @relation(fields: [jitId], references: [id])
   jitId     String
   metadata  Json?
-  notes     String?
 
   @@index([jitId])
 }
@@ -143,4 +143,17 @@ model CustomName {
 enum AssociatedEntityType {
   Position
   Move
+}
+
+model Note {
+  id         String   @id @default(uuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  jit        Jit      @relation(fields: [jitId], references: [id])
+  jitId      String
+  metadata   Json?
+  body       String
+  isFavorite Boolean  @default(false)
+
+  @@index([jitId])
 }
