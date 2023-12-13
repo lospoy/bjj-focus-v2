@@ -225,7 +225,7 @@ export const JitView = (props: { jit: Jit }) => {
         <>
           <Progress
             value={progressBarValue}
-            className="w-10/12 bg-primary/20"
+            className="h-4 w-10/12 bg-primary/20"
             indicatorClassName="bg-primary/80"
           />
         </>
