@@ -32,6 +32,7 @@ import { Badge } from "./ui/badge";
 import { Belt } from "./ui/belt";
 import { JitNotesFeed } from "./JitNotesFeed";
 import { useState } from "react";
+import { Progress } from "./ui/progress";
 
 type Jit = RouterOutputs["jits"]["getAll"][number];
 type Note = RouterOutputs["notes"]["getNotesByJitId"][number];
@@ -159,30 +160,77 @@ export const JitView = (props: { jit: Jit }) => {
     return eyes;
   };
 
-  const calculateAndRenderBelt = (sessionCount: number) => {
-    let numberOfStripes = 0;
-    let beltColor: "white" | "blue" = "white";
+  // Min/max represents jit.sessionCount
+  const beltRules = [
+    { min: 0, max: 0, numberOfStripes: 0, beltColor: "white" },
+    { min: 1, max: 2, numberOfStripes: 1, beltColor: "white" },
+    { min: 3, max: 4, numberOfStripes: 2, beltColor: "white" },
+    { min: 5, max: 7, numberOfStripes: 3, beltColor: "white" },
+    { min: 8, max: 10, numberOfStripes: 4, beltColor: "white" },
+    { min: 11, max: 13, numberOfStripes: 0, beltColor: "blue" },
+    { min: 14, max: 17, numberOfStripes: 1, beltColor: "blue" },
+    { min: 18, max: 21, numberOfStripes: 2, beltColor: "blue" },
+    { min: 22, max: 25, numberOfStripes: 3, beltColor: "blue" },
+    { min: 26, max: 29, numberOfStripes: 4, beltColor: "blue" },
+    { min: 30, max: Infinity, numberOfStripes: 0, beltColor: "purple" },
+  ];
 
-    if (sessionCount === 2) {
-      numberOfStripes = 1;
-    } else if (sessionCount >= 3 && sessionCount < 5) {
-      numberOfStripes = 2;
-    } else if (sessionCount >= 5 && sessionCount < 7) {
-      numberOfStripes = 3;
-    } else if (sessionCount >= 7 && sessionCount < 10) {
-      numberOfStripes = 4;
-    } else if (sessionCount >= 10) {
-      numberOfStripes = 0;
-      beltColor = "blue";
-    }
+  const renderJitBelt = (sessionCount: number) => {
+    let numberOfStripes: number;
+    let beltColor: "white" | "blue" | "purple" | "brown" | "black";
 
-    return (
-      <Belt
-        className="-mr-1 h-8 w-full rounded-sm drop-shadow-lg"
-        numberOfStripes={numberOfStripes}
-        beltColor={beltColor}
-      />
+    const rule = beltRules.find(
+      (r) => sessionCount >= r.min && sessionCount <= r.max,
     );
+
+    if (rule) {
+      numberOfStripes = rule.numberOfStripes;
+      beltColor = rule.beltColor as
+        | "white"
+        | "blue"
+        | "purple"
+        | "brown"
+        | "black";
+
+      return (
+        <Belt
+          className=" -mr-1 h-8 w-[210px] rounded-sm drop-shadow-lg"
+          numberOfStripes={numberOfStripes}
+          beltColor={beltColor}
+        />
+      );
+    }
+  };
+
+  const renderJitProgress = (sessionCount: number) => {
+    const rule = beltRules.find(
+      (r) => sessionCount >= r.min && sessionCount <= r.max,
+    );
+
+    if (rule) {
+      let progressBarValue = 0;
+      const levelSteps = rule.max - rule.min + 1;
+      const completedSteps = sessionCount - rule.min;
+
+      if (sessionCount === 0) {
+        progressBarValue = 5;
+      } else {
+        progressBarValue = Math.max(
+          5,
+          Math.min(100, (completedSteps / levelSteps) * 100),
+        );
+      }
+
+      return (
+        <>
+          <Progress
+            value={progressBarValue}
+            className="h-4 w-10/12 bg-primary/20"
+            indicatorClassName="bg-primary/80"
+          />
+        </>
+      );
+    }
   };
 
   const handleAddSessionClick = () => {
@@ -341,27 +389,17 @@ export const JitView = (props: { jit: Jit }) => {
         </Dialog>
       </CardContent>
 
-      {/* SESSIONS & BELT */}
-      <CardContent className="flex h-16 p-0">
-        {/* SESSIONS */}
-        {jit.sessionCount <= 10 ? (
-          <div className="flex w-6/12 flex-col">
-            <h3 className="-mb-1 font-mono text-xs">hit rolling</h3>
-            <span className="flex space-x-1.5">{renderEyeIcons()}</span>
-          </div>
-        ) : (
-          <div className="flex w-6/12 flex-col">
-            <div className="flex flex-row">
-              <Badge className="mt-1 font-mono text-sm text-accent">
-                hit rolling: {renderEyeIcons()}
-              </Badge>
-            </div>
-          </div>
-        )}
+      {/* PROGRESS & BELT */}
+      <CardContent className="flex p-0 pb-4">
+        {/* PROGRESS */}
+        <div className="flex w-[54%] flex-col">
+          <h3 className="font-mono text-xs">Sessions to next level</h3>
+          {renderJitProgress(jit.sessionCount)}
+        </div>
 
         {/* BELT */}
-        <div className="flex w-6/12 justify-end">
-          {calculateAndRenderBelt(jit.sessionCount)}
+        <div className="flex w-[46%] justify-end md:absolute md:-right-4">
+          {renderJitBelt(jit.sessionCount)}
         </div>
       </CardContent>
 
@@ -371,11 +409,7 @@ export const JitView = (props: { jit: Jit }) => {
           onClick={handleAddSessionClick}
           className="mt-1 h-8 font-mono font-semibold"
         >
-          {jit.sessionCount <= 10 ? (
-            <span>HIT ROLLING</span>
-          ) : (
-            <span>ADD SESSION</span>
-          )}
+          <span>+1 SESSION</span>
         </Button>
         <ToastContainer
           position="bottom-center"
