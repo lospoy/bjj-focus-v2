@@ -2,27 +2,16 @@ import Link from "next/link";
 import { UserNav } from "./ui/user-nav";
 import {
   BarChart4,
-  Cloud,
-  CreditCard,
   EyeIcon,
-  Github,
-  Keyboard,
   LampDesk,
-  LifeBuoy,
-  ListTree,
-  LogOut,
-  Mail,
   Menu,
   MessageSquare,
   Network,
   Option,
-  Plus,
   PlusCircle,
   Settings,
   Shapes,
   User,
-  UserPlus,
-  Users,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -38,16 +27,33 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 
+import { useState } from "react";
+
 export default function TopNav() {
+  const [isMenuClicked, setIsMenuClicked] = useState(false);
+
+  const handleMenuOpenChange = (open: boolean) => {
+    setIsMenuClicked(open);
+  };
+
   return (
-    <nav className="w-full bg-inherit px-4 md:border-0">
+    <nav className="sticky top-0 z-10 w-full bg-accent px-4 md:border-0">
       <div className="mx-auto md:max-w-3xl">
-        <div className="flex justify-between pt-3">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild className="mt-1">
-              <Menu />
+        <div className="flex justify-between pb-1 pt-2">
+          <DropdownMenu onOpenChange={handleMenuOpenChange}>
+            <DropdownMenuTrigger
+              asChild
+              className={`mt-1 ${
+                isMenuClicked ? "text-background" : "text-primary"
+              }`}
+            >
+              <Menu
+                className={`transition-transform duration-500 ${
+                  isMenuClicked ? "rotate-90" : ""
+                }`}
+              />
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56 bg-background">
+            <DropdownMenuContent className="ml-4 w-56 bg-background">
               <DropdownMenuLabel className="text-[#a4a5a6]">
                 Account
               </DropdownMenuLabel>
@@ -87,12 +93,12 @@ export default function TopNav() {
                           <span>All Jits</span>
                         </DropdownMenuItem>
                       </Link>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem disabled>
                         <BarChart4 className="mr-2 h-4 w-4" />
                         <span>Jits Report</span>
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem>
+                      <DropdownMenuItem disabled>
                         <PlusCircle className="mr-2 h-4 w-4" />
                         <span>New Jit</span>
                       </DropdownMenuItem>
@@ -142,7 +148,7 @@ export default function TopNav() {
             </DropdownMenuContent>
           </DropdownMenu>
           <Link href="/">
-            <h1 className="-mt-1 text-[1.6rem] font-bold text-accent">
+            <h1 className="-mt-1 text-[1.6rem] font-bold text-primary">
               BJJ FOCUS
             </h1>
           </Link>
