@@ -16,6 +16,12 @@ module.exports = {
       },
     },
     extend: {
+      backdropBlur: {
+        none: "0",
+        blur: "blur(20px)",
+        "blur-lg": "blur(40px)",
+        "blur-xl": "blur(60px)",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
