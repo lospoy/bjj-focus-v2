@@ -160,20 +160,54 @@ export const JitView = (props: { jit: Jit }) => {
     return eyes;
   };
 
+  type BeltRuleType = {
+    beltColor: string;
+    sessionsPerStripe: number;
+  };
+
   // Min/max represents jit.sessionCount
-  const beltRules = [
-    { min: 0, max: 0, numberOfStripes: 0, beltColor: "white" },
-    { min: 1, max: 2, numberOfStripes: 1, beltColor: "white" },
-    { min: 3, max: 4, numberOfStripes: 2, beltColor: "white" },
-    { min: 5, max: 7, numberOfStripes: 3, beltColor: "white" },
-    { min: 8, max: 10, numberOfStripes: 4, beltColor: "white" },
-    { min: 11, max: 13, numberOfStripes: 0, beltColor: "blue" },
-    { min: 14, max: 17, numberOfStripes: 1, beltColor: "blue" },
-    { min: 18, max: 21, numberOfStripes: 2, beltColor: "blue" },
-    { min: 22, max: 25, numberOfStripes: 3, beltColor: "blue" },
-    { min: 26, max: 29, numberOfStripes: 4, beltColor: "blue" },
-    { min: 30, max: Infinity, numberOfStripes: 0, beltColor: "purple" },
+  const generateBeltRules = (rules: BeltRuleType[]) => {
+    const beltRules = [
+      { min: 0, max: 0, numberOfStripes: 0, beltColor: "white" },
+      { min: 1, max: 2, numberOfStripes: 1, beltColor: "white" },
+      { min: 3, max: 4, numberOfStripes: 2, beltColor: "white" },
+      { min: 5, max: 7, numberOfStripes: 3, beltColor: "white" },
+      { min: 8, max: 10, numberOfStripes: 4, beltColor: "white" },
+    ];
+
+    let currentMin = 11;
+
+    rules.forEach((rule) => {
+      for (let i = 0; i < 5; i++) {
+        const max = currentMin + rule.sessionsPerStripe - 1;
+        beltRules.push({
+          min: currentMin,
+          max: max,
+          numberOfStripes: i,
+          beltColor: rule.beltColor,
+        });
+        currentMin = max + 1;
+      }
+    });
+
+    beltRules.push({
+      min: currentMin,
+      max: Infinity,
+      numberOfStripes: 0,
+      beltColor: "black",
+    });
+
+    return beltRules;
+  };
+
+  const rules = [
+    { beltColor: "blue", sessionsPerStripe: 3 },
+    { beltColor: "purple", sessionsPerStripe: 4 },
+    { beltColor: "brown", sessionsPerStripe: 5 },
+    { beltColor: "black", sessionsPerStripe: 6 },
   ];
+
+  const beltRules = generateBeltRules(rules);
 
   const renderJitBelt = (sessionCount: number) => {
     let numberOfStripes: number;
@@ -193,43 +227,110 @@ export const JitView = (props: { jit: Jit }) => {
         | "black";
 
       return (
-        <Belt
-          className=" -mr-1 h-8 w-[210px] rounded-sm drop-shadow-lg"
-          numberOfStripes={numberOfStripes}
-          beltColor={beltColor}
-        />
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Belt
+            className="h-8 w-[170px] rounded-md drop-shadow-lg md:-mr-20 md:w-[180px]"
+            numberOfStripes={numberOfStripes}
+            beltColor={beltColor}
+          />
+        </div>
       );
     }
   };
 
-  const renderJitProgress = (sessionCount: number) => {
+  const renderStripeProgress = (sessionCount: number) => {
     const rule = beltRules.find(
       (r) => sessionCount >= r.min && sessionCount <= r.max,
     );
 
     if (rule) {
-      let progressBarValue = 0;
       const levelSteps = rule.max - rule.min + 1;
       const completedSteps = sessionCount - rule.min;
 
-      if (sessionCount === 0) {
-        progressBarValue = 5;
-      } else {
-        progressBarValue = Math.max(
-          5,
-          Math.min(100, (completedSteps / levelSteps) * 100),
-        );
+      const squareWidth = 100 / levelSteps; // Calculate the width of each square dynamically
+
+      const squares = [];
+      for (let i = 0; i < levelSteps; i++) {
+        if (sessionCount === 0) {
+          squares.push(
+            <div
+              className="mr-1 h-4 rounded-sm bg-primary/10"
+              style={{ width: `100%` }}
+            />,
+          );
+        } else if (i < completedSteps) {
+          squares.push(
+            <div
+              key={i}
+              className="mr-1 h-4 rounded-sm bg-primary"
+              style={{ width: `${squareWidth}%` }}
+            />,
+          );
+        } else {
+          squares.push(
+            <div
+              key={i}
+              className="mr-1 h-4 rounded-sm bg-primary/10"
+              style={{ width: `${squareWidth}%` }}
+            />,
+          );
+        }
       }
 
-      return (
-        <>
-          <Progress
-            value={progressBarValue}
-            className="h-4 w-10/12 bg-primary/20"
-            indicatorClassName="bg-primary/80"
-          />
-        </>
+      return <div className="flex">{squares}</div>;
+    }
+  };
+
+  const renderBeltProgress = (sessionCount: number) => {
+    const currentRule = beltRules.find(
+      (r) => sessionCount >= r.min && sessionCount <= r.max,
+    );
+
+    if (currentRule) {
+      const firstRuleWithCurrentColor = beltRules.find(
+        (r) => r.beltColor === currentRule.beltColor,
       );
+
+      const lastRuleWithCurrentColor = [...beltRules]
+        .reverse()
+        .find((r) => r.beltColor === currentRule.beltColor);
+
+      const levelSteps = lastRuleWithCurrentColor
+        ? lastRuleWithCurrentColor.max - firstRuleWithCurrentColor.min
+        : currentRule.max - firstRuleWithCurrentColor.min;
+
+      const completedSteps = sessionCount - firstRuleWithCurrentColor.min;
+
+      const squareWidth = 100 / (levelSteps + 1); // Calculate the width of each square dynamically
+
+      const squares = [];
+      for (let i = 0; i <= levelSteps; i++) {
+        if (i < completedSteps) {
+          squares.push(
+            <div
+              key={i}
+              className="mr-[1.5px] h-4 rounded-sm bg-primary"
+              style={{ width: `${squareWidth}%` }}
+            />,
+          );
+        } else {
+          squares.push(
+            <div
+              key={i}
+              className="mr-[1.5px] h-4 rounded-sm bg-primary/10"
+              style={{ width: `${squareWidth}%` }}
+            />,
+          );
+        }
+      }
+
+      return <div className="flex">{squares}</div>;
     }
   };
 
@@ -243,31 +344,16 @@ export const JitView = (props: { jit: Jit }) => {
         void ctx.jits.getAll.invalidate();
       }, 2000);
 
-      if (jit.sessionCount <= 10) {
-        toast.success("+1 HIT ROLLING", {
-          position: "bottom-center",
-          autoClose: 2500,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      }
-
-      if (jit.sessionCount > 10) {
-        toast.info("SESSION ADDED", {
-          position: "bottom-center",
-          autoClose: 2500,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      }
+      toast.success("SESSION ADDED", {
+        position: "bottom-center",
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } catch (e: unknown) {
       toast.error("Failed to add session. Please try again later.");
     }
@@ -389,41 +475,52 @@ export const JitView = (props: { jit: Jit }) => {
         </Dialog>
       </CardContent>
 
-      {/* PROGRESS & BELT */}
+      {/* PROGRESS & BELT+BUTTON */}
       <CardContent className="flex p-0 pb-4">
         {/* PROGRESS */}
-        <div className="flex w-[54%] flex-col">
-          <h3 className="font-mono text-xs">Sessions to next level</h3>
-          {renderJitProgress(jit.sessionCount)}
+        <div className="flex w-6/12 flex-col gap-y-2">
+          <div>
+            {" "}
+            <h3 className="font-mono text-xs">Sessions to next stripe</h3>
+            {renderStripeProgress(jit.sessionCount)}
+          </div>
+          <div>
+            {" "}
+            <h3 className="font-mono text-xs">Sessions to next belt</h3>
+            {renderBeltProgress(jit.sessionCount)}
+          </div>
         </div>
 
-        {/* BELT */}
-        <div className="flex w-[46%] justify-end md:absolute md:-right-4">
-          {renderJitBelt(jit.sessionCount)}
+        {/* BELT & BUTTON */}
+        <div className="flex w-6/12 flex-col justify-end gap-y-2">
+          {/* BELT */}
+          <div className="-mr-10">{renderJitBelt(jit.sessionCount)}</div>
+
+          {/* BUTTON */}
+          <div className="pr-4 text-right">
+            <Button
+              onClick={handleAddSessionClick}
+              className="h-8 font-mono text-xs font-semibold"
+            >
+              <span>+1 SESSION</span>
+            </Button>
+            <ToastContainer
+              position="bottom-center"
+              autoClose={2500}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="light"
+            />
+          </div>
         </div>
+
+        {/* ADD SESSION BUTTON */}
       </CardContent>
-
-      {/* BUTTON */}
-      <CardFooter className="flex h-0 items-start justify-center">
-        <Button
-          onClick={handleAddSessionClick}
-          className="mt-1 h-8 font-mono font-semibold"
-        >
-          <span>+1 SESSION</span>
-        </Button>
-        <ToastContainer
-          position="bottom-center"
-          autoClose={2500}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
-      </CardFooter>
     </Card>
   );
 };
