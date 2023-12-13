@@ -5,13 +5,7 @@
 // ~/FullJitFeed
 
 import { api, type RouterOutputs } from "~/utils/api";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "./ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import {
   Dialog,
   DialogContent,
@@ -26,13 +20,11 @@ import { EyeClosedIcon } from "@radix-ui/react-icons";
 import { Icons } from "./ui/icons";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { BookmarkIcon, Heart, SaveIcon } from "lucide-react";
+import { SaveIcon } from "lucide-react";
 import { Button } from "./ui/button";
-import { Badge } from "./ui/badge";
 import { Belt } from "./ui/belt";
 import { JitNotesFeed } from "./JitNotesFeed";
 import { useState } from "react";
-import { Progress } from "./ui/progress";
 
 type Jit = RouterOutputs["jits"]["getAll"][number];
 type Note = RouterOutputs["notes"]["getNotesByJitId"][number];
@@ -50,40 +42,37 @@ export const JitView = (props: { jit: Jit }) => {
   const favoriteNotes = allNotesFromThisJit?.filter((note) => note.isFavorite);
 
   // Returns human-readable date based on the difference between the current date and the date passed in
-  const formatDate = (date: Date | null | undefined): string => {
-    if (!date) {
-      return "Unknown";
-    }
+  // const formatDate = (date: Date | null | undefined): string => {
+  //   if (!date) {
+  //     return "Unknown";
+  //   }
 
-    const currentDate = new Date();
-    const timeDiff = Math.abs(currentDate.getTime() - date.getTime());
-    const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+  //   const currentDate = new Date();
+  //   const timeDiff = Math.abs(currentDate.getTime() - date.getTime());
+  //   const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
-    if (daysDiff === 1) {
-      return "yesterday";
-    } else if (daysDiff === 0) {
-      return "today";
-    } else if (daysDiff < 30) {
-      return `${daysDiff} days ago`;
-    } else if (daysDiff < 365) {
-      const months = Math.floor(daysDiff / 30);
-      const remainingDays = daysDiff % 30;
-      return `${months} months ${remainingDays} days ago`;
-    } else {
-      return "over a year ago";
-    }
-  };
+  //   if (daysDiff === 1) {
+  //     return "yesterday";
+  //   } else if (daysDiff === 0) {
+  //     return "today";
+  //   } else if (daysDiff < 30) {
+  //     return `${daysDiff} days ago`;
+  //   } else if (daysDiff < 365) {
+  //     const months = Math.floor(daysDiff / 30);
+  //     const remainingDays = daysDiff % 30;
+  //     return `${months} months ${remainingDays} days ago`;
+  //   } else {
+  //     return "over a year ago";
+  //   }
+  // };
 
   const renderFavoriteNotes = (favoriteNotes: Note[]) => {
     return favoriteNotes?.map((note) => (
       <li
         key={note.id}
-        className="py-.5 flex items-start justify-between rounded-md border-2 border-gray-200/50 px-1 font-mono text-xs"
+        className="py-.5 flex rounded-md border-2 border-gray-200/50 px-6 py-1 text-left font-mono text-xs"
       >
         {note.body}
-        <div className="flex pt-[3px]">
-          <Heart fill="currentColor" className="h-3 w-3 text-pink-800" />
-        </div>
       </li>
     ));
   };
@@ -126,39 +115,6 @@ export const JitView = (props: { jit: Jit }) => {
     }
     return null;
   }
-
-  const renderEyeIcons = () => {
-    const eyes = [];
-    const sessionCount = jit.sessionCount;
-
-    // sessionCount values between 0 and 5 will open the eyes one by one
-    if (sessionCount <= 5) {
-      for (let i = 0; i < 5; i++) {
-        i < sessionCount
-          ? eyes.push(<Icons.eyeHalf key={i} className={`h-6 w-6`} />)
-          : eyes.push(<EyeClosedIcon key={i} className={`h-6 w-6`} />);
-      }
-    }
-    // sessionCount values between 6 and 10 will modify the opened eyes one by one
-    if (sessionCount >= 6) {
-      for (let i = 5; i < 10; i++) {
-        i < sessionCount
-          ? eyes.push(
-              <Icons.eyeFull key={i} className={`h-6 w-6 fill-accent`} />,
-            )
-          : eyes.push(<Icons.eyeHalf key={i} className={`h-6 w-6`} />);
-      }
-    }
-    // sessionCount values over 10 will return one eye
-    if (sessionCount > 10) {
-      eyes.length = 0;
-      eyes.push(
-        <Icons.eyeFull key={"just me luv"} className={`ml-1 h-4 w-4`} />,
-      );
-    }
-
-    return eyes;
-  };
 
   type BeltRuleType = {
     beltColor: string;
@@ -302,10 +258,11 @@ export const JitView = (props: { jit: Jit }) => {
         .find((r) => r.beltColor === currentRule.beltColor);
 
       const levelSteps = lastRuleWithCurrentColor
-        ? lastRuleWithCurrentColor.max - firstRuleWithCurrentColor.min
-        : currentRule.max - firstRuleWithCurrentColor.min;
+        ? lastRuleWithCurrentColor.max - (firstRuleWithCurrentColor?.min ?? 0)
+        : currentRule.max - (firstRuleWithCurrentColor?.min ?? 0);
 
-      const completedSteps = sessionCount - firstRuleWithCurrentColor.min;
+      const completedSteps =
+        sessionCount - (firstRuleWithCurrentColor?.min ?? 0);
 
       const squareWidth = 100 / (levelSteps + 1); // Calculate the width of each square dynamically
 
@@ -406,19 +363,16 @@ export const JitView = (props: { jit: Jit }) => {
         <div className="flex w-1/12 flex-col">
           <button onClick={handleFavoriteClick}>
             {jit.isFavorite ? (
-              <BookmarkIcon
-                fill="currentColor"
-                className="h-5 w-5 text-blue-800"
-              />
+              <Icons.eyeFull className="h-5 w-5 fill-accent" />
             ) : (
-              <BookmarkIcon className="h-5 w-5 text-blue-800" />
+              <EyeClosedIcon className="h-5 w-5" />
             )}
           </button>
         </div>
       </CardHeader>
 
       {/* NOTES */}
-      <CardContent className="mb-8 p-0">
+      <CardContent className="mb-8 p-0 px-4">
         <Dialog>
           <DialogTrigger asChild>
             <button className="w-full pr-4 text-center">
