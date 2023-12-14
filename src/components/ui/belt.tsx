@@ -83,7 +83,7 @@ export const Belt = (props: BeltProps) => {
   };
 
   return (
-    <svg width={100} height={20} xmlns="http://www.w3.org/2000/svg" {...props}>
+    <svg width={95} height={20} xmlns="http://www.w3.org/2000/svg" {...props}>
       {/* BELT COLOR */}
       <rect y={2} width="100%" height="92%" fill={color[beltColor]} />
 

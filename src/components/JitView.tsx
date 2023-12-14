@@ -20,7 +20,7 @@ import { EyeClosedIcon } from "@radix-ui/react-icons";
 import { Icons } from "./ui/icons";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Plus, PlusIcon, PlusSquare, SaveIcon } from "lucide-react";
+import { Plus, SaveIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import { Belt } from "./ui/belt";
 import { JitNotesFeed } from "./JitNotesFeed";
@@ -183,19 +183,13 @@ export const JitView = (props: { jit: Jit }) => {
         | "black";
 
       return (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <Belt
-            className="h-[35px] w-[170px] rounded-md drop-shadow-lg md:-mr-20 md:w-[180px]"
-            numberOfStripes={numberOfStripes}
-            beltColor={beltColor}
-          />
-        </div>
+        // TO PROPERLY ADJUST BELT WIDTH, WE PROBABLY NEED TO MODIFY THE SVG'S WIDTH
+        // VIA A PROP, BASED ON VIEWPORT WIDTH - maybe we could do some kind of clamp, or use wh
+        <Belt
+          className="absolute right-1 h-[35px] w-max rounded-md drop-shadow-lg"
+          numberOfStripes={numberOfStripes}
+          beltColor={beltColor}
+        />
       );
     }
   };
@@ -357,13 +351,13 @@ export const JitView = (props: { jit: Jit }) => {
       key={jit.id}
       className={`mb-8 border-2 ${
         jit.isFavorite ? "border-gray-400" : "border-gray-200"
-      } bg-inherit pl-3`}
+      } bg-inherit`}
     >
       {/* FAVORITE BUTTON */}
       <div className="flex justify-center">
         <button
           onClick={handleFavoriteClick}
-          className={`-ml-3 -mt-3 flex rounded-full border-2 ${
+          className={`-ml-3 -mt-3 flex rounded-lg border-2 ${
             jit.isFavorite ? "border-gray-400" : "border-gray-200/50"
           } bg-background px-3`}
         >
@@ -374,7 +368,7 @@ export const JitView = (props: { jit: Jit }) => {
           )}
         </button>
       </div>
-      <CardHeader className="mb-8 flex flex-row p-0">
+      <CardHeader className="mb-8 flex flex-row p-0 pl-3">
         {/* TITLE */}
         <CardTitle className="flex w-10/12 flex-col text-2xl leading-5">
           {renderJitTitle(jit)}
@@ -403,7 +397,7 @@ export const JitView = (props: { jit: Jit }) => {
       </CardHeader>
 
       {/* NOTES */}
-      <CardContent className="mb-8 p-0 px-4">
+      <CardContent className="mx-auto mb-8 w-11/12 p-0 pl-3">
         <Dialog>
           <DialogTrigger asChild>
             <button className="w-full pr-4 text-center">
@@ -460,8 +454,8 @@ export const JitView = (props: { jit: Jit }) => {
         </Dialog>
       </CardContent>
 
-      {/* PROGRESS & BELT+BUTTON */}
-      <CardContent className="flex p-0 pb-4">
+      {/* PROGRESS & BELT */}
+      <CardContent className="flex p-0 pb-4 pl-3">
         {/* PROGRESS */}
         <div className="flex w-6/12 flex-col gap-y-2 text-xs font-semibold">
           <div>
@@ -474,10 +468,9 @@ export const JitView = (props: { jit: Jit }) => {
           </div>
         </div>
 
-        {/* BELT & BUTTON */}
-        <div className="flex w-6/12 flex-col justify-center">
-          {/* BELT */}
-          <div className="-mr-10">{renderJitBelt(jit.sessionCount)}</div>
+        {/* BELT */}
+        <div className="flex flex-col justify-center">
+          {renderJitBelt(jit.sessionCount)}
         </div>
 
         {/* ADD SESSION BUTTON */}
