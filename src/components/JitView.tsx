@@ -20,7 +20,7 @@ import { EyeClosedIcon } from "@radix-ui/react-icons";
 import { Icons } from "./ui/icons";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { SaveIcon } from "lucide-react";
+import { Plus, PlusIcon, PlusSquare, SaveIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import { Belt } from "./ui/belt";
 import { JitNotesFeed } from "./JitNotesFeed";
@@ -191,7 +191,7 @@ export const JitView = (props: { jit: Jit }) => {
           }}
         >
           <Belt
-            className="h-8 w-[170px] rounded-md drop-shadow-lg md:-mr-20 md:w-[180px]"
+            className="h-[35px] w-[170px] rounded-md drop-shadow-lg md:-mr-20 md:w-[180px]"
             numberOfStripes={numberOfStripes}
             beltColor={beltColor}
           />
@@ -353,21 +353,52 @@ export const JitView = (props: { jit: Jit }) => {
   };
 
   return (
-    <Card key={jit.id} className="relative mb-8 bg-inherit pl-3">
-      <CardHeader className="mb-8 flex flex-row p-0 pt-2">
+    <Card
+      key={jit.id}
+      className={`mb-8 border-2 ${
+        jit.isFavorite ? "border-gray-400" : "border-gray-200"
+      } bg-inherit pl-3`}
+    >
+      {/* FAVORITE BUTTON */}
+      <div className="flex justify-center">
+        <button
+          onClick={handleFavoriteClick}
+          className={`-ml-3 -mt-3 flex rounded-full border-2 ${
+            jit.isFavorite ? "border-gray-400" : "border-gray-200/50"
+          } bg-background px-3`}
+        >
+          {jit.isFavorite ? (
+            <Icons.eyeHalf className="h-6 w-6 fill-background " />
+          ) : (
+            <EyeClosedIcon className="h-5 w-5" />
+          )}
+        </button>
+      </div>
+      <CardHeader className="mb-8 flex flex-row p-0">
         {/* TITLE */}
-        <CardTitle className="flex w-11/12 flex-col text-2xl leading-5">
+        <CardTitle className="flex w-10/12 flex-col text-2xl leading-5">
           {renderJitTitle(jit)}
         </CardTitle>
-        {/* FAVORITE / BOOKMARK */}
-        <div className="flex w-1/12 flex-col">
-          <button onClick={handleFavoriteClick}>
-            {jit.isFavorite ? (
-              <Icons.eyeFull className="h-5 w-5 fill-accent" />
-            ) : (
-              <EyeClosedIcon className="h-5 w-5" />
-            )}
-          </button>
+        {/* ADD SESSION BUTTON */}
+        <div className="flex w-2/12 flex-col">
+          <Button
+            onClick={handleAddSessionClick}
+            className="w-[38px] bg-accent p-0 text-xs font-semibold"
+          >
+            <Plus className="h-7 w-7" />
+          </Button>
+          <ToastContainer
+            position="bottom-center"
+            autoClose={2500}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+          />
         </div>
       </CardHeader>
 
@@ -432,45 +463,21 @@ export const JitView = (props: { jit: Jit }) => {
       {/* PROGRESS & BELT+BUTTON */}
       <CardContent className="flex p-0 pb-4">
         {/* PROGRESS */}
-        <div className="flex w-6/12 flex-col gap-y-2">
+        <div className="flex w-6/12 flex-col gap-y-2 text-xs font-semibold">
           <div>
-            {" "}
-            <h3 className="font-mono text-xs">Sessions to next stripe</h3>
+            <h3>Sessions to next stripe</h3>
             {renderStripeProgress(jit.sessionCount)}
           </div>
           <div>
-            {" "}
-            <h3 className="font-mono text-xs">Sessions to next belt</h3>
+            <h3>Sessions to next belt</h3>
             {renderBeltProgress(jit.sessionCount)}
           </div>
         </div>
 
         {/* BELT & BUTTON */}
-        <div className="flex w-6/12 flex-col justify-end gap-y-2">
+        <div className="flex w-6/12 flex-col justify-center">
           {/* BELT */}
           <div className="-mr-10">{renderJitBelt(jit.sessionCount)}</div>
-
-          {/* BUTTON */}
-          <div className="pr-4 text-right">
-            <Button
-              onClick={handleAddSessionClick}
-              className="h-8 font-mono text-xs font-semibold"
-            >
-              <span>+1 SESSION</span>
-            </Button>
-            <ToastContainer
-              position="bottom-center"
-              autoClose={2500}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              theme="light"
-            />
-          </div>
         </div>
 
         {/* ADD SESSION BUTTON */}
