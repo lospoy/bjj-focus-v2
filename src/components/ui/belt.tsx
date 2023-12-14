@@ -33,7 +33,7 @@ export const Belt = (props: BeltProps) => {
             y={0}
             x={x}
             width={width}
-            height="120%"
+            height="103%"
             fill={color.white}
             transform={`rotate(${incline} 0 0)`} // Apply rotation transform
             stroke={color.black} // Add left border color
@@ -83,9 +83,15 @@ export const Belt = (props: BeltProps) => {
   };
 
   return (
-    <svg width={95} height={20} xmlns="http://www.w3.org/2000/svg" {...props}>
+    <svg
+      overflow={"visible"}
+      width={95}
+      height={20}
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
       {/* BELT COLOR */}
-      <rect y={2} width="100%" height="92%" fill={color[beltColor]} />
+      <rect y={2} width="100%" height="92%" fill={color[beltColor]} rx={3} />
 
       {/* BAR COLOR */}
       {beltColor !== "black" ? (

@@ -186,7 +186,7 @@ export const JitView = (props: { jit: Jit }) => {
         // TO PROPERLY ADJUST BELT WIDTH, WE PROBABLY NEED TO MODIFY THE SVG'S WIDTH
         // VIA A PROP, BASED ON VIEWPORT WIDTH - maybe we could do some kind of clamp, or use wh
         <Belt
-          className="absolute right-1 h-[35px] w-max rounded-md drop-shadow-lg"
+          className="absolute -right-2 h-[35px] w-max drop-shadow-lg"
           numberOfStripes={numberOfStripes}
           beltColor={beltColor}
         />
@@ -349,7 +349,7 @@ export const JitView = (props: { jit: Jit }) => {
   return (
     <Card
       key={jit.id}
-      className={`mb-8 border-2 ${
+      className={`relative mb-8 border-2 ${
         jit.isFavorite ? "border-gray-400" : "border-gray-200"
       } bg-inherit`}
     >
@@ -414,7 +414,10 @@ export const JitView = (props: { jit: Jit }) => {
               )}
             </button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px] ">
+          <DialogContent
+            className="sm:max-w-[425px] "
+            onOpenAutoFocus={(e) => e.preventDefault()}
+          >
             <DialogHeader className="pb-6">
               <DialogTitle className="flex flex-col text-2xl leading-5 ">
                 {renderJitTitle(jit)}
