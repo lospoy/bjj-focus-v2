@@ -2,29 +2,25 @@ import { type NextPage } from "next";
 import { api } from "~/utils/api";
 import { PageLayout } from "~/components/ui/layout";
 import { JitCreator } from "~/components/JitCreator";
-import { useUser } from "@clerk/nextjs";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
 const NewJit: NextPage = () => {
-  // const router = useRouter();
-  const { isLoaded: userLoaded, isSignedIn } = useUser();
-
   // Start fetching asap
   // (React query will use cached data if the data doesn't change)
-  api.jits.getAll.useQuery();
-
-  // Return empty div if user isn't loaded yet
-  if (!userLoaded) return <div />;
-
-  // const handleNewSequence = async () => {
-  //   const url = `/activeJit/jit-selection`;
-  //   await router.push(url);
-  // };
+  api.categories.getAll.useQuery().data;
+  api.positions.getAll.useQuery().data;
+  api.moves.getAll.useQuery().data;
 
   return (
     <PageLayout>
-      <div className="flex h-full flex-col items-center justify-center pt-20">
-        <JitCreator />
-      </div>
+      <Card className="mt-[15vh] h-[50vh]">
+        <CardHeader className="flex items-center pb-8">
+          <CardTitle className="flex text-2xl">New Jit</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <JitCreator />
+        </CardContent>
+      </Card>
     </PageLayout>
   );
 };
