@@ -3,6 +3,9 @@ import { jitsRouter } from "./routers/jits";
 import { usersRouter } from "./routers/users";
 import { sessionsRouter } from "./routers/sessions";
 import { notesRouter } from "./routers/notes";
+import { categoriesRouter } from "./routers/categories";
+import { positionsRouter } from "./routers/positions";
+import { movesRouter } from "./routers/moves";
 
 /**
  * This is the primary router for your server.
@@ -14,6 +17,9 @@ export const appRouter = createTRPCRouter({
   users: usersRouter,
   sessions: sessionsRouter,
   notes: notesRouter,
+  categories: categoriesRouter,
+  positions: positionsRouter,
+  moves: movesRouter,
 });
 
 // export type definition of API
