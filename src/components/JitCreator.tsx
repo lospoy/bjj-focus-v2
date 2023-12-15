@@ -26,6 +26,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { useToast } from "./ui/use-toast";
 import { ToastAction } from "./ui/toast";
 import { ScrollArea } from "./ui/scroll-area";
+import { PopoverClose } from "@radix-ui/react-popover";
 
 const FormSchema = z
   .object({
@@ -72,13 +73,28 @@ export const JitCreator = () => {
       });
     }
     toast({
+      duration: 6000,
+
+      className: "bg-primary text-background",
       title: "Created New Jit",
       description: (
-        <pre className="mt-2 w-[300px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
+        <>
+          {data.move && (
+            <div className="">
+              <strong>Move:</strong> {data.move?.name}
+            </div>
+          )}
+          {data.position && (
+            <div className="">
+              <strong>Position:</strong> {data.position?.name}
+            </div>
+          )}
+          <div className="">
+            <strong>Action:</strong> {data.category.name}
+          </div>
+        </>
       ),
-      action: <ToastAction altText="Try again">Undo</ToastAction>,
+      action: <ToastAction altText="Undo">Undo</ToastAction>,
     });
   }
 
@@ -93,7 +109,7 @@ export const JitCreator = () => {
         {/* POSITIONS AND MOVES */}
         <div className="space-y-2 pb-4">
           <FormDescription className="text-center">
-            Select a position, a move, or a combination of both.
+            Select a position/move (or both):
           </FormDescription>
           <FormField
             control={form.control}
@@ -137,25 +153,47 @@ export const JitCreator = () => {
                       <CommandEmpty>No position found.</CommandEmpty>
                       <CommandGroup>
                         <ScrollArea className="h-[30vh] ">
-                          {allPositions?.map((position) => (
+                          <PopoverClose className="w-full">
                             <CommandItem
-                              value={position.name}
-                              key={position.id}
+                              className="opacity-50"
+                              value="n/a"
                               onSelect={() => {
-                                form.setValue("position", position);
+                                form.setValue("position", undefined);
                               }}
                             >
                               <Check
                                 className={cn(
                                   "mr-2 h-4 w-4",
-                                  position === field.value
-                                    ? "opacity-100"
-                                    : "opacity-0",
+                                  !field.value ? "opacity-100" : "opacity-0",
                                 )}
                               />
-                              {position.name}
+                              n/a
                             </CommandItem>
-                          ))}
+                            {allPositions?.map((position) => (
+                              <CommandItem
+                                className={cn(
+                                  position.id === field.value?.id
+                                    ? "bg-accent "
+                                    : "bg-none",
+                                )}
+                                value={position.name}
+                                key={position.id}
+                                onSelect={() => {
+                                  form.setValue("position", position);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    position?.id === field.value?.id
+                                      ? "opacity-100"
+                                      : "opacity-0",
+                                  )}
+                                />
+                                {position.name}
+                              </CommandItem>
+                            ))}
+                          </PopoverClose>
                         </ScrollArea>
                       </CommandGroup>
                     </Command>
@@ -208,25 +246,47 @@ export const JitCreator = () => {
                       <CommandEmpty>No move found.</CommandEmpty>
                       <CommandGroup>
                         <ScrollArea className="h-[30vh]">
-                          {allMoves?.map((move) => (
+                          <PopoverClose className="w-full">
                             <CommandItem
-                              value={move.name}
-                              key={move.id}
+                              className="opacity-40"
+                              value="n/a"
                               onSelect={() => {
-                                form.setValue("move", move);
+                                form.setValue("move", undefined);
                               }}
                             >
                               <Check
                                 className={cn(
                                   "mr-2 h-4 w-4",
-                                  move === field.value
-                                    ? "opacity-100"
-                                    : "opacity-0",
+                                  !field.value ? "opacity-100" : "opacity-0",
                                 )}
                               />
-                              {move.name}
+                              n/a
                             </CommandItem>
-                          ))}
+                            {allMoves?.map((move) => (
+                              <CommandItem
+                                className={cn(
+                                  move.id === field.value?.id
+                                    ? "bg-accent "
+                                    : "bg-none",
+                                )}
+                                value={move.name}
+                                key={move.id}
+                                onSelect={() => {
+                                  form.setValue("move", move);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    move.id === field.value?.id
+                                      ? "opacity-100"
+                                      : "opacity-0",
+                                  )}
+                                />
+                                {move.name}
+                              </CommandItem>
+                            ))}
+                          </PopoverClose>
                         </ScrollArea>
                       </CommandGroup>
                     </Command>
@@ -237,10 +297,10 @@ export const JitCreator = () => {
             )}
           />
         </div>
-        {/* ROLE (CATEGORIES) */}
+        {/* ACTION (CATEGORIES) */}
         <div className="space-y-2">
           <FormDescription className="text-center">
-            Then select what is your role in this Jit.
+            Then select your action in this Jit:
           </FormDescription>
           <FormField
             control={form.control}
@@ -268,7 +328,7 @@ export const JitCreator = () => {
                             }
                           </>
                         ) : (
-                          "My role"
+                          "My Action"
                         )}
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                       </Button>
@@ -280,28 +340,37 @@ export const JitCreator = () => {
                     onOpenAutoFocus={(e) => e.preventDefault()}
                   >
                     <Command>
-                      <CommandInput placeholder="Select your role in this jit..." />
+                      <CommandInput placeholder="Find your action..." />
                       <CommandEmpty>No category found.</CommandEmpty>
                       <CommandGroup>
-                        {allCategories?.map((category) => (
-                          <CommandItem
-                            value={category.name}
-                            key={category.id}
-                            onSelect={() => {
-                              form.setValue("category", category);
-                            }}
-                          >
-                            <Check
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                category === field.value
-                                  ? "opacity-100"
-                                  : "opacity-0",
-                              )}
-                            />
-                            {category.name}
-                          </CommandItem>
-                        ))}
+                        <ScrollArea className="h-[30vh]">
+                          <PopoverClose className="w-full">
+                            {allCategories?.map((category) => (
+                              <CommandItem
+                                className={cn(
+                                  category.id === field.value?.id
+                                    ? "bg-accent "
+                                    : "bg-none",
+                                )}
+                                value={category.name}
+                                key={category.id}
+                                onSelect={() => {
+                                  form.setValue("category", category);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    category.id === field.value?.id
+                                      ? "opacity-100"
+                                      : "opacity-0",
+                                  )}
+                                />
+                                {category.name}
+                              </CommandItem>
+                            ))}
+                          </PopoverClose>
+                        </ScrollArea>
                       </CommandGroup>
                     </Command>
                   </PopoverContent>
