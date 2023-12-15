@@ -102,10 +102,12 @@ export default function TopNav() {
                           <span>Jits Report</span>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem disabled>
-                          <PlusCircle className="mr-2 h-4 w-4" />
-                          <span>New Jit</span>
-                        </DropdownMenuItem>
+                        <Link href="/newJit">
+                          <DropdownMenuItem>
+                            <PlusCircle className="mr-2 h-4 w-4" />
+                            <span>New Jit</span>
+                          </DropdownMenuItem>
+                        </Link>
                       </DropdownMenuSubContent>
                     </DropdownMenuPortal>
                   </DropdownMenuSub>
