@@ -27,11 +27,18 @@ import { useToast } from "./ui/use-toast";
 import { ToastAction } from "./ui/toast";
 import { ScrollArea } from "./ui/scroll-area";
 import { PopoverClose } from "@radix-ui/react-popover";
+import { useEffect, useState } from "react";
 
 const FormSchema = z
   .object({
     move: z.object({ name: z.string(), id: z.string() }).optional(),
-    position: z.object({ name: z.string(), id: z.string() }).optional(),
+    position: z
+      .object({
+        name: z.string(),
+        id: z.string(),
+        categoryType: z.object({ name: z.string() }),
+      })
+      .optional(),
     category: z.object({
       name: z.string(),
       id: z.string(),
@@ -46,16 +53,120 @@ const FormSchema = z
     path: ["category"],
   });
 
+type FormData = z.infer<typeof FormSchema>;
+
 export const JitCreator = () => {
   const { toast } = useToast();
   const allCategories = api.categories.getAll.useQuery().data;
   const allPositions = api.positions.getAll.useQuery().data;
   const allMoves = api.moves.getAll.useQuery().data;
   const newJit = api.jits.create.useMutation();
+  const [filteredCategories, setFilteredCategories] = useState(allCategories);
 
-  const form = useForm<z.infer<typeof FormSchema>>({
+  const form = useForm<FormData>({
     resolver: zodResolver(FormSchema),
   });
+
+  const positionValue = form.watch("position");
+  const positionName = positionValue?.name;
+
+  type PositionCategoryRules = Record<string, string[]>;
+  type CategoryNameRules = Record<string, Record<string, string>>;
+  const categoryNameRules: CategoryNameRules = {
+    pass: {
+      defense: `Defending the ${positionName}`,
+      pass: `Doing a ${positionName} pass`,
+    },
+    sweep: {
+      sweep: `Doing a ${positionName} sweep`,
+      defense: `Defending the ${positionName}`,
+    },
+    guard: {
+      sweep: `Sweeping from ${positionName}`,
+      guard: `Playing/Retaining ${positionName}`,
+      submission: `Submitting from ${positionName}`,
+    },
+    takedown: {
+      takedown: `Doing a ${positionName} takedown`,
+      defense: `Defending the ${positionName}`,
+    },
+    control: {
+      control: `Maintaining ${positionName}`,
+      escape: `Escaping the ${positionName}`,
+      submission: `Submitting from ${positionName}`,
+    },
+    escape: {
+      escape: `Escaping the ${positionName}`,
+      control: `Pinning from ${positionName}`,
+      submission: `Submitting from ${positionName}`,
+    },
+    defense: {
+      defense: `Defending the ${positionName}`,
+      submission: `Submitting from ${positionName}`,
+    },
+    submission: {
+      submission: `Submitting from ${positionName}`,
+      defense: `Defending the ${positionName}`,
+    },
+  };
+
+  function mapCategoryNames(
+    category: FormData["category"],
+    selectedPosition: FormData["position"],
+  ) {
+    if (selectedPosition) {
+      const rules =
+        categoryNameRules[selectedPosition.categoryType.name.toLowerCase()];
+
+      // @ts-expect-error categoryNameRules cannot be undefined
+      if (rules ?? rules[category.name.toLowerCase()]) {
+        // @ts-expect-error categoryNameRules cannot be undefined
+        return `${rules[category.name.toLowerCase()]}`;
+      }
+    }
+    return category.name;
+  }
+
+  // Filter categories based on the selected position
+  // states which categories should be shown, based on the rules above
+  // Update the filtered categories whenever the selected position changes
+
+  useEffect(() => {
+    const positionCategoryRules: PositionCategoryRules = {
+      control: ["escape", "control", "submission"],
+      defense: ["defense", "control", "takedown"],
+      escape: ["escape", "control", "submission"],
+      guard: ["sweep", "guard", "submission"],
+      pass: ["defense", "pass"],
+      submission: ["defense", "submission"],
+      sweep: ["sweep", "defense"],
+      takedown: ["takedown", "defense"],
+    };
+
+    function filterCategories(
+      category: FormData["category"],
+      selectedPosition: FormData["position"],
+    ) {
+      if (selectedPosition) {
+        const rules =
+          selectedPosition.categoryType &&
+          positionCategoryRules[
+            selectedPosition.categoryType.name.toLowerCase()
+          ];
+        if (rules && !rules.includes(category.name.toLowerCase())) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    const selectedPosition = form.getValues("position");
+    setFilteredCategories(
+      allCategories?.filter((category) =>
+        filterCategories(category, selectedPosition),
+      ),
+    );
+  }, [allCategories, form, positionValue]);
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
@@ -343,32 +454,38 @@ export const JitCreator = () => {
                       <CommandInput placeholder="Find your action..." />
                       <CommandEmpty>No category found.</CommandEmpty>
                       <CommandGroup>
-                        <ScrollArea className="h-[30vh]">
+                        <ScrollArea className="h-[15vh]">
                           <PopoverClose className="w-full">
-                            {allCategories?.map((category) => (
-                              <CommandItem
-                                className={cn(
-                                  category.id === field.value?.id
-                                    ? "bg-accent "
-                                    : "bg-none",
-                                )}
-                                value={category.name}
-                                key={category.id}
-                                onSelect={() => {
-                                  form.setValue("category", category);
-                                }}
-                              >
-                                <Check
+                            {filteredCategories?.map((category) => {
+                              const categoryName = mapCategoryNames(
+                                category,
+                                form.getValues("position"),
+                              );
+                              return (
+                                <CommandItem
                                   className={cn(
-                                    "mr-2 h-4 w-4",
                                     category.id === field.value?.id
-                                      ? "opacity-100"
-                                      : "opacity-0",
+                                      ? "bg-accent "
+                                      : "bg-none",
                                   )}
-                                />
-                                {category.name}
-                              </CommandItem>
-                            ))}
+                                  value={categoryName}
+                                  key={category.id}
+                                  onSelect={() => {
+                                    form.setValue("category", category);
+                                  }}
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      category.id === field.value?.id
+                                        ? "opacity-100"
+                                        : "opacity-0",
+                                    )}
+                                  />
+                                  {categoryName}
+                                </CommandItem>
+                              );
+                            })}
                           </PopoverClose>
                         </ScrollArea>
                       </CommandGroup>

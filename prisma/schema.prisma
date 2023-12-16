@@ -64,22 +64,27 @@ model Jit {
 }
 
 model Category {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String     @id @default(uuid())
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
   name      String
   metadata  Json?
   Jit       Jit[]
+  Position  Position[]
 }
 
 model Position {
-  id          String       @id @default(uuid())
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  name        String
-  metadata    Json?
-  customNames CustomName[]
-  Jit         Jit[]
+  id             String       @id @default(uuid())
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  name           String
+  metadata       Json?
+  customNames    CustomName[]
+  Jit            Jit[]
+  categoryTypeId String
+  categoryType   Category     @relation(fields: [categoryTypeId], references: [id])
+
+  @@index([categoryTypeId])
 }
 
 model Move {

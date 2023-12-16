@@ -27,6 +27,7 @@ export const positionsRouter = createTRPCRouter({
         name: true,
         customNames: true,
         metadata: true,
+        categoryType: { select: { name: true } },
       },
     });
 
