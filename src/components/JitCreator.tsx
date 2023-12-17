@@ -69,6 +69,7 @@ export const JitCreator = () => {
 
   const positionValue = form.watch("position");
   const positionName = positionValue?.name;
+  const moveValue = form.watch("move");
 
   type PositionCategoryRules = Record<string, string[]>;
   type CategoryNameRules = Record<string, Record<string, string>>;
@@ -118,9 +119,7 @@ export const JitCreator = () => {
       const rules =
         categoryNameRules[selectedPosition.categoryType.name.toLowerCase()];
 
-      // @ts-expect-error categoryNameRules cannot be undefined
-      if (rules ?? rules[category.name.toLowerCase()]) {
-        // @ts-expect-error categoryNameRules cannot be undefined
+      if (rules?.[category.name.toLowerCase()]) {
         return `${rules[category.name.toLowerCase()]}`;
       }
     }
@@ -145,28 +144,49 @@ export const JitCreator = () => {
 
     function filterCategories(
       category: FormData["category"],
-      selectedPosition: FormData["position"],
+      position: FormData["position"],
     ) {
-      if (selectedPosition) {
+      if (position?.categoryType) {
         const rules =
-          selectedPosition.categoryType &&
-          positionCategoryRules[
-            selectedPosition.categoryType.name.toLowerCase()
-          ];
+          positionCategoryRules[position.categoryType.name.toLowerCase()];
         if (rules && !rules.includes(category.name.toLowerCase())) {
           return false;
         }
       }
+
       return true;
     }
 
     const selectedPosition = form.getValues("position");
-    setFilteredCategories(
-      allCategories?.filter((category) =>
+    const selectedMove = form.getValues("move");
+
+    let filteredCategories;
+
+    if (selectedMove) {
+      filteredCategories = [
+        {
+          id: "defense",
+          name: selectedPosition
+            ? `Defending the ${selectedMove.name} from ${selectedPosition.name}`
+            : `Defending the ${selectedMove.name}`,
+          metadata: null,
+        },
+        {
+          id: "attack",
+          name: selectedPosition
+            ? `Doing the ${selectedMove.name} from ${selectedPosition.name}`
+            : `Doing the ${selectedMove.name}`,
+          metadata: null,
+        },
+      ];
+    } else {
+      filteredCategories = allCategories?.filter((category) =>
         filterCategories(category, selectedPosition),
-      ),
-    );
-  }, [allCategories, form, positionValue]);
+      );
+    }
+
+    setFilteredCategories(filteredCategories);
+  }, [allCategories, form, positionValue, moveValue]);
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
@@ -209,7 +229,9 @@ export const JitCreator = () => {
     });
   }
 
-  // Select either a move, a position, or both.
+  useEffect(() => {
+    form.setValue("category", null);
+  }, [positionValue, moveValue, form]);
 
   return (
     <Form {...form}>
@@ -408,10 +430,10 @@ export const JitCreator = () => {
             )}
           />
         </div>
-        {/* ACTION (CATEGORIES) */}
+        {/* FOCUS (CATEGORIES) */}
         <div className="space-y-2">
           <FormDescription className="text-center">
-            Then select your action in this Jit:
+            Then select your focus in this Jit:
           </FormDescription>
           <FormField
             control={form.control}
@@ -437,9 +459,10 @@ export const JitCreator = () => {
                                 (category) => category.id === field.value?.id,
                               )?.name
                             }
+                            {field.value.name}
                           </>
                         ) : (
-                          "My Action"
+                          "My Focus"
                         )}
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                       </Button>
@@ -451,7 +474,7 @@ export const JitCreator = () => {
                     onOpenAutoFocus={(e) => e.preventDefault()}
                   >
                     <Command>
-                      <CommandInput placeholder="Find your action..." />
+                      <CommandInput placeholder="Find your focus..." />
                       <CommandEmpty>No category found.</CommandEmpty>
                       <CommandGroup>
                         <ScrollArea className="h-[15vh]">
@@ -482,7 +505,7 @@ export const JitCreator = () => {
                                         : "opacity-0",
                                     )}
                                   />
-                                  {categoryName}
+                                  {category.name}
                                 </CommandItem>
                               );
                             })}
