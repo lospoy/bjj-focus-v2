@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { api } from "~/utils/api";
+import { type RouterOutputs, api } from "~/utils/api";
 import { cn } from "~/libs/utils";
 import { Button } from "./ui/button";
 import {
@@ -28,6 +28,8 @@ import { ToastAction } from "./ui/toast";
 import { ScrollArea } from "./ui/scroll-area";
 import { PopoverClose } from "@radix-ui/react-popover";
 import { useEffect, useState } from "react";
+
+type Category = RouterOutputs["categories"]["getAll"];
 
 const FormSchema = z
   .object({
@@ -160,22 +162,18 @@ export const JitCreator = () => {
     const selectedPosition = form.getValues("position");
     const selectedMove = form.getValues("move");
 
-    let filteredCategories;
+    let filteredCategories: Category | undefined;
 
     if (selectedMove) {
       filteredCategories = [
         {
           id: "defense",
-          name: selectedPosition
-            ? `Defending the ${selectedMove.name} from ${selectedPosition.name}`
-            : `Defending the ${selectedMove.name}`,
+          name: `Defending the ${selectedMove.name}`,
           metadata: null,
         },
         {
           id: "attack",
-          name: selectedPosition
-            ? `Doing the ${selectedMove.name} from ${selectedPosition.name}`
-            : `Doing the ${selectedMove.name}`,
+          name: `Doing the ${selectedMove.name}`,
           metadata: null,
         },
       ];
@@ -230,7 +228,7 @@ export const JitCreator = () => {
   }
 
   useEffect(() => {
-    form.setValue("category", null);
+    form.setValue("category", { name: "", id: "" });
   }, [positionValue, moveValue, form]);
 
   return (
@@ -430,6 +428,21 @@ export const JitCreator = () => {
             )}
           />
         </div>
+
+        {(positionValue ?? moveValue) && (
+          <div className="flex flex-col">
+            <span className="text-2xl">{moveValue?.name} </span>
+            <div>
+              <span>from </span>
+              {positionValue ? (
+                <span className="text-2xl"> {positionName}</span>
+              ) : (
+                <span>any position</span>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* FOCUS (CATEGORIES) */}
         <div className="space-y-2">
           <FormDescription className="text-center">
