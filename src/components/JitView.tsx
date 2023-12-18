@@ -350,7 +350,7 @@ export const JitView = (props: { jit: Jit }) => {
     <Card
       key={jit.id}
       className={`relative mb-8 border-2 ${
-        jit.isFavorite ? "border-gray-400" : "border-gray-200"
+        jit.isFavorite ? "border-accent" : "border-gray-200 opacity-90"
       } bg-inherit`}
     >
       {/* FAVORITE BUTTON */}
