@@ -12,6 +12,8 @@ import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import superjson from "superjson";
 import { ZodError } from "zod";
 import { prisma } from "~/server/db";
+import * as trpcNext from "@trpc/server/adapters/next";
+import { appRouter } from "./root";
 
 /**
  * This is the actual context you will use in your router. It will be used to process every request
@@ -29,6 +31,8 @@ export const createTRPCContext = (opts: CreateNextContextOptions) => {
     prisma,
     userId,
     sesh,
+    req,
+    // res,
   };
 };
 
@@ -94,3 +98,23 @@ const enforceUserIsAuthed = t.middleware(async ({ ctx, next }) => {
 });
 
 export const privateProcedure = t.procedure.use(enforceUserIsAuthed);
+
+// export const cachingApiHandler = trpcNext.createNextApiHandler({
+//   router: appRouter,
+//   createContext: createTRPCContext,
+//   responseMeta(opts) {
+//     const { ctx, errors, type } = opts;
+//     const allOk = errors.length === 0;
+//     const isQuery = type === "query";
+
+//     if (ctx?.res && allOk && isQuery) {
+//       const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
+//       return {
+//         headers: {
+//           "cache-control": `s-maxage=1, stale-while-revalidate=${ONE_DAY_IN_SECONDS}`,
+//         },
+//       };
+//     }
+//     return {};
+//   },
+// });

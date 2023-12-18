@@ -13,7 +13,7 @@ export const JitFeed = ({ jitsPage, dashboard }: JitFeedProps) => {
 
   const [searchTerm, setSearchTerm] = useState("");
 
-  if (!allJits) return <div>Something went wrong</div>;
+  if (!allJits) return <div>Loading...</div>;
 
   // Convert search term to lowercase for case-insensitive comparison
   const lowerCaseSearchTerm = searchTerm.toLowerCase();
