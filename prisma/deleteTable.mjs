@@ -7,7 +7,7 @@ async function main() {
   try {
     // Use Prisma to delete all records from the Session table
     // modify to delete other tables
-    await prisma.session.deleteMany({});
+    await prisma.jit.deleteMany({});
 
     console.log("All data from the Session table has been deleted.");
   } catch (error) {

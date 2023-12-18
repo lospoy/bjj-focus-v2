@@ -78,38 +78,29 @@ export const JitView = (props: { jit: Jit }) => {
   };
 
   function renderJitTitle(jit: Jit) {
-    if (jit.category && jit.position && jit.move) {
+    if (jit.position && jit.move) {
       return (
         <>
-          <span className="text-sm">{jit.category.name}</span>
           <span>{jit.move.name}</span>
-          <span className="text-sm">from {jit.position.name}</span>
+          <div>
+            {" "}
+            <span className="text-sm">from </span>
+            <span>{jit.position.name}</span>
+          </div>
         </>
       );
-    } else if (jit.category && jit.position && !jit.move) {
+    } else if (jit.position && !jit.move) {
       return (
         <>
-          <span className="text-sm">any {jit.category.name}</span>
-          <span>from {jit.position.name}</span>
-        </>
-      );
-    } else if (jit.category && !jit.position && jit.move) {
-      return (
-        <>
-          <span className="text-sm">{jit.category.name}</span>
-          <span>{jit.move.name}s</span>
-        </>
-      );
-    } else if (!jit.category && jit.position && !jit.move) {
-      return (
-        <>
+          <span className="text-sm">any move from</span>
           <span>{jit.position.name}</span>
         </>
       );
-    } else if (!jit.category && !jit.position && jit.move) {
+    } else if (!jit.position && jit.move) {
       return (
         <>
-          <span>{jit.move.name}s</span>
+          <span>{jit.move.name}</span>
+          <span className="text-sm">from any position</span>
         </>
       );
     }
