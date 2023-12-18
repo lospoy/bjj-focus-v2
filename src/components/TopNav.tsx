@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { UserNav } from "./ui/user-nav";
+import { UserNav } from "./UserNav";
 import {
   BarChart4,
   EyeIcon,
@@ -41,14 +41,14 @@ export default function TopNav() {
       {isMenuClicked && (
         <div className="fixed inset-0 z-10 bg-black opacity-40"></div>
       )}
-      <nav className="sticky top-0 z-10 w-full bg-accent px-4 md:border-0">
+      <nav className="sticky top-0 z-10 w-full bg-accent px-4 md:border-0 ">
         <div className="mx-auto md:max-w-3xl">
           <div className="flex justify-between pb-1 pt-2">
             <DropdownMenu onOpenChange={handleMenuOpenChange}>
               <DropdownMenuTrigger
                 asChild
                 className={`mt-1 ${
-                  isMenuClicked ? "text-background" : "text-primary"
+                  isMenuClicked ? "text-background" : "text-background"
                 }`}
               >
                 <Menu
@@ -154,7 +154,7 @@ export default function TopNav() {
               </DropdownMenuContent>
             </DropdownMenu>
             <Link href="/">
-              <h1 className="-mt-1 text-[1.6rem] font-bold text-primary">
+              <h1 className="-mt-1 text-[1.6rem] font-bold text-background">
                 BJJ FOCUS
               </h1>
             </Link>

@@ -1,10 +1,8 @@
-"use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { type RouterOutputs, api } from "~/utils/api";
+import { api } from "~/utils/api";
 import { cn } from "~/libs/utils";
 import { Button } from "./ui/button";
 import {
@@ -27,9 +25,8 @@ import { useToast } from "./ui/use-toast";
 import { ToastAction } from "./ui/toast";
 import { ScrollArea } from "./ui/scroll-area";
 import { PopoverClose } from "@radix-ui/react-popover";
-import { useEffect, useState } from "react";
 
-type Category = RouterOutputs["categories"]["getAll"];
+// type Category = RouterOutputs["categories"]["getAll"];
 
 const FormSchema = z
   .object({
@@ -41,29 +38,27 @@ const FormSchema = z
         categoryType: z.object({ name: z.string() }),
       })
       .optional(),
-    category: z.object({
-      name: z.string(),
-      id: z.string(),
-    }),
+    // category: z.object({
+    //   name: z.string(),
+    //   id: z.string(),
+    // }),
   })
   .refine((data) => data.move ?? data.position, {
     message: "Select at least one move or one position.",
     path: ["move"],
-  })
-  .refine((data) => data.category, {
-    message: "Please select your role in this Jit.",
-    path: ["category"],
   });
 
 type FormData = z.infer<typeof FormSchema>;
 
 export const JitCreator = () => {
   const { toast } = useToast();
-  const allCategories = api.categories.getAll.useQuery().data;
+
   const allPositions = api.positions.getAll.useQuery().data;
   const allMoves = api.moves.getAll.useQuery().data;
   const newJit = api.jits.create.useMutation();
-  const [filteredCategories, setFilteredCategories] = useState(allCategories);
+
+  // const allCategories = api.categories.getAll.useQuery().data;
+  // const [filteredCategories, setFilteredCategories] = useState(allCategories);
 
   const form = useForm<FormData>({
     resolver: zodResolver(FormSchema),
@@ -73,137 +68,144 @@ export const JitCreator = () => {
   const positionName = positionValue?.name;
   const moveValue = form.watch("move");
 
-  type PositionCategoryRules = Record<string, string[]>;
-  type CategoryNameRules = Record<string, Record<string, string>>;
-  const categoryNameRules: CategoryNameRules = {
-    pass: {
-      defense: `Defending the ${positionName}`,
-      pass: `Doing a ${positionName} pass`,
-    },
-    sweep: {
-      sweep: `Doing a ${positionName} sweep`,
-      defense: `Defending the ${positionName}`,
-    },
-    guard: {
-      sweep: `Sweeping from ${positionName}`,
-      guard: `Playing/Retaining ${positionName}`,
-      submission: `Submitting from ${positionName}`,
-    },
-    takedown: {
-      takedown: `Doing a ${positionName} takedown`,
-      defense: `Defending the ${positionName}`,
-    },
-    control: {
-      control: `Maintaining ${positionName}`,
-      escape: `Escaping the ${positionName}`,
-      submission: `Submitting from ${positionName}`,
-    },
-    escape: {
-      escape: `Escaping the ${positionName}`,
-      control: `Pinning from ${positionName}`,
-      submission: `Submitting from ${positionName}`,
-    },
-    defense: {
-      defense: `Defending the ${positionName}`,
-      submission: `Submitting from ${positionName}`,
-    },
-    submission: {
-      submission: `Submitting from ${positionName}`,
-      defense: `Defending the ${positionName}`,
-    },
-  };
+  // type PositionCategoryRules = Record<string, string[]>;
+  // type CategoryNameRules = Record<string, Record<string, string>>;
+  // const categoryNameRules: CategoryNameRules = {
+  //   pass: {
+  //     defense: `Defending the ${positionName}`,
+  //     pass: `Doing a ${positionName} pass`,
+  //   },
+  //   sweep: {
+  //     sweep: `Doing a ${positionName} sweep`,
+  //     defense: `Defending the ${positionName}`,
+  //   },
+  //   guard: {
+  //     sweep: `Sweeping from ${positionName}`,
+  //     guard: `Playing/Retaining ${positionName}`,
+  //     submission: `Submitting from ${positionName}`,
+  //   },
+  //   takedown: {
+  //     takedown: `Doing a ${positionName} takedown`,
+  //     defense: `Defending the ${positionName}`,
+  //   },
+  //   control: {
+  //     control: `Maintaining ${positionName}`,
+  //     escape: `Escaping the ${positionName}`,
+  //     submission: `Submitting from ${positionName}`,
+  //   },
+  //   escape: {
+  //     escape: `Escaping the ${positionName}`,
+  //     control: `Pinning from ${positionName}`,
+  //     submission: `Submitting from ${positionName}`,
+  //   },
+  //   defense: {
+  //     defense: `Defending the ${positionName}`,
+  //     submission: `Submitting from ${positionName}`,
+  //   },
+  //   submission: {
+  //     submission: `Submitting from ${positionName}`,
+  //     defense: `Defending the ${positionName}`,
+  //   },
+  // };
 
-  function mapCategoryNames(
-    category: FormData["category"],
-    selectedPosition: FormData["position"],
-  ) {
-    if (selectedPosition) {
-      const rules =
-        categoryNameRules[selectedPosition.categoryType.name.toLowerCase()];
+  // function mapCategoryNames(
+  //   // category: FormData["category"],
+  //   selectedPosition: FormData["position"],
+  // ) {
+  //   if (selectedPosition) {
+  //     const rules =
+  //       categoryNameRules[selectedPosition.categoryType.name.toLowerCase()];
 
-      if (rules?.[category.name.toLowerCase()]) {
-        return `${rules[category.name.toLowerCase()]}`;
-      }
-    }
-    return category.name;
-  }
+  //     if (rules?.[category.name.toLowerCase()]) {
+  //       return `${rules[category.name.toLowerCase()]}`;
+  //     }
+  //   }
+  //   return category.name;
+  // }
 
   // Filter categories based on the selected position
   // states which categories should be shown, based on the rules above
   // Update the filtered categories whenever the selected position changes
 
-  useEffect(() => {
-    const positionCategoryRules: PositionCategoryRules = {
-      control: ["escape", "control", "submission"],
-      defense: ["defense", "control", "takedown"],
-      escape: ["escape", "control", "submission"],
-      guard: ["sweep", "guard", "submission"],
-      pass: ["defense", "pass"],
-      submission: ["defense", "submission"],
-      sweep: ["sweep", "defense"],
-      takedown: ["takedown", "defense"],
-    };
+  // useEffect(() => {
+  //   const positionCategoryRules: PositionCategoryRules = {
+  //     control: ["escape", "control", "submission"],
+  //     defense: ["defense", "control", "takedown"],
+  //     escape: ["escape", "control", "submission"],
+  //     guard: ["sweep", "guard", "submission"],
+  //     pass: ["defense", "pass"],
+  //     submission: ["defense", "submission"],
+  //     sweep: ["sweep", "defense"],
+  //     takedown: ["takedown", "defense"],
+  //   };
 
-    function filterCategories(
-      category: FormData["category"],
-      position: FormData["position"],
-    ) {
-      if (position?.categoryType) {
-        const rules =
-          positionCategoryRules[position.categoryType.name.toLowerCase()];
-        if (rules && !rules.includes(category.name.toLowerCase())) {
-          return false;
-        }
-      }
+  //   function filterCategories(
+  //     category: FormData["category"],
+  //     position: FormData["position"],
+  //   ) {
+  //     if (position?.categoryType) {
+  //       const rules =
+  //         positionCategoryRules[position.categoryType.name.toLowerCase()];
+  //       if (rules && !rules.includes(category.name.toLowerCase())) {
+  //         return false;
+  //       }
+  //     }
 
-      return true;
-    }
+  //     return true;
+  //   }
 
-    const selectedPosition = form.getValues("position");
-    const selectedMove = form.getValues("move");
+  //   const selectedPosition = form.getValues("position");
+  //   const selectedMove = form.getValues("move");
 
-    let filteredCategories: Category | undefined;
+  //   let filteredCategories: Category | undefined;
 
-    if (selectedMove) {
-      filteredCategories = [
-        {
-          id: "defense",
-          name: `Defending the ${selectedMove.name}`,
-          metadata: null,
-        },
-        {
-          id: "attack",
-          name: `Doing the ${selectedMove.name}`,
-          metadata: null,
-        },
-      ];
-    } else {
-      filteredCategories = allCategories?.filter((category) =>
-        filterCategories(category, selectedPosition),
-      );
-    }
+  //   if (selectedMove) {
+  //     filteredCategories = [
+  //       {
+  //         id: "defense",
+  //         name: `Defending the ${selectedMove.name}`,
+  //         metadata: null,
+  //       },
+  //       {
+  //         id: "attack",
+  //         name: `Doing the ${selectedMove.name}`,
+  //         metadata: null,
+  //       },
+  //     ];
+  //   } else {
+  //     filteredCategories = allCategories?.filter((category) =>
+  //       filterCategories(category, selectedPosition),
+  //     );
+  //   }
 
-    setFilteredCategories(filteredCategories);
-  }, [allCategories, form, positionValue, moveValue]);
+  //   setFilteredCategories(filteredCategories);
+  // }, [allCategories, form, positionValue, moveValue]);
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    try {
-      // newJit.mutate({
-      //   categoryId: data.category,
-      //   moveId: data.move,
-      //   positionId: data.position,
-      // });
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-        description: "There was a problem creating this Jit.",
-        action: <ToastAction altText="Try again">Try again</ToastAction>,
-      });
-    }
-    toast({
-      duration: 6000,
+    let newJitTimeoutId: NodeJS.Timeout | null = null;
+    const delay = 6000;
 
+    newJitTimeoutId = setTimeout(() => {
+      try {
+        newJit.mutate({
+          categoryId: "",
+          moveId: data.move?.id,
+          positionId: data.position?.id,
+        });
+      } catch (error) {
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: "There was a problem creating this Jit.",
+          // action: <ToastAction altText="Try again">Try again</ToastAction>,
+        });
+      }
+    }, delay);
+
+    form.reset();
+
+    toast({
+      duration: delay,
       className: "bg-primary text-background",
       title: "Created New Jit",
       description: (
@@ -218,18 +220,25 @@ export const JitCreator = () => {
               <strong>Position:</strong> {data.position?.name}
             </div>
           )}
-          <div className="">
-            <strong>Action:</strong> {data.category.name}
-          </div>
+          {/* <div className="">
+            <strong>Action:</strong> {data.category?.name}
+          </div> */}
         </>
       ),
-      action: <ToastAction altText="Undo">Undo</ToastAction>,
+      action: (
+        <ToastAction
+          altText="Undo"
+          onClick={() => {
+            if (newJitTimeoutId) {
+              clearTimeout(newJitTimeoutId);
+            }
+          }}
+        >
+          Undo
+        </ToastAction>
+      ),
     });
   }
-
-  useEffect(() => {
-    form.setValue("category", { name: "", id: "" });
-  }, [positionValue, moveValue, form]);
 
   return (
     <Form {...form}>
@@ -238,10 +247,7 @@ export const JitCreator = () => {
         className="space-y-6 md:px-20"
       >
         {/* POSITIONS AND MOVES */}
-        <div className="space-y-2 pb-4">
-          <FormDescription className="text-center">
-            Select a position/move (or both):
-          </FormDescription>
+        <div className="space-y-2">
           <FormField
             control={form.control}
             name="position"
@@ -304,7 +310,7 @@ export const JitCreator = () => {
                               <CommandItem
                                 className={cn(
                                   position.id === field.value?.id
-                                    ? "bg-accent "
+                                    ? "bg-accent text-background"
                                     : "bg-none",
                                 )}
                                 value={position.name}
@@ -397,7 +403,7 @@ export const JitCreator = () => {
                               <CommandItem
                                 className={cn(
                                   move.id === field.value?.id
-                                    ? "bg-accent "
+                                    ? "bg-accent text-background"
                                     : "bg-none",
                                 )}
                                 value={move.name}
@@ -429,22 +435,34 @@ export const JitCreator = () => {
           />
         </div>
 
+        {/* INTERPRETATION OF SELECTED POS/MOVE */}
         {(positionValue ?? moveValue) && (
-          <div className="flex flex-col">
-            <span className="text-2xl">{moveValue?.name} </span>
-            <div>
-              <span>from </span>
-              {positionValue ? (
-                <span className="text-2xl"> {positionName}</span>
-              ) : (
-                <span>any position</span>
-              )}
-            </div>
+          <div className="flex flex-col text-center font-mono">
+            {moveValue ? (
+              <>
+                <span className="text-3xl">{moveValue?.name} </span>
+                <div className="flex flex-col">
+                  <span>from </span>
+                  {positionValue ? (
+                    <span className="text-3xl"> {positionName}</span>
+                  ) : (
+                    <span className="text-3xl">any position</span>
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex flex-col -space-y-1">
+                  <span>any move from</span>
+                  <span className="text-3xl"> {positionName}</span>
+                </div>
+              </>
+            )}
           </div>
         )}
 
         {/* FOCUS (CATEGORIES) */}
-        <div className="space-y-2">
+        {/* <div className="space-y-2">
           <FormDescription className="text-center">
             Then select your focus in this Jit:
           </FormDescription>
@@ -532,10 +550,15 @@ export const JitCreator = () => {
               </FormItem>
             )}
           />
-        </div>
+        </div> */}
 
         <div className="flex justify-center ">
-          <Button size={"lg"} type="submit">
+          <Button
+            size={"lg"}
+            type="submit"
+            className="bg-accent text-background"
+            disabled={!moveValue && !positionValue}
+          >
             CREATE JIT
           </Button>
         </div>

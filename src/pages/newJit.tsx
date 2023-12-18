@@ -13,9 +13,9 @@ const NewJit: NextPage = () => {
 
   return (
     <PageLayout>
-      <Card className="mt-[15vh] h-[50vh]">
-        <CardHeader className="flex items-center pb-8">
-          <CardTitle className="flex text-2xl">New Jit</CardTitle>
+      <Card className="mt-[15vh]">
+        <CardHeader className="flex items-center">
+          <CardTitle className="flex text-xl">Create New Jit</CardTitle>
         </CardHeader>
         <CardContent>
           <JitCreator />
