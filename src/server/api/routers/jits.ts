@@ -11,7 +11,7 @@ const ratelimit = new Ratelimit({
 });
 
 const JitSchema = z.object({
-  id: z.string(),
+  id: z.string().optional(),
   metadata: z
     .record(
       z.union([

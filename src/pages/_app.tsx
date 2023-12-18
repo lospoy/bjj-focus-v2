@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 import store from "~/store/store";
 import Head from "next/head";
 import TopNav from "~/components/TopNav";
+import { Toaster } from "~/components/ui/toaster";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
@@ -17,6 +18,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
         </Head>
         <TopNav />
         <Component {...pageProps} />
+        <Toaster />
       </ClerkProvider>
     </Provider>
   );
