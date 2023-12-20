@@ -18,16 +18,18 @@ import {
 import { Input } from "./ui/input";
 import { EyeClosedIcon } from "@radix-ui/react-icons";
 import { Icons } from "./ui/icons";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { Plus, SaveIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import { Belt } from "./ui/belt";
 import { JitNotesFeed } from "./JitNotesFeed";
 import { useState } from "react";
+import { toast } from "./ui/use-toast";
+import { ToastAction } from "./ui/toast";
+import { useToastWithAction } from "~/hooks/useToastWithAction";
 
 type Jit = RouterOutputs["jits"]["getAll"][number];
 type Note = RouterOutputs["jits"]["getAll"][number]["notes"][number];
+type Session = RouterOutputs["sessions"]["create"];
 
 export const JitView = (props: { jit: Jit }) => {
   const { jit } = props;
@@ -37,6 +39,21 @@ export const JitView = (props: { jit: Jit }) => {
   const newNote = api.notes.create.useMutation();
   const [inputValue, setInputValue] = useState("");
   const favoriteNotes = jit.notes?.filter((note) => note.isFavorite);
+
+  const toastDescription = (
+    <>
+      {jit.move && (
+        <div className="">
+          <strong>Move:</strong> {jit.move?.name}
+        </div>
+      )}
+      {jit.position && (
+        <div className="">
+          <strong>Position:</strong> {jit.position?.name}
+        </div>
+      )}
+    </>
+  );
 
   // Returns human-readable date based on the difference between the current date and the date passed in
   // const formatDate = (date: Date | null | undefined): string => {
@@ -273,44 +290,117 @@ export const JitView = (props: { jit: Jit }) => {
     }
   };
 
-  const handleAddSessionClick = () => {
-    try {
-      addSession.mutate({
-        jitId: jit.id,
-      });
-      // If mutate succeeds, update UI and invalidate the data
-      setTimeout(() => {
-        void ctx.jits.getAll.invalidate();
-      }, 2000);
+  const handleAddSessionClick = useToastWithAction();
 
-      toast.success("SESSION ADDED", {
-        position: "bottom-center",
-        autoClose: 2500,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    } catch (e: unknown) {
-      toast.error("Failed to add session. Please try again later.");
-    }
-  };
+  // const handleAddSessionClick = () => {
+  //   let newJitTimeoutId: NodeJS.Timeout | null = null;
+  //   const delay = 4000;
+
+  //   newJitTimeoutId = setTimeout(() => {
+  //     try {
+  //       addSession.mutate({
+  //         jitId: jit.id,
+  //       });
+  //       // If mutate succeeds, update UI and invalidate the data
+  //       setTimeout(() => {
+  //         void ctx.jits.getAll.invalidate();
+  //       }, 2000);
+  //     } catch (e: unknown) {
+  //       toast({
+  //         variant: "destructive",
+  //         title: "Uh oh! Something went wrong.",
+  //         description: "There was a problem adding a Session.",
+  //       });
+  //     }
+  //   }, delay);
+
+  //   toast({
+  //     duration: delay,
+  //     className: "bg-primary text-background",
+  //     title: "Adding a Session...",
+  //     description: (
+  //       <>
+  //         {jit.move && (
+  //           <div className="">
+  //             <strong>Move:</strong> {jit.move?.name}
+  //           </div>
+  //         )}
+  //         {jit.position && (
+  //           <div className="">
+  //             <strong>Position:</strong> {jit.position?.name}
+  //           </div>
+  //         )}
+  //       </>
+  //     ),
+  //     action: (
+  //       <ToastAction
+  //         altText="Undo"
+  //         onClick={() => {
+  //           if (newJitTimeoutId) {
+  //             clearTimeout(newJitTimeoutId);
+  //           }
+  //         }}
+  //       >
+  //         Undo
+  //       </ToastAction>
+  //     ),
+  //   });
+  // };
 
   const handleFavoriteClick = () => {
-    try {
-      updateJit.mutate({
-        id: jit.id,
-        isFavorite: !jit.isFavorite,
-      });
-      // If mutate succeeds, update UI and invalidate the data
-      setTimeout(() => {
-        void ctx.jits.getAll.invalidate();
-      }, 2000);
-    } catch (e: unknown) {
-      toast.error("Failed to update. Please try again later.");
-    }
+    let setFavoriteJitTimeoutId: NodeJS.Timeout | null = null;
+    const delay = 4000;
+
+    setFavoriteJitTimeoutId = setTimeout(() => {
+      try {
+        updateJit.mutate({
+          id: jit.id,
+          isFavorite: !jit.isFavorite,
+        });
+        // If mutate succeeds, update UI and invalidate the data
+        setTimeout(() => {
+          void ctx.jits.getAll.invalidate();
+        }, 2000);
+      } catch (e: unknown) {
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: "There was a problem moving this Jit to the Focus Page.",
+        });
+      }
+    }, delay);
+
+    toast({
+      duration: delay,
+      className: "bg-primary text-background",
+      title: "Adding to Focus...",
+      description: (
+        <>
+          {jit.move && (
+            <div className="">
+              <strong>Move:</strong> {jit.move?.name}
+            </div>
+          )}
+          {jit.position && (
+            <div className="">
+              <strong>Position:</strong> {jit.position?.name}
+            </div>
+          )}
+        </>
+      ),
+      action: (
+        <ToastAction
+          altText="Undo"
+          onClick={() => {
+            if (setFavoriteJitTimeoutId) {
+              clearTimeout(setFavoriteJitTimeoutId);
+            }
+          }}
+        >
+          Undo
+        </ToastAction>
+      ),
+    });
   };
 
   const handleNewNoteInputChange = (
@@ -320,18 +410,62 @@ export const JitView = (props: { jit: Jit }) => {
   };
 
   const handleSaveNewNoteClick = () => {
-    try {
-      newNote.mutate({
-        jitId: jit.id,
-        body: inputValue,
-      });
-      // If mutate succeeds, update UI and invalidate the data
-      setTimeout(() => {
-        void ctx.notes.getNotesByJitId.invalidate();
-      }, 2000);
-    } catch (e: unknown) {
-      toast.error("Failed to create new note. Please try again later.");
-    }
+    let newNoteTimeoutId: NodeJS.Timeout | null = null;
+    const delay = 4000;
+
+    newNoteTimeoutId = setTimeout(() => {
+      try {
+        newNote.mutate({
+          jitId: jit.id,
+          body: inputValue,
+        });
+        // If mutate succeeds, update UI and invalidate the data
+        setTimeout(() => {
+          void ctx.jits.getAll.invalidate();
+        }, 2000);
+      } catch (e: unknown) {
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: "There was a problem creating this note.",
+        });
+      }
+    }, delay);
+
+    toast({
+      duration: delay,
+      className: "bg-primary text-background",
+      title: "Creating note...",
+      description: (
+        <>
+          <div className="">
+            <strong>New note:</strong> {new Date().toLocaleString()}
+          </div>
+          {jit.move && (
+            <div className="">
+              <strong>Move:</strong> {jit.move?.name}
+            </div>
+          )}
+          {jit.position && (
+            <div className="">
+              <strong>Position:</strong> {jit.position?.name}
+            </div>
+          )}
+        </>
+      ),
+      action: (
+        <ToastAction
+          altText="Undo"
+          onClick={() => {
+            if (newNoteTimeoutId) {
+              clearTimeout(newNoteTimeoutId);
+            }
+          }}
+        >
+          Undo
+        </ToastAction>
+      ),
+    });
   };
 
   return (
@@ -364,23 +498,19 @@ export const JitView = (props: { jit: Jit }) => {
         {/* ADD SESSION BUTTON */}
         <div className="flex w-2/12 flex-col">
           <Button
-            onClick={handleAddSessionClick}
+            onClick={() =>
+              handleAddSessionClick(
+                "Adding a Session...",
+                toastDescription,
+                () => addSession.mutate({ jitId: jit.id }),
+                // eslint-disable-next-line @typescript-eslint/unbound-method
+                ctx.jits.getAll.invalidate,
+              )
+            }
             className="w-[38px] bg-accent p-0 text-xs font-semibold"
           >
             <Plus className="h-7 w-7" />
           </Button>
-          <ToastContainer
-            position="bottom-center"
-            autoClose={2500}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="light"
-          />
         </div>
       </CardHeader>
 
