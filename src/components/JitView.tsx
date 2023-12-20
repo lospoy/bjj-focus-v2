@@ -27,7 +27,7 @@ import { JitNotesFeed } from "./JitNotesFeed";
 import { useState } from "react";
 
 type Jit = RouterOutputs["jits"]["getAll"][number];
-type Note = RouterOutputs["notes"]["getNotesByJitId"][number];
+type Note = RouterOutputs["jits"]["getAll"][number]["notes"][number];
 
 export const JitView = (props: { jit: Jit }) => {
   const { jit } = props;
@@ -36,10 +36,7 @@ export const JitView = (props: { jit: Jit }) => {
   const updateJit = api.jits.updateById.useMutation();
   const newNote = api.notes.create.useMutation();
   const [inputValue, setInputValue] = useState("");
-  const allNotesFromThisJit = api.notes.getNotesByJitId.useQuery({
-    jitId: jit.id,
-  }).data;
-  const favoriteNotes = allNotesFromThisJit?.filter((note) => note.isFavorite);
+  const favoriteNotes = jit.notes?.filter((note) => note.isFavorite);
 
   // Returns human-readable date based on the difference between the current date and the date passed in
   // const formatDate = (date: Date | null | undefined): string => {
@@ -156,7 +153,7 @@ export const JitView = (props: { jit: Jit }) => {
 
   const beltRules = generateBeltRules(rules);
 
-  const renderJitBelt = (sessionCount: number) => {
+  const renderJitBelt = (sessionCount: Jit["sessionCount"]) => {
     let numberOfStripes: number;
     let beltColor: "white" | "blue" | "purple" | "brown" | "black";
 
@@ -185,7 +182,7 @@ export const JitView = (props: { jit: Jit }) => {
     }
   };
 
-  const renderStripeProgress = (sessionCount: number) => {
+  const renderStripeProgress = (sessionCount: Jit["sessionCount"]) => {
     const rule = beltRules.find(
       (r) => sessionCount >= r.min && sessionCount <= r.max,
     );
@@ -228,7 +225,7 @@ export const JitView = (props: { jit: Jit }) => {
     }
   };
 
-  const renderBeltProgress = (sessionCount: number) => {
+  const renderBeltProgress = (sessionCount: Jit["sessionCount"]) => {
     const currentRule = beltRules.find(
       (r) => sessionCount >= r.min && sessionCount <= r.max,
     );
@@ -414,7 +411,7 @@ export const JitView = (props: { jit: Jit }) => {
                 {renderJitTitle(jit)}
               </DialogTitle>
               <DialogDescription>
-                Manage your notes specific to this Focus.
+                Manage your notes specific to this Jit.
               </DialogDescription>
             </DialogHeader>
 

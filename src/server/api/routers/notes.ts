@@ -23,10 +23,13 @@ const NoteSchema = z.object({
       ]),
     )
     .optional(),
-  jitId: z.string(),
   body: z.string().optional(),
   id: z.string().optional(),
   isFavorite: z.boolean().optional(),
+});
+
+const CreateNoteSchema = NoteSchema.extend({
+  jitId: z.string(),
 });
 
 export const notesRouter = createTRPCRouter({
@@ -98,7 +101,7 @@ export const notesRouter = createTRPCRouter({
     }),
 
   create: privateProcedure
-    .input(NoteSchema)
+    .input(CreateNoteSchema)
     .mutation(async ({ ctx, input }) => {
       const { success } = await ratelimit.limit(ctx.userId);
 
