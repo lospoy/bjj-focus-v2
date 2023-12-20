@@ -1,8 +1,13 @@
 // homePage
 
-import { type NextPage } from "next";
+import { type GetServerSideProps, type NextPage } from "next";
 import { SignIn, useUser } from "@clerk/nextjs";
 import { Dashboard } from "../components/Dashboard";
+import { appRouter } from "~/server/api/root";
+import { createServerSideHelpers } from "@trpc/react-query/server";
+import { getAuth } from "@clerk/nextjs/server";
+import SuperJSON from "superjson";
+import { promise } from "zod";
 
 const HomePage: NextPage = () => {
   const { isLoaded: userLoaded, isSignedIn } = useUser();
@@ -16,7 +21,7 @@ const HomePage: NextPage = () => {
       </main>
       <footer className="fixed bottom-0 left-0 w-full bg-gray-100 p-3 text-center">
         <p className="text-xs text-gray-700">
-          © 2024 BJJ Focus. All rights reserved.
+          © {new Date().getFullYear()} BJJ Focus. All rights reserved.
         </p>
       </footer>
     </div>
@@ -25,4 +30,26 @@ const HomePage: NextPage = () => {
   );
 };
 
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const sesh = getAuth(req);
+  const userId = sesh.userId;
+
+  const helpers = createServerSideHelpers({
+    router: appRouter,
+    // @ts-expect-error https://github.com/trpc/trpc/discussions/371
+    ctx: { req, sesh, userId },
+    transformer: SuperJSON,
+  });
+
+  await Promise.all([
+    helpers.jits.getAll.prefetch(),
+    helpers.categories.getAll.prefetch(),
+    helpers.positions.getAll.prefetch(),
+    helpers.moves.getAll.prefetch(),
+  ]);
+
+  return {
+    props: { trpcState: helpers.dehydrate() },
+  };
+};
 export default HomePage;

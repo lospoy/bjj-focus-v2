@@ -12,8 +12,6 @@ import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import superjson from "superjson";
 import { ZodError } from "zod";
 import { prisma } from "~/server/db";
-import * as trpcNext from "@trpc/server/adapters/next";
-import { appRouter } from "./root";
 
 /**
  * This is the actual context you will use in your router. It will be used to process every request
