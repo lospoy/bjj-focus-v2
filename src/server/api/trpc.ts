@@ -29,6 +29,8 @@ export const createTRPCContext = (opts: CreateNextContextOptions) => {
     prisma,
     userId,
     sesh,
+    req,
+    // res,
   };
 };
 
@@ -94,3 +96,23 @@ const enforceUserIsAuthed = t.middleware(async ({ ctx, next }) => {
 });
 
 export const privateProcedure = t.procedure.use(enforceUserIsAuthed);
+
+// export const cachingApiHandler = trpcNext.createNextApiHandler({
+//   router: appRouter,
+//   createContext: createTRPCContext,
+//   responseMeta(opts) {
+//     const { ctx, errors, type } = opts;
+//     const allOk = errors.length === 0;
+//     const isQuery = type === "query";
+
+//     if (ctx?.res && allOk && isQuery) {
+//       const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
+//       return {
+//         headers: {
+//           "cache-control": `s-maxage=1, stale-while-revalidate=${ONE_DAY_IN_SECONDS}`,
+//         },
+//       };
+//     }
+//     return {};
+//   },
+// });

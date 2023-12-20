@@ -9,7 +9,7 @@ import { Card, CardContent } from "./ui/card";
 import { Pin } from "lucide-react";
 import { toast } from "react-toastify";
 
-type Note = RouterOutputs["notes"]["getNotesByJitId"][number];
+type Note = RouterOutputs["jits"]["getAll"][number]["notes"][number];
 
 export const JitNoteView = (props: { note: Note }) => {
   const { note } = props;
@@ -20,7 +20,6 @@ export const JitNoteView = (props: { note: Note }) => {
     try {
       updateNote.mutate({
         id: note.id,
-        jitId: note.jitId,
         isFavorite: !note.isFavorite,
       });
       // If mutate succeeds, update UI and invalidate the data

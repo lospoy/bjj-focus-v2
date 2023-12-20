@@ -1,72 +1,54 @@
-// Dashboard
+// homePage
 
-import { type NextPage } from "next";
-import { api } from "~/utils/api";
-import { SignInButton, useUser } from "@clerk/nextjs";
-import { PageLayout } from "~/components/ui/layout";
-import { useDispatch } from "react-redux";
-import { setUser } from "../store/actions/userActions";
-import { useEffect } from "react";
-import { JitFeed } from "~/components/JitFeed";
+import { type GetServerSideProps, type NextPage } from "next";
+import { SignIn, useUser } from "@clerk/nextjs";
+import { Dashboard } from "../components/Dashboard";
+import { appRouter } from "~/server/api/root";
+import { createServerSideHelpers } from "@trpc/react-query/server";
+import { getAuth } from "@clerk/nextjs/server";
+import SuperJSON from "superjson";
 
-const Home: NextPage = () => {
-  // Dispatching user data to Redux store
-  const dispatch = useDispatch();
-  const user = useUser().user;
+const HomePage: NextPage = () => {
   const { isLoaded: userLoaded, isSignedIn } = useUser();
 
-  useEffect(() => {
-    if (user && userLoaded) {
-      // Ensure user data is not null or undefined before dispatching
-      const userData = {
-        firstName: user.firstName ?? "",
-        lastName: user.lastName ?? "",
-        username: user.username ?? "",
-        imageUrl: user.imageUrl ?? "",
-        email: user.primaryEmailAddress?.emailAddress ?? "",
-        id: user.id ?? "",
-      };
-      dispatch(setUser(userData));
-    }
-  }, [dispatch, user, userLoaded]);
-
-  // Start fetching asap
-  // (React query will use cached data if the data doesn't change)
-  api.jits.getAll.useQuery();
-
-  // Return empty div if user isn't loaded yet
-  if (!userLoaded) return <div />;
-
-  // const handleNewSequence = async () => {
-  //   const url = `/activeJit/jit-selection`;
-  //   await router.push(url);
-  // };
-
-  return (
-    <PageLayout>
-      <div className="flex flex-col">
-        <div className="flex px-4 py-2">
-          {!isSignedIn && (
-            <div className="flex justify-center">
-              <SignInButton />
-            </div>
-          )}
-        </div>
-
-        {user && (
-          <>
-            <JitFeed dashboard={true} />
-          </>
-        )}
-        {/* <Button
-          onClick={handleNewSequence}
-          className="fixed bottom-2 right-2 z-50 m-4 flex h-20 self-end rounded-full border-4 bg-current p-4 text-white shadow-lg "
-        >
-          <Plus className="h-10 w-10 text-accent" />
-        </Button> */}
-      </div>
-    </PageLayout>
+  return !isSignedIn ? (
+    <div className="min-w-screen flex flex-col items-center bg-background">
+      <main className="flex-grow md:w-1/3">
+        <section className="md:min-w-xl mx-auto p-4">
+          <SignIn />
+        </section>
+      </main>
+      <footer className="fixed bottom-0 left-0 w-full bg-gray-100 p-3 text-center">
+        <p className="text-xs text-gray-700">
+          © {new Date().getFullYear()} BJJ Focus. All rights reserved.
+        </p>
+      </footer>
+    </div>
+  ) : (
+    <Dashboard />
   );
 };
 
-export default Home;
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  const sesh = getAuth(req);
+  const userId = sesh.userId;
+
+  const helpers = createServerSideHelpers({
+    router: appRouter,
+    // @ts-expect-error https://github.com/trpc/trpc/discussions/371
+    ctx: { req, sesh, userId },
+    transformer: SuperJSON,
+  });
+
+  await Promise.all([
+    helpers.jits.getAll.prefetch(),
+    helpers.categories.getAll.prefetch(),
+    helpers.positions.getAll.prefetch(),
+    helpers.moves.getAll.prefetch(),
+  ]);
+
+  return {
+    props: { trpcState: helpers.dehydrate() },
+  };
+};
+export default HomePage;
