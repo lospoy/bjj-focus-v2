@@ -7,7 +7,6 @@ import { appRouter } from "~/server/api/root";
 import { createServerSideHelpers } from "@trpc/react-query/server";
 import { getAuth } from "@clerk/nextjs/server";
 import SuperJSON from "superjson";
-import { promise } from "zod";
 
 const HomePage: NextPage = () => {
   const { isLoaded: userLoaded, isSignedIn } = useUser();
@@ -30,7 +29,7 @@ const HomePage: NextPage = () => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   const sesh = getAuth(req);
   const userId = sesh.userId;
 
