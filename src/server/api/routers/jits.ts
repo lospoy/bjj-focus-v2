@@ -130,6 +130,7 @@ export const jitsRouter = createTRPCRouter({
             metadata: true,
             body: true,
             isFavorite: true,
+            jitId: true,
           },
         },
       },
