@@ -9,41 +9,39 @@ import { Card, CardContent } from "./ui/card";
 import { Pin } from "lucide-react";
 import { toast } from "./ui/use-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 
 type Note = RouterOutputs["notes"]["updateById"];
 type UpdateNoteInput = Pick<Note, "id" | "isFavorite">;
 
 export const JitNoteView = (props: { note: Note }) => {
   const { note } = props;
-  const ctx = api.useUtils();
   const queryClient = useQueryClient();
   const { mutateAsync } = api.notes.updateById.useMutation();
+  const ctx = api.useUtils();
+
+  // Define a local state for isFavorite (UI state)
+  const [isPinned, setIsPinned] = useState(note.isFavorite);
 
   const updateNote = useMutation(
     (newNote: UpdateNoteInput) => mutateAsync(newNote),
     {
       onMutate: async (newNote: UpdateNoteInput) => {
-        // Cancel any outgoing refetches
-        // (so they don't overwrite our optimistic update)
         await queryClient.cancelQueries({ queryKey: ["notes", newNote.id] });
 
-        // Snapshot the previous value
         const previousNote = queryClient.getQueryData(["notes", newNote.id]);
 
         // Optimistically update to the new value
         queryClient.setQueryData(["notes", newNote.id], newNote);
 
-        // Return a context with the previous and new todo
         return { previousNote, newNote };
       },
-      // If the mutation fails, use the context we returned above
       onError: (err, newNote, context) => {
         queryClient.setQueryData(
           ["notes", context?.newNote.id],
           context?.previousNote,
         );
       },
-      // Always refetch after error or success:
       onSettled: (newNote) => {
         void queryClient.invalidateQueries({
           queryKey: ["notes", newNote?.id],
@@ -53,6 +51,8 @@ export const JitNoteView = (props: { note: Note }) => {
   );
 
   const handleTogglePin = async () => {
+    // Update isPinned immediately when the button is clicked
+    setIsPinned(!isPinned);
     try {
       const newNote: UpdateNoteInput = {
         id: note.id,
@@ -60,13 +60,14 @@ export const JitNoteView = (props: { note: Note }) => {
       };
 
       await updateNote.mutateAsync(newNote);
-      // If mutate succeeds, update UI and invalidate the data
       void ctx.jits.getAll.invalidate();
     } catch (e: unknown) {
+      // If the mutation fails, revert the local state
+      setIsPinned(isPinned);
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: "There was a problem adding a Session.",
+        description: "There was a problem pinning this note.",
       });
     }
   };
@@ -78,7 +79,7 @@ export const JitNoteView = (props: { note: Note }) => {
         {/* FAVORITE / BOOKMARK */}
         <div className="flex w-1/12 flex-col">
           <button onClick={handleTogglePin}>
-            {note.isFavorite ? (
+            {isPinned ? (
               <Pin fill="currentColor" className="h-5 w-5 text-blue-800" />
             ) : (
               <Pin className="h-5 w-5 text-blue-800" />
