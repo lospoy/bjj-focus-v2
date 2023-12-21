@@ -29,7 +29,6 @@ import { useToastWithAction } from "~/hooks/useToastWithAction";
 
 type Jit = RouterOutputs["jits"]["getAll"][number];
 type Note = RouterOutputs["jits"]["getAll"][number]["notes"][number];
-type Session = RouterOutputs["sessions"]["create"];
 
 export const JitView = (props: { jit: Jit }) => {
   const { jit } = props;
