@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { api } from "~/utils/api";
+import { type RouterOutputs, api } from "~/utils/api";
 import { cn } from "~/libs/utils";
 import { Button } from "./ui/button";
 import {
@@ -18,6 +18,14 @@ import { useToast } from "./ui/use-toast";
 import { ToastAction } from "./ui/toast";
 import { ScrollArea } from "./ui/scroll-area";
 import { PopoverClose } from "@radix-ui/react-popover";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+type Jit = RouterOutputs["jits"]["create"];
+type CreateNewJit = {
+  categoryId: string | null;
+  moveId: string | null;
+  positionId: string | null;
+};
 
 const FormSchema = z
   .object({
@@ -39,10 +47,10 @@ type FormData = z.infer<typeof FormSchema>;
 
 export const JitCreator = () => {
   const { toast } = useToast();
-
+  const { mutateAsync } = api.jits.create.useMutation();
   const allPositions = api.positions.getAll.useQuery().data;
   const allMoves = api.moves.getAll.useQuery().data;
-  const newJit = api.jits.create.useMutation();
+  const queryClient = useQueryClient();
 
   const form = useForm<FormData>({
     resolver: zodResolver(FormSchema),
@@ -52,17 +60,40 @@ export const JitCreator = () => {
   const positionName = positionValue?.name;
   const moveValue = form.watch("move");
 
+  const createJit = useMutation((newJit: Jit) => mutateAsync(newJit), {
+    onMutate: async (newJit: Jit) => {
+      await queryClient.cancelQueries({ queryKey: ["jits"] });
+
+      const previousJits = queryClient.getQueryData(["jits"]);
+
+      // Optimistically update to the new value
+      queryClient.setQueryData(["jits"], (old) => [...old, newJit]);
+
+      return { previousJits };
+    },
+    onError: (err, newJit, context) => {
+      queryClient.setQueryData(["jits"], context?.previousJits);
+    },
+    onSettled: () => {
+      void queryClient.invalidateQueries({
+        queryKey: ["jits"],
+      });
+    },
+  });
+
   function onSubmit(data: z.infer<typeof FormSchema>) {
     let newJitTimeoutId: NodeJS.Timeout | null = null;
     const delay = 4000;
 
-    newJitTimeoutId = setTimeout(() => {
+    const createNewJit = async () => {
       try {
-        newJit.mutate({
-          categoryId: "",
-          moveId: data.move?.id,
-          positionId: data.position?.id,
-        });
+        const newJit: Jit = {
+          categoryId: null,
+          moveId: data.move?.id ?? null,
+          positionId: data.position?.id ?? null,
+        };
+
+        await createJit.mutateAsync(newJit);
       } catch (error) {
         toast({
           variant: "destructive",
@@ -70,6 +101,10 @@ export const JitCreator = () => {
           description: "There was a problem creating this Jit.",
         });
       }
+    };
+
+    newJitTimeoutId = setTimeout(() => {
+      void createNewJit();
     }, delay);
 
     form.reset();

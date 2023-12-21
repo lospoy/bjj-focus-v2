@@ -10,26 +10,13 @@ const ratelimit = new Ratelimit({
   analytics: true,
 });
 
-const JitSchema = z.object({
-  id: z.string().optional(),
-  metadata: z
-    .record(
-      z.union([
-        z.string(),
-        z.number(),
-        z.boolean(),
-        z.null(),
-        z.array(z.any()),
-        z.record(z.any()),
-      ]),
-    )
-    .optional(),
-  curriculumId: z.string().optional(),
-  isFavorite: z.boolean().optional(),
-  isGoal: z.boolean().optional(),
-  categoryId: z.string().optional(),
-  positionId: z.string().optional(),
-  moveId: z.string().optional(),
+const JitSchema = z.object({,
+  curriculumId: z.string().nullable(),
+  isFavorite: z.boolean(),
+  isGoal: z.boolean(),
+  categoryId: z.string().nullable(),
+  positionId: z.string().nullable(),
+  moveId: z.string().nullable(),
 });
 
 export const jitsRouter = createTRPCRouter({
@@ -168,10 +155,9 @@ export const jitsRouter = createTRPCRouter({
           userId: ctx.userId,
         },
         data: {
-          metadata: input.metadata ?? { set: null },
           curriculumId: input.curriculumId ?? null,
-          isFavorite: input.isFavorite,
-          isGoal: input.isGoal,
+          isFavorite: input.isFavorite ?? false,
+          isGoal: input.isGoal ?? false,
         },
       });
 
@@ -191,10 +177,9 @@ export const jitsRouter = createTRPCRouter({
         categoryId: input.categoryId ?? null,
         positionId: input.positionId ?? null,
         moveId: input.moveId ?? null,
-        metadata: input.metadata ?? { set: null },
         curriculumId: input.curriculumId ?? null,
-        isFavorite: input.isFavorite,
-        isGoal: input.isGoal,
+        isFavorite: input.isFavorite ?? false,
+        isGoal: input.isGoal ?? false,
       },
     });
 
