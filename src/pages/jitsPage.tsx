@@ -1,10 +1,19 @@
 // JitsPage
 
-import { type NextPage } from "next";
 import { api } from "~/utils/api";
 import { SignInButton, useUser } from "@clerk/nextjs";
 import { PageLayout } from "~/components/ui/layout";
 import { JitFeed } from "~/components/JitFeed";
+import {
+  type NextApiRequest,
+  type GetServerSideProps,
+  type NextPage,
+} from "next";
+import { appRouter } from "~/server/api/root";
+import { createServerSideHelpers } from "@trpc/react-query/server";
+import { getAuth } from "@clerk/nextjs/server";
+import SuperJSON from "superjson";
+import { prisma } from "prisma/db";
 
 const JitsPage: NextPage = () => {
   const user = useUser().user;
@@ -14,7 +23,11 @@ const JitsPage: NextPage = () => {
 
   // Start fetching asap
   // (React query will use cached data if the data doesn't change)
-  api.jits.getAll.useQuery();
+  const allJits = api.jits.getAll.useQuery().data;
+
+  // const allJits: GetAllJit = [];
+
+  console.log({ allJits });
 
   // Return empty div if user isn't loaded yet
   if (!userLoaded) return <div />;
@@ -35,9 +48,9 @@ const JitsPage: NextPage = () => {
           )}
         </div>
 
-        {user && (
+        {user && allJits && (
           <>
-            <JitFeed jitsPage={true} />
+            <JitFeed jitsPage={true} allJits={allJits} />
           </>
         )}
         {/* <Button
@@ -49,6 +62,30 @@ const JitsPage: NextPage = () => {
       </div>
     </PageLayout>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  const sesh = getAuth(req);
+  const userId = sesh.userId;
+
+  const helpers = createServerSideHelpers({
+    router: appRouter,
+    ctx: { prisma, userId, sesh, req: req as NextApiRequest },
+    transformer: SuperJSON,
+  });
+
+  // await Promise.all([
+  //   helpers.jits.getAll.prefetch(),
+  //   helpers.categories.getAll.prefetch(),
+  //   helpers.positions.getAll.prefetch(),
+  //   helpers.moves.getAll.prefetch(),
+  // ]);
+
+  await helpers.jits.getAll.prefetch();
+
+  return {
+    props: { trpcState: helpers.dehydrate() },
+  };
 };
 
 export default JitsPage;

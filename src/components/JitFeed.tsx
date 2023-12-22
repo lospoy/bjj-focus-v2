@@ -1,15 +1,36 @@
-import { useState } from "react";
-import { api } from "~/utils/api";
+import { useEffect, useState } from "react";
+import { type RouterOutputs, api } from "~/utils/api";
 import { JitView } from "./JitView";
 import { Search } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import type { JitCreate, JitRecord } from "./JitCreator";
 
 interface JitFeedProps {
   jitsPage?: boolean;
   dashboard?: boolean;
+  allJits?: GetAllJit;
 }
 
-export const JitFeed = ({ jitsPage, dashboard }: JitFeedProps) => {
-  const allJits = api.jits.getAll.useQuery().data;
+export type GetAllJit = RouterOutputs["jits"]["getAll"];
+
+export const JitFeed = ({
+  jitsPage,
+  dashboard,
+  allJits: fuckJist,
+}: JitFeedProps) => {
+  const allJits = [...(fuckJist ?? [])];
+  // const _allJits = api.jits.getAll.useQuery().data;
+
+  // const queryClient = useQueryClient();
+
+  // const cachedJits = queryClient.getQueryData<(JitRecord | JitCreate)[]>([
+  //   "jits",
+  // ]);
+
+  // const allJits = [
+  //   ...(_allJits ?? []),
+  //   ...(cachedJits ?? []),
+  // ];
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -23,9 +44,8 @@ export const JitFeed = ({ jitsPage, dashboard }: JitFeedProps) => {
   if (jitsPage) {
     filteredJits = allJits?.filter(
       (jit) =>
-        jit.category?.name.toLowerCase().includes(lowerCaseSearchTerm) ??
-        jit.position?.name.toLowerCase().includes(lowerCaseSearchTerm) ??
-        jit.move?.name.toLowerCase().includes(lowerCaseSearchTerm),
+        jit?.position?.name.toLowerCase().includes(lowerCaseSearchTerm) ??
+        jit?.move?.name.toLowerCase().includes(lowerCaseSearchTerm),
     );
   } else if (dashboard) {
     filteredJits = allJits?.filter((jit) => jit.isFavorite);

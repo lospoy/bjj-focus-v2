@@ -19,13 +19,11 @@ import { ToastAction } from "./ui/toast";
 import { ScrollArea } from "./ui/scroll-area";
 import { PopoverClose } from "@radix-ui/react-popover";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { type JitSchemaInput } from "~/server/api/routers/jits";
+import { getQueryKey } from "@trpc/react-query";
 
-type Jit = RouterOutputs["jits"]["create"];
-type CreateNewJit = {
-  categoryId: string | null;
-  moveId: string | null;
-  positionId: string | null;
-};
+export type JitRecord = RouterOutputs["jits"]["create"];
+export type JitCreate = z.infer<typeof JitSchemaInput>;
 
 const FormSchema = z
   .object({
@@ -45,12 +43,23 @@ const FormSchema = z
 
 type FormData = z.infer<typeof FormSchema>;
 
+// Create a new file and prove that I can access the TRPC cache
+// 1. call the cache/getALl query
+// 2. do the createJit mutation
+
+// why does the mutate happens AFTER and not before it reaches DB
+
+// put prisma client in one file, export, and import everyhwere
+// same with serversideprops
+
 export const JitCreator = () => {
   const { toast } = useToast();
   const { mutateAsync } = api.jits.create.useMutation();
   const allPositions = api.positions.getAll.useQuery().data;
   const allMoves = api.moves.getAll.useQuery().data;
   const queryClient = useQueryClient();
+
+  const [queryKey] = getQueryKey(api.jits.getAll, undefined, "query");
 
   const form = useForm<FormData>({
     resolver: zodResolver(FormSchema),
@@ -60,23 +69,33 @@ export const JitCreator = () => {
   const positionName = positionValue?.name;
   const moveValue = form.watch("move");
 
-  const createJit = useMutation((newJit: Jit) => mutateAsync(newJit), {
-    onMutate: async (newJit: Jit) => {
-      await queryClient.cancelQueries({ queryKey: ["jits"] });
+  const createJit = useMutation({
+    mutationFn: mutateAsync,
+    onMutate: async (newJit: JitCreate) => {
+      console.log({ newJit });
 
-      const previousJits = queryClient.getQueryData(["jits"]);
+      await queryClient.cancelQueries({ queryKey });
+
+      const previousJits =
+        queryClient.getQueryData<(JitRecord | JitCreate)[]>(queryKey);
 
       // Optimistically update to the new value
-      queryClient.setQueryData(["jits"], (old) => [...old, newJit]);
+      queryClient.setQueryData<(JitRecord | JitCreate)[]>(
+        queryKey,
+        (old: (JitRecord | JitCreate)[] | undefined) => [
+          ...(old ?? []),
+          newJit,
+        ],
+      );
 
       return { previousJits };
     },
     onError: (err, newJit, context) => {
-      queryClient.setQueryData(["jits"], context?.previousJits);
+      queryClient.setQueryData(queryKey, context?.previousJits);
     },
     onSettled: () => {
       void queryClient.invalidateQueries({
-        queryKey: ["jits"],
+        queryKey,
       });
     },
   });
@@ -87,13 +106,12 @@ export const JitCreator = () => {
 
     const createNewJit = async () => {
       try {
-        const newJit: Jit = {
-          categoryId: null,
-          moveId: data.move?.id ?? null,
-          positionId: data.position?.id ?? null,
-        };
+        const moveId = data.move?.id;
+        const positionId = data.position?.id;
 
-        await createJit.mutateAsync(newJit);
+        if (moveId) return await createJit.mutateAsync({ moveId, positionId });
+        if (positionId)
+          return await createJit.mutateAsync({ moveId, positionId });
       } catch (error) {
         toast({
           variant: "destructive",

@@ -566,7 +566,7 @@ export const JitView = (props: { jit: Jit }) => {
 
             <div className="grid gap-2 pb-0">
               <div className=" items-center gap-1 font-mono">
-                <JitNotesFeed jit={jit} />
+                <JitNotesFeed jitId={jit.id} />
               </div>
             </div>
             <DialogFooter></DialogFooter>

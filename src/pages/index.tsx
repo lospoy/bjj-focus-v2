@@ -1,12 +1,17 @@
 // homePage
 
-import { type GetServerSideProps, type NextPage } from "next";
+import {
+  type NextApiRequest,
+  type GetServerSideProps,
+  type NextPage,
+} from "next";
 import { SignIn, useUser } from "@clerk/nextjs";
 import { Dashboard } from "../components/Dashboard";
 import { appRouter } from "~/server/api/root";
 import { createServerSideHelpers } from "@trpc/react-query/server";
 import { getAuth } from "@clerk/nextjs/server";
 import SuperJSON from "superjson";
+import { prisma } from "prisma/db";
 
 const HomePage: NextPage = () => {
   const { isLoaded: userLoaded, isSignedIn } = useUser();
@@ -29,14 +34,15 @@ const HomePage: NextPage = () => {
   );
 };
 
+// Moving this one to a separate dashboard page
+// Adding a return getServerSideProps redirect to this index page
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   const sesh = getAuth(req);
   const userId = sesh.userId;
 
   const helpers = createServerSideHelpers({
     router: appRouter,
-    // @ts-expect-error https://github.com/trpc/trpc/discussions/371
-    ctx: { req, sesh, userId },
+    ctx: { prisma, userId, sesh, req: req as NextApiRequest },
     transformer: SuperJSON,
   });
 
