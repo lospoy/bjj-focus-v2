@@ -7,27 +7,49 @@
 import { api, type RouterOutputs } from "~/utils/api";
 import { Card, CardContent } from "./ui/card";
 import { Pin } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "./ui/use-toast";
 
-type Note = RouterOutputs["jits"]["getAll"][number]["notes"][number];
+type Note = RouterOutputs["notes"]["updateById"];
 
 export const JitNoteView = (props: { note: Note }) => {
   const { note } = props;
   const ctx = api.useUtils();
-  const updateNote = api.notes.updateById.useMutation();
 
-  const handleFavoriteClick = () => {
+  const noteUpdate = api.notes.updateById.useMutation({
+    onMutate: (newNote) => {
+      // Optimistically update to the new value
+      ctx.notes.getNotesByJitId.setData(
+        { jitId: note.jitId },
+        (previousNotes) =>
+          previousNotes?.map((n) => {
+            if (n.id === newNote.id) {
+              return { ...n, ...newNote };
+            }
+            return n;
+          }),
+      );
+      return newNote;
+    },
+
+    onSettled: () => {
+      void ctx.notes.getNotesByJitId.invalidate();
+      void ctx.jits.getAll.invalidate();
+    },
+  });
+
+  const handleTogglePin = () => {
     try {
-      updateNote.mutate({
-        id: note.id,
+      noteUpdate.mutate({
+        ...note,
         isFavorite: !note.isFavorite,
       });
-      // If mutate succeeds, update UI and invalidate the data
-      setTimeout(() => {
-        void ctx.notes.getNotesByJitId.invalidate();
-      }, 2000);
     } catch (e: unknown) {
-      toast.error("Failed to update. Please try again later.");
+      // If the mutation fails, revert the local state
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem pinning this note.",
+      });
     }
   };
 
@@ -37,7 +59,7 @@ export const JitNoteView = (props: { note: Note }) => {
         <p className="flex w-11/12 flex-col leading-5">{note.body}</p>
         {/* FAVORITE / BOOKMARK */}
         <div className="flex w-1/12 flex-col">
-          <button onClick={handleFavoriteClick}>
+          <button onClick={handleTogglePin}>
             {note.isFavorite ? (
               <Pin fill="currentColor" className="h-5 w-5 text-blue-800" />
             ) : (

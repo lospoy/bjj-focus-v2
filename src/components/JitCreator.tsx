@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { api } from "~/utils/api";
+import { type RouterOutputs, api } from "~/utils/api";
 import { cn } from "~/libs/utils";
 import { Button } from "./ui/button";
 import {
@@ -18,6 +18,11 @@ import { useToast } from "./ui/use-toast";
 import { ToastAction } from "./ui/toast";
 import { ScrollArea } from "./ui/scroll-area";
 import { PopoverClose } from "@radix-ui/react-popover";
+import type { JitCreate } from "~/server/api/routers/jits";
+import { useRouter } from "next/router";
+
+export type JitRecord = RouterOutputs["jits"]["create"];
+export type JitCreate = z.infer<typeof JitCreate>;
 
 const FormSchema = z
   .object({
@@ -37,12 +42,21 @@ const FormSchema = z
 
 type FormData = z.infer<typeof FormSchema>;
 
+// Create a new file and prove that I can access the TRPC cache
+// 1. call the cache/getALl query
+// 2. do the createJit mutation
+
+// why does the mutate happens AFTER and not before it reaches DB
+
+// put prisma client in one file, export, and import everyhwere
+// same with serversideprops
+
 export const JitCreator = () => {
   const { toast } = useToast();
-
   const allPositions = api.positions.getAll.useQuery().data;
   const allMoves = api.moves.getAll.useQuery().data;
-  const newJit = api.jits.create.useMutation();
+  const ctx = api.useUtils();
+  const router = useRouter();
 
   const form = useForm<FormData>({
     resolver: zodResolver(FormSchema),
@@ -52,41 +66,65 @@ export const JitCreator = () => {
   const positionName = positionValue?.name;
   const moveValue = form.watch("move");
 
+  const jitCreate = api.jits.create.useMutation({
+    onMutate: (newJit: JitCreate) => {
+      // Optimistically update to the new value
+      ctx.jits.getAll.setData(
+        undefined,
+        (previousJits) =>
+          previousJits?.map((j) => {
+            return { ...j, ...newJit };
+          }),
+      );
+    },
+
+    onSettled: () => {
+      void ctx.jits.getAll.invalidate();
+    },
+  });
+
   function onSubmit(data: z.infer<typeof FormSchema>) {
     let newJitTimeoutId: NodeJS.Timeout | null = null;
-    const delay = 4000;
+    const delay = 3000;
 
-    newJitTimeoutId = setTimeout(() => {
+    const createNewJit = () => {
       try {
-        newJit.mutate({
-          categoryId: "",
-          moveId: data.move?.id,
+        jitCreate.mutate({
           positionId: data.position?.id,
+          moveId: data.move?.id,
         });
-      } catch (error) {
+      } catch (e: unknown) {
         toast({
           variant: "destructive",
           title: "Uh oh! Something went wrong.",
           description: "There was a problem creating this Jit.",
         });
       }
+    };
+
+    newJitTimeoutId = setTimeout(() => {
+      void createNewJit();
     }, delay);
+
+    setTimeout(() => {
+      void router.push("/");
+    }, delay + 200);
 
     form.reset();
 
     toast({
       duration: delay,
       className: "bg-primary text-background",
-      title: "Creating New Jit",
+      title: "Creating New Jit...",
       description: (
         <>
           {data.move && (
-            <div className="">
+            <div>
               <strong>Move:</strong> {data.move?.name}
             </div>
           )}
           {data.position && (
-            <div className="">
+            <div>
               <strong>Position:</strong> {data.position?.name}
             </div>
           )}

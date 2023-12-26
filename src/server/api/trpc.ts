@@ -11,7 +11,7 @@ import { TRPCError, initTRPC } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import superjson from "superjson";
 import { ZodError } from "zod";
-import { prisma } from "~/server/db";
+import { prisma } from "prisma/db";
 
 /**
  * This is the actual context you will use in your router. It will be used to process every request

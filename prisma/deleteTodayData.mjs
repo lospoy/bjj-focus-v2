@@ -1,28 +1,26 @@
-// Deletes all files created today in a specific db model
+// Deletes all files created in the last 3 hours in a specific db model
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-async function clearDataSavedToday() {
+async function clearDataSavedInLast3Hours() {
   try {
-    // Calculate the start and end of today
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Set to the beginning of the day
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1); // Set to the beginning of the next day
+    // Calculate the time 3 hours ago
+    const threeHoursAgo = new Date();
+    threeHoursAgo.setHours(threeHoursAgo.getHours() - 3);
 
-    // Use Prisma Client to find and delete records created on the date specified above
-    // Replace ".jit" with any other model that needs a file deletion
-    const deletedRecords = await prisma.jit.deleteMany({
+    // Use Prisma Client to find and delete records created in the last 3 hours
+    const deletedRecords = await prisma.session.deleteMany({
       where: {
         createdAt: {
-          gte: today,
-          lt: tomorrow,
+          gte: threeHoursAgo,
         },
       },
     });
 
-    console.log(`Deleted ${deletedRecords.count} records created today.`);
+    console.log(
+      `Deleted ${deletedRecords.count} records created in the last 3 hours.`,
+    );
   } catch (error) {
     console.error("Error clearing data:", error);
   } finally {
@@ -30,4 +28,4 @@ async function clearDataSavedToday() {
   }
 }
 
-await clearDataSavedToday();
+await clearDataSavedInLast3Hours();

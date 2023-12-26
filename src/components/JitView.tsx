@@ -18,13 +18,12 @@ import {
 import { Input } from "./ui/input";
 import { EyeClosedIcon } from "@radix-ui/react-icons";
 import { Icons } from "./ui/icons";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { Plus, SaveIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import { Belt } from "./ui/belt";
 import { JitNotesFeed } from "./JitNotesFeed";
 import { useState } from "react";
+import { useToastWithAction } from "~/hooks/useToastWithAction";
 
 type Jit = RouterOutputs["jits"]["getAll"][number];
 type Note = RouterOutputs["jits"]["getAll"][number]["notes"][number];
@@ -32,11 +31,23 @@ type Note = RouterOutputs["jits"]["getAll"][number]["notes"][number];
 export const JitView = (props: { jit: Jit }) => {
   const { jit } = props;
   const ctx = api.useUtils();
-  const addSession = api.sessions.create.useMutation();
-  const updateJit = api.jits.updateById.useMutation();
-  const newNote = api.notes.create.useMutation();
   const [inputValue, setInputValue] = useState("");
   const favoriteNotes = jit.notes?.filter((note) => note.isFavorite);
+
+  const toastDescription = (
+    <>
+      {jit.move && (
+        <div className="">
+          <strong>Move:</strong> {jit.move?.name}
+        </div>
+      )}
+      {jit.position && (
+        <div className="">
+          <strong>Position:</strong> {jit.position?.name}
+        </div>
+      )}
+    </>
+  );
 
   // Returns human-readable date based on the difference between the current date and the date passed in
   // const formatDate = (date: Date | null | undefined): string => {
@@ -73,7 +84,6 @@ export const JitView = (props: { jit: Jit }) => {
       </li>
     ));
   };
-
   function renderJitTitle(jit: Jit) {
     if (jit.position && jit.move) {
       return (
@@ -103,12 +113,10 @@ export const JitView = (props: { jit: Jit }) => {
     }
     return null;
   }
-
   type BeltRuleType = {
     beltColor: string;
     sessionsPerStripe: number;
   };
-
   // Min/max represents jit.sessionCount
   const generateBeltRules = (rules: BeltRuleType[]) => {
     const beltRules = [
@@ -143,16 +151,13 @@ export const JitView = (props: { jit: Jit }) => {
 
     return beltRules;
   };
-
   const rules = [
     { beltColor: "blue", sessionsPerStripe: 3 },
     { beltColor: "purple", sessionsPerStripe: 4 },
     { beltColor: "brown", sessionsPerStripe: 5 },
     { beltColor: "black", sessionsPerStripe: 6 },
   ];
-
   const beltRules = generateBeltRules(rules);
-
   const renderJitBelt = (sessionCount: Jit["sessionCount"]) => {
     let numberOfStripes: number;
     let beltColor: "white" | "blue" | "purple" | "brown" | "black";
@@ -181,7 +186,6 @@ export const JitView = (props: { jit: Jit }) => {
       );
     }
   };
-
   const renderStripeProgress = (sessionCount: Jit["sessionCount"]) => {
     const rule = beltRules.find(
       (r) => sessionCount >= r.min && sessionCount <= r.max,
@@ -224,7 +228,6 @@ export const JitView = (props: { jit: Jit }) => {
       return <div className="flex">{squares}</div>;
     }
   };
-
   const renderBeltProgress = (sessionCount: Jit["sessionCount"]) => {
     const currentRule = beltRules.find(
       (r) => sessionCount >= r.min && sessionCount <= r.max,
@@ -273,65 +276,76 @@ export const JitView = (props: { jit: Jit }) => {
     }
   };
 
-  const handleAddSessionClick = () => {
-    try {
-      addSession.mutate({
-        jitId: jit.id,
-      });
-      // If mutate succeeds, update UI and invalidate the data
-      setTimeout(() => {
-        void ctx.jits.getAll.invalidate();
-      }, 2000);
+  // ADD SESSION HANDLERS
+  const handleAddSessionClick = useToastWithAction();
+  const jitAddSession = api.sessions.create.useMutation({
+    onMutate: (newSession) => {
+      // Optimistically update to the new value
+      ctx.jits.getAll.setData(
+        undefined,
+        (previousSessions) =>
+          previousSessions?.map((s) => {
+            return { ...s, ...newSession };
+          }),
+      );
+    },
 
-      toast.success("SESSION ADDED", {
-        position: "bottom-center",
-        autoClose: 2500,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    } catch (e: unknown) {
-      toast.error("Failed to add session. Please try again later.");
-    }
-  };
+    onSettled: () => {
+      void ctx.jits.getAll.invalidate();
+    },
+  });
 
-  const handleFavoriteClick = () => {
-    try {
-      updateJit.mutate({
-        id: jit.id,
-        isFavorite: !jit.isFavorite,
-      });
-      // If mutate succeeds, update UI and invalidate the data
-      setTimeout(() => {
-        void ctx.jits.getAll.invalidate();
-      }, 2000);
-    } catch (e: unknown) {
-      toast.error("Failed to update. Please try again later.");
-    }
-  };
+  // MAKE FAVORITE HANDLERS
+  const handleFavoriteClick = useToastWithAction();
+  const jitMakeFavorite = api.jits.updateById.useMutation({
+    onMutate: (newJit) => {
+      // Optimistically update to the new value
+      ctx.jits.getAll.setData(
+        undefined,
+        (previousJits) =>
+          previousJits?.map((j) => {
+            if (j.id === newJit.id) {
+              return { ...j, ...newJit };
+            }
+            return j;
+          }),
+      );
+      return newJit;
+    },
 
+    onSettled: () => {
+      void ctx.jits.getAll.invalidate();
+    },
+  });
+
+  // NEW NOTE HANDLERS
+  // ****Bug: the new note replaces every entry in the dummy cache, should only add one new entry
+  const handleSaveNewNoteClick = useToastWithAction();
+  const jitSaveNote = api.notes.create.useMutation({
+    onMutate: (newNote) => {
+      // Optimistically update to the new value
+      ctx.notes.getNotesByJitId.setData(
+        { jitId: jit.id },
+        (previousNotes) =>
+          previousNotes?.map((n) => {
+            if (n.jitId === newNote.jitId) {
+              return { ...n, ...newNote };
+            }
+            return n;
+          }),
+      );
+      return newNote;
+    },
+
+    onSettled: () => {
+      void ctx.notes.getNotesByJitId.invalidate();
+      void ctx.jits.getAll.invalidate();
+    },
+  });
   const handleNewNoteInputChange = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     setInputValue(event.target.value);
-  };
-
-  const handleSaveNewNoteClick = () => {
-    try {
-      newNote.mutate({
-        jitId: jit.id,
-        body: inputValue,
-      });
-      // If mutate succeeds, update UI and invalidate the data
-      setTimeout(() => {
-        void ctx.notes.getNotesByJitId.invalidate();
-      }, 2000);
-    } catch (e: unknown) {
-      toast.error("Failed to create new note. Please try again later.");
-    }
   };
 
   return (
@@ -341,48 +355,56 @@ export const JitView = (props: { jit: Jit }) => {
         jit.isFavorite ? "border-accent" : "border-gray-200 opacity-90"
       } bg-inherit`}
     >
-      {/* FAVORITE BUTTON */}
-      <div className="flex justify-center">
-        <button
-          onClick={handleFavoriteClick}
-          className={`-ml-3 -mt-3 flex rounded-lg border-2 ${
-            jit.isFavorite ? "border-gray-400" : "border-gray-200/50"
-          } bg-background px-3`}
-        >
-          {jit.isFavorite ? (
-            <Icons.eyeHalf className="h-6 w-6 fill-background " />
-          ) : (
-            <EyeClosedIcon className="h-5 w-5" />
-          )}
-        </button>
-      </div>
-      <CardHeader className="mb-8 flex flex-row p-0 pl-3">
-        {/* TITLE */}
-        <CardTitle className="flex w-10/12 flex-col text-2xl leading-5">
-          {renderJitTitle(jit)}
-        </CardTitle>
-        {/* ADD SESSION BUTTON */}
-        <div className="flex w-2/12 flex-col">
-          <Button
-            onClick={handleAddSessionClick}
-            className="w-[38px] bg-accent p-0 text-xs font-semibold"
+      {/* FAVORITE/FOCUS BUTTON */}
+      <>
+        <div className="flex justify-center">
+          <button
+            onClick={() =>
+              handleFavoriteClick(
+                jit.isFavorite
+                  ? "Removing from Focus..."
+                  : "Moving to Focus...",
+                toastDescription,
+                () =>
+                  jitMakeFavorite.mutate({
+                    ...jit,
+                    isFavorite: !jit.isFavorite,
+                  }),
+              )
+            }
+            className={`-ml-3 -mt-3 flex rounded-lg border-2 ${
+              jit.isFavorite ? "border-accent" : "border-gray-200/50"
+            } bg-background px-3`}
           >
-            <Plus className="h-7 w-7" />
-          </Button>
-          <ToastContainer
-            position="bottom-center"
-            autoClose={2500}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="light"
-          />
+            {jit.isFavorite ? (
+              <Icons.eyeHalf className="h-6 w-6 fill-background " />
+            ) : (
+              <EyeClosedIcon className="h-5 w-5" />
+            )}
+          </button>
         </div>
-      </CardHeader>
+        <CardHeader className="mb-8 flex flex-row p-0 pl-3">
+          {/* TITLE */}
+          <CardTitle className="flex w-10/12 flex-col text-2xl leading-5">
+            {renderJitTitle(jit)}
+          </CardTitle>
+          {/* ADD SESSION BUTTON */}
+          <div className="flex w-2/12 flex-col">
+            <Button
+              onClick={() =>
+                handleAddSessionClick(
+                  "Adding Session...",
+                  toastDescription,
+                  () => jitAddSession.mutate({ jitId: jit.id }),
+                )
+              }
+              className="w-[38px] bg-accent p-0 text-xs font-semibold"
+            >
+              <Plus className="h-7 w-7" />
+            </Button>
+          </div>
+        </CardHeader>
+      </>
 
       {/* NOTES */}
       <CardContent className="mx-auto mb-8 w-11/12 p-0 pl-3">
@@ -425,7 +447,18 @@ export const JitView = (props: { jit: Jit }) => {
                 onChange={handleNewNoteInputChange}
               />
               <Button
-                onClick={handleSaveNewNoteClick}
+                onClick={() =>
+                  handleSaveNewNoteClick(
+                    "Saving New Note...",
+                    toastDescription,
+
+                    () =>
+                      jitSaveNote.mutate({
+                        jitId: jit.id,
+                        body: inputValue,
+                      }),
+                  )
+                }
                 type="submit"
                 className="bg-pink-950 px-2"
               >
@@ -437,7 +470,7 @@ export const JitView = (props: { jit: Jit }) => {
 
             <div className="grid gap-2 pb-0">
               <div className=" items-center gap-1 font-mono">
-                <JitNotesFeed jit={jit} />
+                <JitNotesFeed jitId={jit.id} />
               </div>
             </div>
             <DialogFooter></DialogFooter>

@@ -2,23 +2,27 @@
 // Handles displaying all Notes related to a Jit
 
 import { useState } from "react";
-import type { RouterOutputs } from "~/utils/api";
+import { api, type RouterOutputs } from "~/utils/api";
 import { Search } from "lucide-react";
 import { JitNoteView } from "./JitNoteView";
 
 type Jit = RouterOutputs["jits"]["getAll"][number];
 
-export const JitNotesFeed = (props: { jit: Jit }) => {
-  const { jit } = props;
+export const JitNotesFeed = (props: { jitId: string }) => {
+  const { jitId } = props;
+  const notes = api.notes.getNotesByJitId.useQuery({ jitId: jitId }).data;
+
+  console.log({ notes });
+
   const [searchTerm, setSearchTerm] = useState("");
 
-  if (!jit.notes) return <div>Something went wrong</div>;
+  if (!notes) return <div>Something went wrong</div>;
 
   // Convert search term to lowercase for case-insensitive comparison
   const lowerCaseSearchTerm = searchTerm.toLowerCase();
 
   // Filter notes based on the search term
-  const filteredNotes = jit.notes?.filter((note) =>
+  const filteredNotes = notes.filter((note) =>
     note.body.toLowerCase().includes(lowerCaseSearchTerm),
   );
 

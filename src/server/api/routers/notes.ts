@@ -11,18 +11,6 @@ const ratelimit = new Ratelimit({
 });
 
 const NoteSchema = z.object({
-  metadata: z
-    .record(
-      z.union([
-        z.string(),
-        z.number(),
-        z.boolean(),
-        z.null(),
-        z.array(z.any()),
-        z.record(z.any()),
-      ]),
-    )
-    .optional(),
   body: z.string().optional(),
   id: z.string().optional(),
   isFavorite: z.boolean().optional(),
@@ -109,7 +97,6 @@ export const notesRouter = createTRPCRouter({
 
       const newNote = await ctx.prisma.note.create({
         data: {
-          metadata: input.metadata ?? { set: null },
           jitId: input.jitId,
           body: input.body ?? "empty note",
         },
