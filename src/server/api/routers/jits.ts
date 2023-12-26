@@ -50,6 +50,11 @@ export const JitSchemaInputUpdate = z.object({
   isGoal: z.boolean().optional(),
 });
 
+export const JitCreate = z.object({
+  positionId: z.string().optional(),
+  moveId: z.string().optional(),
+});
+
 export const jitsRouter = createTRPCRouter({
   getById: privateProcedure
     .input(z.object({ id: z.string() }))
@@ -178,22 +183,16 @@ export const jitsRouter = createTRPCRouter({
       if (!updatedJit) throw new TRPCError({ code: "NOT_FOUND" });
       return updatedJit;
     }),
-  create: privateProcedure
-    .input(JitSchemaInput)
-    .mutation(async ({ ctx, input }) => {
-      const { success } = await ratelimit.limit(ctx.userId);
-      if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
-      const newJit = await ctx.prisma.jit.create({
-        data: {
-          userId: ctx.userId,
-          categoryId: input.categoryId,
-          positionId: input.positionId,
-          moveId: input.moveId,
-          curriculumId: input.curriculumId,
-          isFavorite: input.isFavorite ?? false,
-          isGoal: input.isGoal ?? false,
-        },
-      });
-      return newJit;
-    }),
+  create: privateProcedure.input(JitCreate).mutation(async ({ ctx, input }) => {
+    const { success } = await ratelimit.limit(ctx.userId);
+    if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
+    const newJit = await ctx.prisma.jit.create({
+      data: {
+        userId: ctx.userId,
+        positionId: input.positionId,
+        moveId: input.moveId,
+      },
+    });
+    return newJit;
+  }),
 });

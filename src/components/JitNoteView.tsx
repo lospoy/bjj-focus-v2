@@ -15,7 +15,7 @@ export const JitNoteView = (props: { note: Note }) => {
   const { note } = props;
   const ctx = api.useUtils();
 
-  const noteMutation = api.notes.updateById.useMutation({
+  const noteUpdate = api.notes.updateById.useMutation({
     onMutate: (newNote) => {
       // Optimistically update to the new value
       ctx.notes.getNotesByJitId.setData(
@@ -39,7 +39,7 @@ export const JitNoteView = (props: { note: Note }) => {
 
   const handleTogglePin = () => {
     try {
-      noteMutation.mutate({
+      noteUpdate.mutate({
         ...note,
         isFavorite: !note.isFavorite,
       });

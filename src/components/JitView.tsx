@@ -479,7 +479,7 @@ export const JitView = (props: { jit: Jit }) => {
         <button
           onClick={handleFavoriteClick}
           className={`-ml-3 -mt-3 flex rounded-lg border-2 ${
-            jit.isFavorite ? "border-gray-400" : "border-gray-200/50"
+            jit.isFavorite ? "border-accent" : "border-gray-200/50"
           } bg-background px-3`}
         >
           {jit.isFavorite ? (

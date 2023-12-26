@@ -34,8 +34,6 @@ const HomePage: NextPage = () => {
   );
 };
 
-// Moving this one to a separate dashboard page
-// Adding a return getServerSideProps redirect to this index page
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   const sesh = getAuth(req);
   const userId = sesh.userId;
@@ -46,15 +44,18 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
     transformer: SuperJSON,
   });
 
-  await Promise.all([
-    helpers.jits.getAll.prefetch(),
-    helpers.categories.getAll.prefetch(),
-    helpers.positions.getAll.prefetch(),
-    helpers.moves.getAll.prefetch(),
-  ]);
+  // await Promise.all([
+  //   helpers.jits.getAll.prefetch(),
+  //   helpers.categories.getAll.prefetch(),
+  //   helpers.positions.getAll.prefetch(),
+  //   helpers.moves.getAll.prefetch(),
+  // ]);
+
+  await helpers.jits.getAll.prefetch();
 
   return {
     props: { trpcState: helpers.dehydrate() },
   };
 };
+
 export default HomePage;

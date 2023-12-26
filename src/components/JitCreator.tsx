@@ -18,12 +18,11 @@ import { useToast } from "./ui/use-toast";
 import { ToastAction } from "./ui/toast";
 import { ScrollArea } from "./ui/scroll-area";
 import { PopoverClose } from "@radix-ui/react-popover";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { type JitSchemaInput } from "~/server/api/routers/jits";
-import { getQueryKey } from "@trpc/react-query";
+import type { JitCreate } from "~/server/api/routers/jits";
+import { useRouter } from "next/router";
 
 export type JitRecord = RouterOutputs["jits"]["create"];
-export type JitCreate = z.infer<typeof JitSchemaInput>;
+export type JitCreate = z.infer<typeof JitCreate>;
 
 const FormSchema = z
   .object({
@@ -54,12 +53,10 @@ type FormData = z.infer<typeof FormSchema>;
 
 export const JitCreator = () => {
   const { toast } = useToast();
-  const { mutateAsync } = api.jits.create.useMutation();
   const allPositions = api.positions.getAll.useQuery().data;
   const allMoves = api.moves.getAll.useQuery().data;
-  const queryClient = useQueryClient();
-
-  const [queryKey] = getQueryKey(api.jits.getAll, undefined, "query");
+  const ctx = api.useUtils();
+  const router = useRouter();
 
   const form = useForm<FormData>({
     resolver: zodResolver(FormSchema),
@@ -69,50 +66,35 @@ export const JitCreator = () => {
   const positionName = positionValue?.name;
   const moveValue = form.watch("move");
 
-  const createJit = useMutation({
-    mutationFn: mutateAsync,
-    onMutate: async (newJit: JitCreate) => {
-      console.log({ newJit });
-
-      await queryClient.cancelQueries({ queryKey });
-
-      const previousJits =
-        queryClient.getQueryData<(JitRecord | JitCreate)[]>(queryKey);
-
+  const jitCreate = api.jits.create.useMutation({
+    onMutate: (newJit: JitCreate) => {
       // Optimistically update to the new value
-      queryClient.setQueryData<(JitRecord | JitCreate)[]>(
-        queryKey,
-        (old: (JitRecord | JitCreate)[] | undefined) => [
-          ...(old ?? []),
-          newJit,
-        ],
+      console.log({ newJit });
+      ctx.jits.getAll.setData(
+        undefined,
+        (previousJits) =>
+          previousJits?.map((j) => {
+            return { ...j, ...newJit };
+          }),
       );
+    },
 
-      return { previousJits };
-    },
-    onError: (err, newJit, context) => {
-      queryClient.setQueryData(queryKey, context?.previousJits);
-    },
     onSettled: () => {
-      void queryClient.invalidateQueries({
-        queryKey,
-      });
+      void ctx.jits.getAll.invalidate();
     },
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     let newJitTimeoutId: NodeJS.Timeout | null = null;
-    const delay = 4000;
+    const delay = 3000;
 
-    const createNewJit = async () => {
+    const createNewJit = () => {
       try {
-        const moveId = data.move?.id;
-        const positionId = data.position?.id;
-
-        if (moveId) return await createJit.mutateAsync({ moveId, positionId });
-        if (positionId)
-          return await createJit.mutateAsync({ moveId, positionId });
-      } catch (error) {
+        jitCreate.mutate({
+          positionId: data.position?.id,
+          moveId: data.move?.id,
+        });
+      } catch (e: unknown) {
         toast({
           variant: "destructive",
           title: "Uh oh! Something went wrong.",
@@ -125,21 +107,25 @@ export const JitCreator = () => {
       void createNewJit();
     }, delay);
 
+    setTimeout(() => {
+      void router.push("/");
+    }, delay + 200);
+
     form.reset();
 
     toast({
       duration: delay,
       className: "bg-primary text-background",
-      title: "Creating New Jit",
+      title: "Creating New Jit...",
       description: (
         <>
           {data.move && (
-            <div className="">
+            <div>
               <strong>Move:</strong> {data.move?.name}
             </div>
           )}
           {data.position && (
-            <div className="">
+            <div>
               <strong>Position:</strong> {data.position?.name}
             </div>
           )}

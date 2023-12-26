@@ -14,6 +14,7 @@ import { createServerSideHelpers } from "@trpc/react-query/server";
 import { getAuth } from "@clerk/nextjs/server";
 import SuperJSON from "superjson";
 import { prisma } from "prisma/db";
+import { Shapes } from "lucide-react";
 
 const JitsPage: NextPage = () => {
   const user = useUser().user;
@@ -25,17 +26,8 @@ const JitsPage: NextPage = () => {
   // (React query will use cached data if the data doesn't change)
   const allJits = api.jits.getAll.useQuery().data;
 
-  // const allJits: GetAllJit = [];
-
-  console.log({ allJits });
-
   // Return empty div if user isn't loaded yet
   if (!userLoaded) return <div />;
-
-  // const handleNewSequence = async () => {
-  //   const url = `/activeJit/jit-selection`;
-  //   await router.push(url);
-  // };
 
   return (
     <PageLayout>
@@ -50,15 +42,15 @@ const JitsPage: NextPage = () => {
 
         {user && allJits && (
           <>
+            <div className="mb-6 flex w-full flex-row items-center -space-x-4 text-center">
+              <Shapes className="ml-6 h-1/4 w-1/4" />
+              <h1 className="w-full whitespace-nowrap text-[15vw] font-bold tracking-tighter text-accent md:text-[10vw] lg:text-[6vw]">
+                ALL JITS
+              </h1>
+            </div>
             <JitFeed jitsPage={true} allJits={allJits} />
           </>
         )}
-        {/* <Button
-          onClick={handleNewSequence}
-          className="fixed bottom-2 right-2 z-50 m-4 flex h-20 self-end rounded-full border-4 bg-current p-4 text-white shadow-lg "
-        >
-          <Plus className="h-10 w-10 text-accent" />
-        </Button> */}
       </div>
     </PageLayout>
   );

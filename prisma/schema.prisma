@@ -31,7 +31,7 @@ model Jit {
   metadata     Json?
   userId       String
   curriculumId String?
-  isFavorite   Boolean     @default(false)
+  isFavorite   Boolean     @default(true)
   isGoal       Boolean     @default(false)
   updatedAt    DateTime    @updatedAt
   categoryId   String?
