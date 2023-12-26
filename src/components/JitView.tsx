@@ -23,8 +23,6 @@ import { Button } from "./ui/button";
 import { Belt } from "./ui/belt";
 import { JitNotesFeed } from "./JitNotesFeed";
 import { useState } from "react";
-import { toast } from "./ui/use-toast";
-import { ToastAction } from "./ui/toast";
 import { useToastWithAction } from "~/hooks/useToastWithAction";
 
 type Jit = RouterOutputs["jits"]["getAll"][number];
@@ -33,9 +31,6 @@ type Note = RouterOutputs["jits"]["getAll"][number]["notes"][number];
 export const JitView = (props: { jit: Jit }) => {
   const { jit } = props;
   const ctx = api.useUtils();
-  const addSession = api.sessions.create.useMutation();
-  const updateJit = api.jits.updateById.useMutation();
-  const newNote = api.notes.create.useMutation();
   const [inputValue, setInputValue] = useState("");
   const favoriteNotes = jit.notes?.filter((note) => note.isFavorite);
 
