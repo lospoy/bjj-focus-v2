@@ -5,24 +5,21 @@ export function useToastWithAction(): (
   title: string,
   description: React.ReactNode,
   mutationFunction: () => void,
-  invalidateFunction: () => Promise<void>,
+  customDelay?: number,
 ) => void {
   return (
     title: string,
     description: React.ReactNode,
     mutationFunction: () => void,
-    invalidateFunction: () => Promise<void>,
+    customDelay?: number,
   ) => {
     let newJitTimeoutId: NodeJS.Timeout | null = null;
-    const delay = 4000;
+    const defaultDelay = 2000;
+    const delay = customDelay ?? defaultDelay;
 
     newJitTimeoutId = setTimeout(() => {
       try {
         mutationFunction();
-        // If mutate succeeds, update UI and invalidate the data
-        setTimeout(() => {
-          void invalidateFunction();
-        }, 2000);
       } catch (e: unknown) {
         toast({
           variant: "destructive",

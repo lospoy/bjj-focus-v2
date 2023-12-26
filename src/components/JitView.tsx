@@ -89,7 +89,6 @@ export const JitView = (props: { jit: Jit }) => {
       </li>
     ));
   };
-
   function renderJitTitle(jit: Jit) {
     if (jit.position && jit.move) {
       return (
@@ -119,12 +118,10 @@ export const JitView = (props: { jit: Jit }) => {
     }
     return null;
   }
-
   type BeltRuleType = {
     beltColor: string;
     sessionsPerStripe: number;
   };
-
   // Min/max represents jit.sessionCount
   const generateBeltRules = (rules: BeltRuleType[]) => {
     const beltRules = [
@@ -159,16 +156,13 @@ export const JitView = (props: { jit: Jit }) => {
 
     return beltRules;
   };
-
   const rules = [
     { beltColor: "blue", sessionsPerStripe: 3 },
     { beltColor: "purple", sessionsPerStripe: 4 },
     { beltColor: "brown", sessionsPerStripe: 5 },
     { beltColor: "black", sessionsPerStripe: 6 },
   ];
-
   const beltRules = generateBeltRules(rules);
-
   const renderJitBelt = (sessionCount: Jit["sessionCount"]) => {
     let numberOfStripes: number;
     let beltColor: "white" | "blue" | "purple" | "brown" | "black";
@@ -197,7 +191,6 @@ export const JitView = (props: { jit: Jit }) => {
       );
     }
   };
-
   const renderStripeProgress = (sessionCount: Jit["sessionCount"]) => {
     const rule = beltRules.find(
       (r) => sessionCount >= r.min && sessionCount <= r.max,
@@ -240,7 +233,6 @@ export const JitView = (props: { jit: Jit }) => {
       return <div className="flex">{squares}</div>;
     }
   };
-
   const renderBeltProgress = (sessionCount: Jit["sessionCount"]) => {
     const currentRule = beltRules.find(
       (r) => sessionCount >= r.min && sessionCount <= r.max,
@@ -289,182 +281,76 @@ export const JitView = (props: { jit: Jit }) => {
     }
   };
 
+  // ADD SESSION HANDLERS
   const handleAddSessionClick = useToastWithAction();
+  const jitAddSession = api.sessions.create.useMutation({
+    onMutate: (newSession) => {
+      // Optimistically update to the new value
+      ctx.jits.getAll.setData(
+        undefined,
+        (previousSessions) =>
+          previousSessions?.map((s) => {
+            return { ...s, ...newSession };
+          }),
+      );
+    },
 
-  // const handleAddSessionClick = () => {
-  //   let newJitTimeoutId: NodeJS.Timeout | null = null;
-  //   const delay = 4000;
+    onSettled: () => {
+      void ctx.jits.getAll.invalidate();
+    },
+  });
 
-  //   newJitTimeoutId = setTimeout(() => {
-  //     try {
-  //       addSession.mutate({
-  //         jitId: jit.id,
-  //       });
-  //       // If mutate succeeds, update UI and invalidate the data
-  //       setTimeout(() => {
-  //         void ctx.jits.getAll.invalidate();
-  //       }, 2000);
-  //     } catch (e: unknown) {
-  //       toast({
-  //         variant: "destructive",
-  //         title: "Uh oh! Something went wrong.",
-  //         description: "There was a problem adding a Session.",
-  //       });
-  //     }
-  //   }, delay);
-
-  //   toast({
-  //     duration: delay,
-  //     className: "bg-primary text-background",
-  //     title: "Adding a Session...",
-  //     description: (
-  //       <>
-  //         {jit.move && (
-  //           <div className="">
-  //             <strong>Move:</strong> {jit.move?.name}
-  //           </div>
-  //         )}
-  //         {jit.position && (
-  //           <div className="">
-  //             <strong>Position:</strong> {jit.position?.name}
-  //           </div>
-  //         )}
-  //       </>
-  //     ),
-  //     action: (
-  //       <ToastAction
-  //         altText="Undo"
-  //         onClick={() => {
-  //           if (newJitTimeoutId) {
-  //             clearTimeout(newJitTimeoutId);
-  //           }
-  //         }}
-  //       >
-  //         Undo
-  //       </ToastAction>
-  //     ),
-  //   });
-  // };
-
-  const handleFavoriteClick = () => {
-    let setFavoriteJitTimeoutId: NodeJS.Timeout | null = null;
-    const delay = 4000;
-
-    setFavoriteJitTimeoutId = setTimeout(() => {
-      try {
-        updateJit.mutate({
-          id: jit.id,
-          isFavorite: !jit.isFavorite,
-        });
-        // If mutate succeeds, update UI and invalidate the data
-        setTimeout(() => {
-          void ctx.jits.getAll.invalidate();
-        }, 2000);
-      } catch (e: unknown) {
-        toast({
-          variant: "destructive",
-          title: "Uh oh! Something went wrong.",
-          description: "There was a problem moving this Jit to the Focus Page.",
-        });
-      }
-    }, delay);
-
-    toast({
-      duration: delay,
-      className: "bg-primary text-background",
-      title: "Adding to Focus...",
-      description: (
-        <>
-          {jit.move && (
-            <div className="">
-              <strong>Move:</strong> {jit.move?.name}
-            </div>
-          )}
-          {jit.position && (
-            <div className="">
-              <strong>Position:</strong> {jit.position?.name}
-            </div>
-          )}
-        </>
-      ),
-      action: (
-        <ToastAction
-          altText="Undo"
-          onClick={() => {
-            if (setFavoriteJitTimeoutId) {
-              clearTimeout(setFavoriteJitTimeoutId);
+  // MAKE FAVORITE HANDLERS
+  const handleFavoriteClick = useToastWithAction();
+  const jitMakeFavorite = api.jits.updateById.useMutation({
+    onMutate: (newJit) => {
+      // Optimistically update to the new value
+      ctx.jits.getAll.setData(
+        undefined,
+        (previousJits) =>
+          previousJits?.map((j) => {
+            if (j.id === newJit.id) {
+              return { ...j, ...newJit };
             }
-          }}
-        >
-          Undo
-        </ToastAction>
-      ),
-    });
-  };
+            return j;
+          }),
+      );
+      return newJit;
+    },
 
+    onSettled: () => {
+      void ctx.jits.getAll.invalidate();
+    },
+  });
+
+  // NEW NOTE HANDLERS
+  // ****Bug: the new note replaces every entry in the dummy cache, should only add one new entry
+  const handleSaveNewNoteClick = useToastWithAction();
+  const jitSaveNote = api.notes.create.useMutation({
+    onMutate: (newNote) => {
+      // Optimistically update to the new value
+      ctx.notes.getNotesByJitId.setData(
+        { jitId: jit.id },
+        (previousNotes) =>
+          previousNotes?.map((n) => {
+            if (n.jitId === newNote.jitId) {
+              return { ...n, ...newNote };
+            }
+            return n;
+          }),
+      );
+      return newNote;
+    },
+
+    onSettled: () => {
+      void ctx.notes.getNotesByJitId.invalidate();
+      void ctx.jits.getAll.invalidate();
+    },
+  });
   const handleNewNoteInputChange = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     setInputValue(event.target.value);
-  };
-
-  const handleSaveNewNoteClick = () => {
-    let newNoteTimeoutId: NodeJS.Timeout | null = null;
-    const delay = 4000;
-
-    newNoteTimeoutId = setTimeout(() => {
-      try {
-        newNote.mutate({
-          jitId: jit.id,
-          body: inputValue,
-        });
-        // If mutate succeeds, update UI and invalidate the data
-        setTimeout(() => {
-          void ctx.jits.getAll.invalidate();
-        }, 2000);
-      } catch (e: unknown) {
-        toast({
-          variant: "destructive",
-          title: "Uh oh! Something went wrong.",
-          description: "There was a problem creating this note.",
-        });
-      }
-    }, delay);
-
-    toast({
-      duration: delay,
-      className: "bg-primary text-background",
-      title: "Creating note...",
-      description: (
-        <>
-          <div className="">
-            <strong>New note:</strong> {new Date().toLocaleString()}
-          </div>
-          {jit.move && (
-            <div className="">
-              <strong>Move:</strong> {jit.move?.name}
-            </div>
-          )}
-          {jit.position && (
-            <div className="">
-              <strong>Position:</strong> {jit.position?.name}
-            </div>
-          )}
-        </>
-      ),
-      action: (
-        <ToastAction
-          altText="Undo"
-          onClick={() => {
-            if (newNoteTimeoutId) {
-              clearTimeout(newNoteTimeoutId);
-            }
-          }}
-        >
-          Undo
-        </ToastAction>
-      ),
-    });
   };
 
   return (
@@ -474,44 +360,56 @@ export const JitView = (props: { jit: Jit }) => {
         jit.isFavorite ? "border-accent" : "border-gray-200 opacity-90"
       } bg-inherit`}
     >
-      {/* FAVORITE BUTTON */}
-      <div className="flex justify-center">
-        <button
-          onClick={handleFavoriteClick}
-          className={`-ml-3 -mt-3 flex rounded-lg border-2 ${
-            jit.isFavorite ? "border-accent" : "border-gray-200/50"
-          } bg-background px-3`}
-        >
-          {jit.isFavorite ? (
-            <Icons.eyeHalf className="h-6 w-6 fill-background " />
-          ) : (
-            <EyeClosedIcon className="h-5 w-5" />
-          )}
-        </button>
-      </div>
-      <CardHeader className="mb-8 flex flex-row p-0 pl-3">
-        {/* TITLE */}
-        <CardTitle className="flex w-10/12 flex-col text-2xl leading-5">
-          {renderJitTitle(jit)}
-        </CardTitle>
-        {/* ADD SESSION BUTTON */}
-        <div className="flex w-2/12 flex-col">
-          <Button
+      {/* FAVORITE/FOCUS BUTTON */}
+      <>
+        <div className="flex justify-center">
+          <button
             onClick={() =>
-              handleAddSessionClick(
-                "Adding a Session...",
+              handleFavoriteClick(
+                jit.isFavorite
+                  ? "Removing from Focus..."
+                  : "Moving to Focus...",
                 toastDescription,
-                () => addSession.mutate({ jitId: jit.id }),
-                // eslint-disable-next-line @typescript-eslint/unbound-method
-                ctx.jits.getAll.invalidate,
+                () =>
+                  jitMakeFavorite.mutate({
+                    ...jit,
+                    isFavorite: !jit.isFavorite,
+                  }),
               )
             }
-            className="w-[38px] bg-accent p-0 text-xs font-semibold"
+            className={`-ml-3 -mt-3 flex rounded-lg border-2 ${
+              jit.isFavorite ? "border-accent" : "border-gray-200/50"
+            } bg-background px-3`}
           >
-            <Plus className="h-7 w-7" />
-          </Button>
+            {jit.isFavorite ? (
+              <Icons.eyeHalf className="h-6 w-6 fill-background " />
+            ) : (
+              <EyeClosedIcon className="h-5 w-5" />
+            )}
+          </button>
         </div>
-      </CardHeader>
+        <CardHeader className="mb-8 flex flex-row p-0 pl-3">
+          {/* TITLE */}
+          <CardTitle className="flex w-10/12 flex-col text-2xl leading-5">
+            {renderJitTitle(jit)}
+          </CardTitle>
+          {/* ADD SESSION BUTTON */}
+          <div className="flex w-2/12 flex-col">
+            <Button
+              onClick={() =>
+                handleAddSessionClick(
+                  "Adding Session...",
+                  toastDescription,
+                  () => jitAddSession.mutate({ jitId: jit.id }),
+                )
+              }
+              className="w-[38px] bg-accent p-0 text-xs font-semibold"
+            >
+              <Plus className="h-7 w-7" />
+            </Button>
+          </div>
+        </CardHeader>
+      </>
 
       {/* NOTES */}
       <CardContent className="mx-auto mb-8 w-11/12 p-0 pl-3">
@@ -554,7 +452,18 @@ export const JitView = (props: { jit: Jit }) => {
                 onChange={handleNewNoteInputChange}
               />
               <Button
-                onClick={handleSaveNewNoteClick}
+                onClick={() =>
+                  handleSaveNewNoteClick(
+                    "Saving New Note...",
+                    toastDescription,
+
+                    () =>
+                      jitSaveNote.mutate({
+                        jitId: jit.id,
+                        body: inputValue,
+                      }),
+                  )
+                }
                 type="submit"
                 className="bg-pink-950 px-2"
               >

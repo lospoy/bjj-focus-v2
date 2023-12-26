@@ -69,7 +69,6 @@ export const JitCreator = () => {
   const jitCreate = api.jits.create.useMutation({
     onMutate: (newJit: JitCreate) => {
       // Optimistically update to the new value
-      console.log({ newJit });
       ctx.jits.getAll.setData(
         undefined,
         (previousJits) =>
