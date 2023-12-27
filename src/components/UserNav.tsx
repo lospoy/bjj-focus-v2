@@ -9,14 +9,13 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { useClerk } from "@clerk/clerk-react";
+import { useUser } from "@clerk/nextjs";
 
 // Store
-import { useSelector } from "react-redux";
-import type { RootState } from "../store/store";
 import { LogOut, Settings } from "lucide-react";
 
 export function UserNav() {
-  const userData = useSelector((state: RootState) => state.user);
+  const userData = useUser().user;
   const { signOut, openUserProfile } = useClerk();
 
   return (
@@ -24,7 +23,7 @@ export function UserNav() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
-            <AvatarImage src={userData.imageUrl} alt="@shadcn" />
+            <AvatarImage src={userData?.imageUrl} alt="@shadcn" />
             <AvatarFallback>SC</AvatarFallback>
           </Avatar>
         </Button>
@@ -33,10 +32,10 @@ export function UserNav() {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">
-              {userData.firstName}
+              {userData?.firstName} {userData?.lastName}
             </p>
             <p className="text-xs leading-none text-muted-foreground">
-              {userData.email}
+              {userData?.primaryEmailAddress?.emailAddress}
             </p>
           </div>
         </DropdownMenuLabel>
