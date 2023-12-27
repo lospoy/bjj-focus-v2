@@ -134,8 +134,8 @@ export const jitsRouter = createTRPCRouter({
         category: {
           select: { name: true, metadata: true },
         },
-        position: { select: { name: true, metadata: true } },
-        move: { select: { name: true, metadata: true } },
+        position: { select: { name: true, metadata: true, id: true } },
+        move: { select: { name: true, metadata: true, id: true } },
         notes: {
           select: {
             id: true,
