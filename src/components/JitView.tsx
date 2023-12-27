@@ -20,10 +20,12 @@ import { EyeClosedIcon } from "@radix-ui/react-icons";
 import { Icons } from "./ui/icons";
 import { Plus, SaveIcon } from "lucide-react";
 import { Button } from "./ui/button";
-import { Belt } from "./ui/belt";
 import { JitNotesFeed } from "./JitNotesFeed";
 import { useState } from "react";
 import { useToastWithAction } from "~/hooks/useToastWithAction";
+import { JitBelt } from "./JitBelt";
+import { ProgressBelt } from "./ProgressBelt";
+import { ProgressStripe } from "./ProgressStripe";
 
 type Jit = RouterOutputs["jits"]["getAll"][number];
 type Note = RouterOutputs["jits"]["getAll"][number]["notes"][number];
@@ -113,168 +115,6 @@ export const JitView = (props: { jit: Jit }) => {
     }
     return null;
   }
-  type BeltRuleType = {
-    beltColor: string;
-    sessionsPerStripe: number;
-  };
-  // Min/max represents jit.sessionCount
-  const generateBeltRules = (rules: BeltRuleType[]) => {
-    const beltRules = [
-      { min: 0, max: 0, numberOfStripes: 0, beltColor: "white" },
-      { min: 1, max: 2, numberOfStripes: 1, beltColor: "white" },
-      { min: 3, max: 4, numberOfStripes: 2, beltColor: "white" },
-      { min: 5, max: 7, numberOfStripes: 3, beltColor: "white" },
-      { min: 8, max: 10, numberOfStripes: 4, beltColor: "white" },
-    ];
-
-    let currentMin = 11;
-
-    rules.forEach((rule) => {
-      for (let i = 0; i < 5; i++) {
-        const max = currentMin + rule.sessionsPerStripe - 1;
-        beltRules.push({
-          min: currentMin,
-          max: max,
-          numberOfStripes: i,
-          beltColor: rule.beltColor,
-        });
-        currentMin = max + 1;
-      }
-    });
-
-    beltRules.push({
-      min: currentMin,
-      max: Infinity,
-      numberOfStripes: 0,
-      beltColor: "black",
-    });
-
-    return beltRules;
-  };
-  const rules = [
-    { beltColor: "blue", sessionsPerStripe: 3 },
-    { beltColor: "purple", sessionsPerStripe: 4 },
-    { beltColor: "brown", sessionsPerStripe: 5 },
-    { beltColor: "black", sessionsPerStripe: 6 },
-  ];
-  const beltRules = generateBeltRules(rules);
-  const renderJitBelt = (sessionCount: Jit["sessionCount"]) => {
-    let numberOfStripes: number;
-    let beltColor: "white" | "blue" | "purple" | "brown" | "black";
-
-    const rule = beltRules.find(
-      (r) => sessionCount >= r.min && sessionCount <= r.max,
-    );
-
-    if (rule) {
-      numberOfStripes = rule.numberOfStripes;
-      beltColor = rule.beltColor as
-        | "white"
-        | "blue"
-        | "purple"
-        | "brown"
-        | "black";
-
-      return (
-        // TO PROPERLY ADJUST BELT WIDTH, WE PROBABLY NEED TO MODIFY THE SVG'S WIDTH
-        // VIA A PROP, BASED ON VIEWPORT WIDTH - maybe we could do some kind of clamp, or use wh
-        <Belt
-          className="absolute -right-2 h-[35px] w-max drop-shadow-lg"
-          numberOfStripes={numberOfStripes}
-          beltColor={beltColor}
-        />
-      );
-    }
-  };
-  const renderStripeProgress = (sessionCount: Jit["sessionCount"]) => {
-    const rule = beltRules.find(
-      (r) => sessionCount >= r.min && sessionCount <= r.max,
-    );
-
-    if (rule) {
-      const levelSteps = rule.max - rule.min + 1;
-      const completedSteps = sessionCount - rule.min;
-
-      const squareWidth = 100 / levelSteps; // Calculate the width of each square dynamically
-
-      const squares = [];
-      for (let i = 0; i < levelSteps; i++) {
-        if (sessionCount === 0) {
-          squares.push(
-            <div
-              className="mr-1 h-4 rounded-sm bg-primary/10"
-              style={{ width: `100%` }}
-            />,
-          );
-        } else if (i < completedSteps) {
-          squares.push(
-            <div
-              key={i}
-              className="mr-1 h-4 rounded-sm bg-primary"
-              style={{ width: `${squareWidth}%` }}
-            />,
-          );
-        } else {
-          squares.push(
-            <div
-              key={i}
-              className="mr-1 h-4 rounded-sm bg-primary/10"
-              style={{ width: `${squareWidth}%` }}
-            />,
-          );
-        }
-      }
-
-      return <div className="flex">{squares}</div>;
-    }
-  };
-  const renderBeltProgress = (sessionCount: Jit["sessionCount"]) => {
-    const currentRule = beltRules.find(
-      (r) => sessionCount >= r.min && sessionCount <= r.max,
-    );
-
-    if (currentRule) {
-      const firstRuleWithCurrentColor = beltRules.find(
-        (r) => r.beltColor === currentRule.beltColor,
-      );
-
-      const lastRuleWithCurrentColor = [...beltRules]
-        .reverse()
-        .find((r) => r.beltColor === currentRule.beltColor);
-
-      const levelSteps = lastRuleWithCurrentColor
-        ? lastRuleWithCurrentColor.max - (firstRuleWithCurrentColor?.min ?? 0)
-        : currentRule.max - (firstRuleWithCurrentColor?.min ?? 0);
-
-      const completedSteps =
-        sessionCount - (firstRuleWithCurrentColor?.min ?? 0);
-
-      const squareWidth = 100 / (levelSteps + 1); // Calculate the width of each square dynamically
-
-      const squares = [];
-      for (let i = 0; i <= levelSteps; i++) {
-        if (i < completedSteps) {
-          squares.push(
-            <div
-              key={i}
-              className="mr-[1.5px] h-4 rounded-sm bg-primary"
-              style={{ width: `${squareWidth}%` }}
-            />,
-          );
-        } else {
-          squares.push(
-            <div
-              key={i}
-              className="mr-[1.5px] h-4 rounded-sm bg-primary/10"
-              style={{ width: `${squareWidth}%` }}
-            />,
-          );
-        }
-      }
-
-      return <div className="flex">{squares}</div>;
-    }
-  };
 
   // ADD SESSION HANDLERS
   const handleAddSessionClick = useToastWithAction();
@@ -484,17 +324,17 @@ export const JitView = (props: { jit: Jit }) => {
         <div className="flex w-6/12 flex-col gap-y-2 text-xs font-semibold">
           <div>
             <h3>Sessions to next stripe</h3>
-            {renderStripeProgress(jit.sessionCount)}
+            <ProgressStripe sessionCount={jit.sessionCount} />
           </div>
           <div>
             <h3>Sessions to next belt</h3>
-            {renderBeltProgress(jit.sessionCount)}
+            <ProgressBelt sessionCount={jit.sessionCount} />
           </div>
         </div>
 
         {/* BELT */}
         <div className="flex flex-col justify-center">
-          {renderJitBelt(jit.sessionCount)}
+          <JitBelt sessionCount={jit.sessionCount} />
         </div>
 
         {/* ADD SESSION BUTTON */}
