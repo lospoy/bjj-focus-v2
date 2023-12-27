@@ -44,14 +44,12 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
     transformer: SuperJSON,
   });
 
-  // await Promise.all([
-  //   helpers.jits.getAll.prefetch(),
-  //   helpers.categories.getAll.prefetch(),
-  //   helpers.positions.getAll.prefetch(),
-  //   helpers.moves.getAll.prefetch(),
-  // ]);
-
-  await helpers.jits.getAll.prefetch();
+  await Promise.all([
+    helpers.jits.getAll.prefetch(),
+    helpers.categories.getAll.prefetch(),
+    helpers.positions.getAll.prefetch(),
+    helpers.moves.getAll.prefetch(),
+  ]);
 
   return {
     props: { trpcState: helpers.dehydrate() },

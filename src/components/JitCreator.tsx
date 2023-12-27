@@ -42,29 +42,36 @@ const FormSchema = z
 
 type FormData = z.infer<typeof FormSchema>;
 
-// Create a new file and prove that I can access the TRPC cache
-// 1. call the cache/getALl query
-// 2. do the createJit mutation
-
-// why does the mutate happens AFTER and not before it reaches DB
-
-// put prisma client in one file, export, and import everyhwere
-// same with serversideprops
-
 export const JitCreator = () => {
-  const { toast } = useToast();
-  const allPositions = api.positions.getAll.useQuery().data;
-  const allMoves = api.moves.getAll.useQuery().data;
   const ctx = api.useUtils();
+  const { toast } = useToast();
+  const allPositions = ctx.positions.getAll.getData();
+  const allMoves = ctx.moves.getAll.getData();
+  const allJits = ctx.jits.getAll.getData();
   const router = useRouter();
 
   const form = useForm<FormData>({
     resolver: zodResolver(FormSchema),
   });
-
   const positionValue = form.watch("position");
   const positionName = positionValue?.name;
   const moveValue = form.watch("move");
+
+  function jitExists(
+    moveId: string | undefined,
+    positionId: string | undefined,
+  ) {
+    if (!allJits) {
+      return false;
+    }
+
+    return allJits.some((jit) => {
+      const jitMoveId = jit.move?.id;
+      const jitPositionId = jit.position?.id;
+
+      return jitMoveId === moveId && jitPositionId === positionId;
+    });
+  }
 
   const jitCreate = api.jits.create.useMutation({
     onMutate: (newJit: JitCreate) => {
@@ -84,6 +91,36 @@ export const JitCreator = () => {
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
+    if (jitExists(data.move?.id, data.position?.id)) {
+      toast({
+        title: "Jit already exists.",
+        duration: 4000,
+        description: (
+          <>
+            {data.move && (
+              <div>
+                <strong>Move:</strong> {data.move?.name}
+              </div>
+            )}
+            {data.position && (
+              <div>
+                <strong>Position:</strong> {data.position?.name}
+              </div>
+            )}
+          </>
+        ),
+        action: (
+          <ToastAction
+            altText="go to jits page"
+            onClick={() => router.push("/jitsPage")}
+          >
+            Go to Jits Page
+          </ToastAction>
+        ),
+      });
+      return;
+    }
+
     let newJitTimeoutId: NodeJS.Timeout | null = null;
     const delay = 3000;
 
@@ -108,7 +145,7 @@ export const JitCreator = () => {
 
     setTimeout(() => {
       void router.push("/");
-    }, delay + 200);
+    }, delay + 100);
 
     form.reset();
 
