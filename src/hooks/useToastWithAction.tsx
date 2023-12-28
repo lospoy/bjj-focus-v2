@@ -6,15 +6,17 @@ export function useToastWithAction(): (
   description: React.ReactNode,
   mutationFunction: () => void,
   customDelay?: number,
+  undoCallback?: () => void,
 ) => void {
   return (
     title: string,
     description: React.ReactNode,
     mutationFunction: () => void,
     customDelay?: number,
+    undoCallback?: () => void,
   ) => {
     let newJitTimeoutId: NodeJS.Timeout | null = null;
-    const defaultDelay = 2000;
+    const defaultDelay = 5000;
     const delay = customDelay ?? defaultDelay;
 
     newJitTimeoutId = setTimeout(() => {
@@ -41,6 +43,7 @@ export function useToastWithAction(): (
             if (newJitTimeoutId) {
               clearTimeout(newJitTimeoutId);
             }
+            undoCallback?.();
           }}
         >
           Undo

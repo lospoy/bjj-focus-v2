@@ -41,17 +41,6 @@ export const JitView = (props: { jit: Jit }) => {
   const handleSaveNewNoteClick = useToastWithAction();
   const jitSaveNote = api.notes.create.useMutation({
     onMutate: (newNote) => {
-      // Optimistically update to the new value
-      ctx.notes.getNotesByJitId.setData(
-        { jitId: jit.id },
-        (previousNotes) =>
-          previousNotes?.map((n) => {
-            if (n.jitId === newNote.jitId) {
-              return { ...n, ...newNote };
-            }
-            return n;
-          }),
-      );
       return newNote;
     },
 
@@ -60,6 +49,7 @@ export const JitView = (props: { jit: Jit }) => {
       void ctx.jits.getAll.invalidate();
     },
   });
+
   const handleNewNoteInputChange = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -150,7 +140,7 @@ export const JitView = (props: { jit: Jit }) => {
   return (
     <div
       className={`parent-component ${
-        isFadingOut ? "duration-3000 opacity-0 transition" : ""
+        isFadingOut ? "opacity-0 transition duration-3000" : ""
       }`}
     >
       <Card
@@ -212,18 +202,33 @@ export const JitView = (props: { jit: Jit }) => {
                   onChange={handleNewNoteInputChange}
                 />
                 <Button
-                  onClick={() =>
+                  onClick={() => {
+                    const newNote = {
+                      body: inputValue,
+                      isFavorite: false,
+                      createdAt: new Date(),
+                      jitId: jit.id,
+                    };
+                    ctx.notes.getNotesByJitId.setData(
+                      { jitId: jit.id },
+                      (previousNotes) =>
+                        [newNote, ...(previousNotes ?? [])] as Note[],
+                    );
                     handleSaveNewNoteClick(
                       "Saving New Note...",
                       toastDescription,
-
-                      () =>
-                        jitSaveNote.mutate({
-                          jitId: jit.id,
-                          body: inputValue,
-                        }),
-                    )
-                  }
+                      () => {
+                        jitSaveNote.mutate(newNote);
+                      },
+                      undefined,
+                      () => {
+                        ctx.notes.getNotesByJitId.setData(
+                          { jitId: jit.id },
+                          (previousNotes) => previousNotes?.slice(1),
+                        );
+                      },
+                    );
+                  }}
                   type="submit"
                   className="bg-pink-950 px-2"
                 >
