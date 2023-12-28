@@ -25,9 +25,8 @@ export const JitFeed = ({
   if (jitsPage) {
     filteredJits = allJits?.filter(
       (jit) =>
-        (jit?.position?.name.toLowerCase().includes(searchTerm.toLowerCase()) ??
-          jit?.move?.name.toLowerCase().includes(searchTerm.toLowerCase())) &&
-        !jit.isFavorite,
+        jit?.position?.name.toLowerCase().includes(searchTerm.toLowerCase()) ??
+        jit?.move?.name.toLowerCase().includes(searchTerm.toLowerCase()),
     );
   } else if (dashboard) {
     filteredJits = allJits?.filter((jit) => jit.isFavorite);

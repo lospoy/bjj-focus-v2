@@ -23,8 +23,9 @@ import { useToastWithAction } from "~/hooks/useToastWithAction";
 import { JitBelt } from "./JitBelt";
 import { JitProgressBelt } from "./JitProgressBelt";
 import { JitProgressStripe } from "./JitProgressStripe";
-import JitMenu from "./JitMenu";
+import JitMenu, { JitToastDescription } from "./JitMenu";
 import { SaveIcon } from "lucide-react";
+import { humanDate } from "~/utils/humanDate";
 
 type Jit = RouterOutputs["jits"]["getAll"][number];
 type Note = RouterOutputs["jits"]["getAll"][number]["notes"][number];
@@ -50,24 +51,26 @@ export const JitView = (props: { jit: Jit }) => {
     },
   });
 
-  const handleNewNoteInputChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    setInputValue(event.target.value);
+  const FavoriteNotes = (props: { favoriteNotes: Note[] }) => {
+    const { favoriteNotes } = props;
+
+    return (
+      <ul className="space-y-2">
+        {favoriteNotes?.map((note) => (
+          <li
+            key={note.id}
+            className="py-.5 flex rounded-md px-6 py-1 text-left font-mono text-xs"
+          >
+            {note.body}
+          </li>
+        ))}
+      </ul>
+    );
   };
 
-  const renderFavoriteNotes = (favoriteNotes: Note[]) => {
-    return favoriteNotes?.map((note) => (
-      <li
-        key={note.id}
-        className="py-.5 flex rounded-md border-2 border-gray-200/50 px-6 py-1 text-left font-mono text-xs"
-      >
-        {note.body}
-      </li>
-    ));
-  };
+  function JitTitle(props: { jit: Jit }) {
+    const { jit } = props;
 
-  function renderJitTitle(jit: Jit) {
     if (jit.position && jit.move) {
       return (
         <>
@@ -97,71 +100,35 @@ export const JitView = (props: { jit: Jit }) => {
     return null;
   }
 
-  const toastDescription = (
-    <>
-      {jit.move && (
-        <div className="">
-          <strong>Move:</strong> {jit.move?.name}
-        </div>
-      )}
-      {jit.position && (
-        <div className="">
-          <strong>Position:</strong> {jit.position?.name}
-        </div>
-      )}
-    </>
-  );
+  const JitProgressAndMenu = (props: { jit: Jit }) => {
+    const { jit } = props;
 
-  // Returns human-readable date based on the difference between the current date and the date passed in
-  // const formatDate = (date: Date | null | undefined): string => {
-  //   if (!date) {
-  //     return "Unknown";
-  //   }
-
-  //   const currentDate = new Date();
-  //   const timeDiff = Math.abs(currentDate.getTime() - date.getTime());
-  //   const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
-
-  //   if (daysDiff === 1) {
-  //     return "yesterday";
-  //   } else if (daysDiff === 0) {
-  //     return "today";
-  //   } else if (daysDiff < 30) {
-  //     return `${daysDiff} days ago`;
-  //   } else if (daysDiff < 365) {
-  //     const months = Math.floor(daysDiff / 30);
-  //     const remainingDays = daysDiff % 30;
-  //     return `${months} months ${remainingDays} days ago`;
-  //   } else {
-  //     return "over a year ago";
-  //   }
-  // };
-
-  return (
-    <div
-      className={`parent-component ${
-        isFadingOut ? "opacity-0 transition duration-3000" : ""
-      }`}
-    >
-      <Card
-        key={jit.id}
-        className={`relative mb-8 border-2 ${
-          jit.isFavorite ? "border-accent" : "border-gray-200 opacity-90"
-        } bg-inherit`}
-      >
-        <CardHeader className="mb-8 flex flex-row p-0 pl-3">
-          {/* BELT */}
-          <div className="flex flex-col justify-center ">
-            <JitBelt sessionCount={jit.sessionCount} />
+    return (
+      <>
+        <div
+          className={`flex w-[78%] flex-col gap-y-2 text-xs font-semibold ${
+            !jit.isFavorite ? "mt-1" : ""
+          }`}
+        >
+          <div>
+            {jit.isFavorite && <h3>Sessions to next stripe</h3>}
+            <JitProgressStripe sessionCount={jit.sessionCount} />
           </div>
+          <div>
+            {jit.isFavorite && <h3>Sessions to next belt</h3>}
+            <JitProgressBelt sessionCount={jit.sessionCount} />
+          </div>
+        </div>
+        <div className="flex w-[22%] items-end justify-end pb-1 pr-3">
+          <JitMenu jit={jit} setIsFadingOut={setIsFadingOut} />
+        </div>
+      </>
+    );
+  };
 
-          {/* TITLE */}
-          <CardTitle className="flex w-11/12 flex-col text-2xl leading-5">
-            {renderJitTitle(jit)}
-          </CardTitle>
-        </CardHeader>
-
-        {/* NOTES */}
+  const JitContentFull = () => {
+    return (
+      <>
         <CardContent className="mx-auto mb-8 w-11/12 p-0 pl-3">
           <Dialog>
             <DialogTrigger asChild>
@@ -173,9 +140,9 @@ export const JitView = (props: { jit: Jit }) => {
                     </Button>
                   </div>
                 ) : (
-                  <ul className="space-y-2">
-                    {favoriteNotes && renderFavoriteNotes(favoriteNotes)}
-                  </ul>
+                  favoriteNotes && (
+                    <FavoriteNotes favoriteNotes={favoriteNotes} />
+                  )
                 )}
               </button>
             </DialogTrigger>
@@ -185,21 +152,20 @@ export const JitView = (props: { jit: Jit }) => {
             >
               <DialogHeader className="pb-6">
                 <DialogTitle className="flex flex-col text-2xl leading-5 ">
-                  {renderJitTitle(jit)}
+                  <JitTitle jit={jit} />
                 </DialogTitle>
                 <DialogDescription>
                   Manage your notes specific to this Jit.
                 </DialogDescription>
               </DialogHeader>
 
-              {/* NEW NOTE */}
               <div className="flex items-center pb-4 text-center font-mono">
                 <Input
                   id="new-note"
                   placeholder="New note..."
                   className="mr-2"
                   value={inputValue}
-                  onChange={handleNewNoteInputChange}
+                  onChange={(event) => setInputValue(event.target.value)}
                 />
                 <Button
                   onClick={() => {
@@ -216,7 +182,7 @@ export const JitView = (props: { jit: Jit }) => {
                     );
                     handleSaveNewNoteClick(
                       "Saving New Note...",
-                      toastDescription,
+                      <JitToastDescription jit={jit} />,
                       () => {
                         jitSaveNote.mutate(newNote);
                       },
@@ -247,26 +213,46 @@ export const JitView = (props: { jit: Jit }) => {
             </DialogContent>
           </Dialog>
         </CardContent>
-
-        {/* PROGRESS & BELT */}
         <CardContent className="flex p-0 pb-4 pl-3">
-          {/* PROGRESS */}
-          <div className="flex w-9/12 flex-col gap-y-2 text-xs font-semibold">
-            <div>
-              <h3>Sessions to next stripe</h3>
-              <JitProgressStripe sessionCount={jit.sessionCount} />
-            </div>
-            <div>
-              <h3>Sessions to next belt</h3>
-              <JitProgressBelt sessionCount={jit.sessionCount} />
-            </div>
+          <JitProgressAndMenu jit={jit} />
+        </CardContent>
+      </>
+    );
+  };
+
+  const JitContentSlim = () => {
+    return (
+      <CardContent className="flex p-0 py-4 pl-3">
+        <JitProgressAndMenu jit={jit} />
+      </CardContent>
+    );
+  };
+
+  return (
+    <div
+      className={`parent-component rounded-xl
+      ${isFadingOut ? "opacity-0 transition duration-3000" : ""}
+      ${jit.isFavorite ? "bg-purple-200" : "bg-inherit"}`}
+    >
+      <Card
+        key={jit.id}
+        className={`relative mb-8 border-2 ${
+          jit.isFavorite ? "border-accent " : "border-gray-200 opacity-90"
+        } bg-inherit`}
+      >
+        <CardHeader className="mb-4 flex flex-row p-0 pl-3">
+          {/* BELT */}
+          <div className="flex flex-col justify-center ">
+            <JitBelt sessionCount={jit.sessionCount} />
           </div>
 
-          {/* MENU */}
-          <div className="flex w-3/12 items-end justify-end pb-1 pr-4">
-            <JitMenu jit={jit} setIsFadingOut={setIsFadingOut} />
-          </div>
-        </CardContent>
+          {/* TITLE */}
+          <CardTitle className="flex w-11/12 flex-col text-2xl leading-5">
+            <JitTitle jit={jit} />
+          </CardTitle>
+        </CardHeader>
+
+        {jit.isFavorite ? <JitContentFull /> : <JitContentSlim />}
       </Card>
     </div>
   );

@@ -15,6 +15,25 @@ import { EyeClosedIcon } from "@radix-ui/react-icons";
 
 type Jit = RouterOutputs["jits"]["getAll"][number];
 
+export const JitToastDescription = (props: { jit: Jit }) => {
+  const { jit } = props;
+
+  return (
+    <>
+      {jit.move && (
+        <div className="">
+          <strong>Move:</strong> {jit.move?.name}
+        </div>
+      )}
+      {jit.position && (
+        <div className="">
+          <strong>Position:</strong> {jit.position?.name}
+        </div>
+      )}
+    </>
+  );
+};
+
 export default function JitMenu(props: {
   jit: Jit;
   setIsFadingOut: (isFadingOut: boolean) => void;
@@ -48,21 +67,6 @@ export default function JitMenu(props: {
       void ctx.jits.getAll.invalidate();
     },
   });
-
-  const toastDescription = (
-    <>
-      {jit.move && (
-        <div className="">
-          <strong>Move:</strong> {jit.move?.name}
-        </div>
-      )}
-      {jit.position && (
-        <div className="">
-          <strong>Position:</strong> {jit.position?.name}
-        </div>
-      )}
-    </>
-  );
 
   // ADD SESSION HANDLERS
   const handleAddSessionClick = useToastWithAction();
@@ -104,7 +108,7 @@ export default function JitMenu(props: {
                     jit.isFavorite
                       ? "Removing from Focus..."
                       : "Moving to Focus...",
-                    toastDescription,
+                    <JitToastDescription jit={jit} />,
                     () =>
                       jitMakeFavorite.mutate({
                         ...jit,
@@ -130,7 +134,7 @@ export default function JitMenu(props: {
                 onClick={() =>
                   handleAddSessionClick(
                     "Adding Session...",
-                    toastDescription,
+                    <JitToastDescription jit={jit} />,
                     () => jitAddSession.mutate({ jitId: jit.id }),
                   )
                 }
