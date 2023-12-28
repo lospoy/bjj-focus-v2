@@ -1,7 +1,7 @@
-// ProgressBelt
+// JitProgressBelt
 import { generateBeltRules, rules } from "~/utils/beltRules";
 
-export const ProgressBelt = ({
+export const JitProgressBelt = ({
   sessionCount = 0,
 }: {
   sessionCount?: number;

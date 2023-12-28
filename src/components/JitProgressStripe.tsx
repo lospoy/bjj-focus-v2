@@ -1,7 +1,7 @@
-// ProgressStripe
+// JitProgressStripe
 import { generateBeltRules, rules } from "~/utils/beltRules";
 
-export const ProgressStripe = ({
+export const JitProgressStripe = ({
   sessionCount = 0,
 }: {
   sessionCount?: number;
