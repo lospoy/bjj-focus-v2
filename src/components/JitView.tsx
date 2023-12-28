@@ -51,23 +51,6 @@ export const JitView = (props: { jit: Jit }) => {
     },
   });
 
-  const FavoriteNotes = (props: { favoriteNotes: Note[] }) => {
-    const { favoriteNotes } = props;
-
-    return (
-      <ul className="space-y-2">
-        {favoriteNotes?.map((note) => (
-          <li
-            key={note.id}
-            className="py-.5 flex rounded-md px-6 py-1 text-left font-mono text-xs"
-          >
-            {note.body}
-          </li>
-        ))}
-      </ul>
-    );
-  };
-
   function JitTitle(props: { jit: Jit }) {
     const { jit } = props;
 
@@ -254,5 +237,22 @@ export const JitView = (props: { jit: Jit }) => {
         )}
       </Card>
     </div>
+  );
+};
+
+const FavoriteNotes = (props: { favoriteNotes: Note[] }) => {
+  const { favoriteNotes } = props;
+
+  return (
+    <ul className="space-y-2">
+      {favoriteNotes?.map((note) => (
+        <li
+          key={note.id}
+          className="py-.5 flex rounded-md px-6 py-1 text-left font-mono text-xs"
+        >
+          {note.body}
+        </li>
+      ))}
+    </ul>
   );
 };
