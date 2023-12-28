@@ -126,100 +126,6 @@ export const JitView = (props: { jit: Jit }) => {
     );
   };
 
-  const JitContentFull = () => {
-    return (
-      <>
-        <CardContent className="mx-auto mb-8 w-11/12 p-0 pl-3">
-          <Dialog>
-            <DialogTrigger asChild>
-              <button className="w-full pr-4 text-center">
-                {favoriteNotes?.length === 0 ? (
-                  <div className="w-full rounded-md border-2 border-gray-200/50 py-2 font-mono text-xs">
-                    <Button className="h-6 bg-transparent font-mono text-xs text-gray-700">
-                      ADD NOTES
-                    </Button>
-                  </div>
-                ) : (
-                  favoriteNotes && (
-                    <FavoriteNotes favoriteNotes={favoriteNotes} />
-                  )
-                )}
-              </button>
-            </DialogTrigger>
-            <DialogContent
-              className="sm:max-w-[425px] "
-              onOpenAutoFocus={(e) => e.preventDefault()}
-            >
-              <DialogHeader className="pb-6">
-                <DialogTitle className="flex flex-col text-2xl leading-5 ">
-                  <JitTitle jit={jit} />
-                </DialogTitle>
-                <DialogDescription>
-                  Manage your notes specific to this Jit.
-                </DialogDescription>
-              </DialogHeader>
-
-              <div className="flex items-center pb-4 text-center font-mono">
-                <Input
-                  id="new-note"
-                  placeholder="New note..."
-                  className="mr-2"
-                  value={inputValue}
-                  onChange={(event) => setInputValue(event.target.value)}
-                />
-                <Button
-                  onClick={() => {
-                    const newNote = {
-                      body: inputValue,
-                      isFavorite: false,
-                      createdAt: new Date(),
-                      jitId: jit.id,
-                    };
-                    ctx.notes.getNotesByJitId.setData(
-                      { jitId: jit.id },
-                      (previousNotes) =>
-                        [newNote, ...(previousNotes ?? [])] as Note[],
-                    );
-                    handleSaveNewNoteClick(
-                      "Saving New Note...",
-                      <JitToastDescription jit={jit} />,
-                      () => {
-                        jitSaveNote.mutate(newNote);
-                      },
-                      undefined,
-                      () => {
-                        ctx.notes.getNotesByJitId.setData(
-                          { jitId: jit.id },
-                          (previousNotes) => previousNotes?.slice(1),
-                        );
-                      },
-                    );
-                  }}
-                  type="submit"
-                  className="bg-pink-950 px-2"
-                >
-                  <SaveIcon className="h-5 w-5" />
-                </Button>
-              </div>
-
-              <div className="border-b-2"></div>
-
-              <div className="grid gap-2 pb-0">
-                <div className=" items-center gap-1 font-mono">
-                  <JitNotesFeed jitId={jit.id} />
-                </div>
-              </div>
-              <DialogFooter></DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </CardContent>
-        <CardContent className="flex p-0 pb-4 pl-3">
-          <JitProgressAndMenu jit={jit} />
-        </CardContent>
-      </>
-    );
-  };
-
   const JitContentSlim = () => {
     return (
       <CardContent className="flex p-0 py-4 pl-3">
@@ -235,7 +141,6 @@ export const JitView = (props: { jit: Jit }) => {
       ${jit.isFavorite ? "bg-purple-200" : "bg-inherit"}`}
     >
       <Card
-        key={jit.id}
         className={`relative mb-8 border-2 ${
           jit.isFavorite ? "border-accent " : "border-gray-200 opacity-90"
         } bg-inherit`}
@@ -252,7 +157,101 @@ export const JitView = (props: { jit: Jit }) => {
           </CardTitle>
         </CardHeader>
 
-        {jit.isFavorite ? <JitContentFull /> : <JitContentSlim />}
+        {jit.isFavorite ? (
+          <>
+            <CardContent className="mx-auto mb-8 w-11/12 p-0 pl-3">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className="w-full pr-4 text-center">
+                    {favoriteNotes?.length === 0 ? (
+                      <div className="w-full rounded-md border-2 border-gray-200/50 py-2 font-mono text-xs">
+                        <Button className="h-6 bg-transparent font-mono text-xs text-gray-700">
+                          ADD NOTES
+                        </Button>
+                      </div>
+                    ) : (
+                      favoriteNotes && (
+                        <FavoriteNotes favoriteNotes={favoriteNotes} />
+                      )
+                    )}
+                  </button>
+                </DialogTrigger>
+                <DialogContent
+                  className="sm:max-w-[425px] "
+                  onOpenAutoFocus={(e) => e.preventDefault()}
+                >
+                  <DialogHeader className="pb-6">
+                    <DialogTitle className="flex flex-col text-2xl leading-5 ">
+                      <JitTitle jit={jit} />
+                    </DialogTitle>
+                    <DialogDescription>
+                      Manage your notes specific to this Jit.
+                    </DialogDescription>
+                  </DialogHeader>
+
+                  <div className="flex items-center pb-4 text-center font-mono">
+                    <Input
+                      id="new-note"
+                      placeholder="New note..."
+                      className="mr-2"
+                      value={inputValue}
+                      onChange={(event) => {
+                        setInputValue(event.target.value);
+                      }}
+                    />
+                    <Button
+                      onClick={() => {
+                        const newNote = {
+                          body: inputValue,
+                          isFavorite: false,
+                          createdAt: new Date(),
+                          jitId: jit.id,
+                        };
+                        ctx.notes.getNotesByJitId.setData(
+                          { jitId: jit.id },
+                          (previousNotes) =>
+                            [newNote, ...(previousNotes ?? [])] as Note[],
+                        );
+                        handleSaveNewNoteClick(
+                          "Saving New Note...",
+                          <JitToastDescription jit={jit} />,
+                          () => {
+                            jitSaveNote.mutate(newNote);
+                          },
+                          undefined,
+                          () => {
+                            ctx.notes.getNotesByJitId.setData(
+                              { jitId: jit.id },
+                              (previousNotes) => previousNotes?.slice(1),
+                            );
+                          },
+                        );
+                      }}
+                      type="submit"
+                      className="bg-pink-950 px-2"
+                    >
+                      <SaveIcon className="h-5 w-5" />
+                    </Button>
+                  </div>
+
+                  <div className="border-b-2"></div>
+
+                  <div className="grid gap-2 pb-0">
+                    <div className=" items-center gap-1 font-mono">
+                      <JitNotesFeed jitId={jit.id} />
+                    </div>
+                  </div>
+                  <DialogFooter></DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </CardContent>
+            <CardContent className="flex p-0 pb-4 pl-3">
+              <JitProgressAndMenu jit={jit} />
+            </CardContent>
+          </>
+        ) : (
+          <JitContentSlim />
+        )}
       </Card>
     </div>
   );
