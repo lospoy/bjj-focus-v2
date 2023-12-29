@@ -37,11 +37,12 @@ export const JitView = (props: { jit: Jit }) => {
   const favoriteNotes = jit.notes?.filter((note) => note.isFavorite);
 
   // NEW NOTE HANDLERS
-  // ****Bug: the new note replaces every entry in the dummy cache, should only add one new entry
+  // TOAST AND UNDO
   const handleSaveNewNoteClick = useToastWithAction()(
     "Saving New Note...",
     <JitToastDescription jit={jit} />,
     undefined,
+    // undo callback
     () => {
       ctx.notes.getNotesByJitId.setData(
         { jitId: jit.id },
@@ -49,6 +50,7 @@ export const JitView = (props: { jit: Jit }) => {
       );
     },
   );
+  // API CALL AND ADDING FAKE DATA TO THE CACHE
   const jitSaveNote = api.notes.create.useMutation({
     onMutate: (newNote) => {
       return newNote;
@@ -123,6 +125,23 @@ export const JitView = (props: { jit: Jit }) => {
       <CardContent className="flex p-0 py-4 pl-3">
         <JitProgressAndMenu jit={jit} />
       </CardContent>
+    );
+  };
+
+  const FavoriteNotes = (props: { favoriteNotes: Note[] }) => {
+    const { favoriteNotes } = props;
+
+    return (
+      <ul className="space-y-2">
+        {favoriteNotes?.map((note) => (
+          <li
+            key={note.id}
+            className="py-.5 flex rounded-md px-6 py-1 text-left font-mono text-xs"
+          >
+            {note.body}
+          </li>
+        ))}
+      </ul>
     );
   };
 
@@ -234,22 +253,5 @@ export const JitView = (props: { jit: Jit }) => {
         )}
       </Card>
     </div>
-  );
-};
-
-const FavoriteNotes = (props: { favoriteNotes: Note[] }) => {
-  const { favoriteNotes } = props;
-
-  return (
-    <ul className="space-y-2">
-      {favoriteNotes?.map((note) => (
-        <li
-          key={note.id}
-          className="py-.5 flex rounded-md px-6 py-1 text-left font-mono text-xs"
-        >
-          {note.body}
-        </li>
-      ))}
-    </ul>
   );
 };

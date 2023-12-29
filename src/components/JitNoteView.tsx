@@ -15,6 +15,8 @@ export const JitNoteView = (props: { note: Note }) => {
   const { note } = props;
   const ctx = api.useUtils();
 
+  // PIN HANDLER
+  // API CALL
   const noteUpdate = api.notes.updateById.useMutation({
     onMutate: (newNote) => {
       // Optimistically update to the new value
@@ -44,7 +46,6 @@ export const JitNoteView = (props: { note: Note }) => {
         isFavorite: !note.isFavorite,
       });
     } catch (e: unknown) {
-      // If the mutation fails, revert the local state
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",

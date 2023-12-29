@@ -12,6 +12,7 @@ import { useToastWithAction } from "~/hooks/useToastWithAction";
 import { type RouterOutputs, api } from "~/utils/api";
 import { Icons } from "./ui/icons";
 import { EyeClosedIcon } from "@radix-ui/react-icons";
+import { toast } from "./ui/use-toast";
 
 type Jit = RouterOutputs["jits"]["getAll"][number];
 
@@ -43,20 +44,22 @@ export default function JitMenu(props: { jit: Jit }) {
   };
 
   // MAKE FAVORITE HANDLERS
-  const handleFavoriteClick = useToastWithAction()(
-    jit.isFavorite ? "Removing focus..." : "Focusing...",
-    <JitToastDescription jit={jit} />,
-    undefined,
-    () => {
-      ctx.jits.getAll.setData(
-        undefined,
-        (previousJits) =>
-          previousJits?.map((j) =>
-            j.id === jit.id ? { ...j, isFavorite: !j.isFavorite } : j,
-          ),
-      );
-    },
-  );
+  // TOAST AND UNDO
+  const handleFavoriteClick = () => {
+    try {
+      jitMakeFavorite.mutate({
+        ...jit,
+        isFavorite: !jit.isFavorite,
+      });
+    } catch (e: unknown) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem updating this Jit.",
+      });
+    }
+  };
+  // API CALL
   const jitMakeFavorite = api.jits.updateById.useMutation({
     onMutate: (newJit) => {
       // Optimistically update to the new value
@@ -79,10 +82,12 @@ export default function JitMenu(props: { jit: Jit }) {
   });
 
   // ADD SESSION HANDLERS
+  // TOAST AND UNDO
   const handleAddSessionClick = useToastWithAction()(
     "Adding Session...",
     <JitToastDescription jit={jit} />,
     undefined,
+    // undo callback
     () => {
       ctx.jits.getAll.setData(
         undefined,
@@ -90,6 +95,7 @@ export default function JitMenu(props: { jit: Jit }) {
       );
     },
   );
+  // API CALL AND ADDING FAKE DATA TO THE CACHE
   const jitAddSession = api.sessions.create.useMutation({
     onMutate: (newSession) => {
       // Optimistically update to the new value
@@ -120,17 +126,7 @@ export default function JitMenu(props: { jit: Jit }) {
         <DropdownMenuContent className="-mt-1 bg-background">
           <DropdownMenuGroup>
             <DropdownMenuItem>
-              <button
-                className="flex"
-                onClick={() => {
-                  handleFavoriteClick(() =>
-                    jitMakeFavorite.mutate({
-                      ...jit,
-                      isFavorite: !jit.isFavorite,
-                    }),
-                  );
-                }}
-              >
+              <button className="flex" onClick={handleFavoriteClick}>
                 {jit.isFavorite ? (
                   <Icons.eyeHalf className="mt-0.5 h-4 w-4 fill-background" />
                 ) : (
