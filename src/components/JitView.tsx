@@ -24,7 +24,14 @@ import { JitBelt } from "./JitBelt";
 import { JitProgressBelt } from "./JitProgressBelt";
 import { JitProgressStripe } from "./JitProgressStripe";
 import { JitToastDescription } from "./JitMenu";
-import { Plus, SaveIcon, StarIcon } from "lucide-react";
+import {
+  Check,
+  CheckSquare,
+  Plus,
+  PlusSquare,
+  SaveIcon,
+  StarIcon,
+} from "lucide-react";
 import { humanDate } from "~/utils/humanDate";
 import { StarFilledIcon } from "@radix-ui/react-icons";
 import { useFavoriteJit } from "~/hooks/useFavoriteJit";
@@ -108,12 +115,17 @@ export const JitView = (props: { jit: Jit }) => {
     };
 
     return (
-      <button
+      <Button
         onClick={handleClick}
-        className="mx-auto -mt-3 flex w-10 justify-center rounded-xl bg-inherit px-2 pt-1"
+        className="flex h-14 flex-row rounded-xl pl-2 pr-3 text-start text-[0.7rem]"
       >
-        <Plus className="h-5 w-5" />
-      </button>
+        <PlusSquare className="mr-1 h-8 w-8" />
+        <span className="leading-[0.9rem]">
+          Log
+          <br />
+          Session
+        </span>
+      </Button>
     );
   };
 
@@ -122,7 +134,7 @@ export const JitView = (props: { jit: Jit }) => {
 
     return (
       <>
-        <div className="flex w-[78%] flex-col gap-y-2 text-xs font-semibold">
+        <div className="flex w-[68%] flex-col gap-y-2 text-xs font-semibold">
           <div>
             {jit.isFavorite && <h3>Sessions to next stripe</h3>}
             <JitProgressStripe sessionCount={jit.sessionCount} />
@@ -132,7 +144,7 @@ export const JitView = (props: { jit: Jit }) => {
             <JitProgressBelt sessionCount={jit.sessionCount} />
           </div>
         </div>
-        <div className="flex w-[22%] items-end justify-end pb-1 pr-3">
+        <div className="flex w-[32%] items-end justify-end pl-2 pr-3">
           <JitAddSessionButton jit={jit} />
         </div>
       </>
