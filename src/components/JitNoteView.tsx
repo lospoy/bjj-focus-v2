@@ -57,7 +57,7 @@ export const JitNoteView = (props: { note: Note }) => {
   return (
     <Card key={note.id} className="relative mb-3 bg-inherit pl-3">
       <CardContent className="my-1 flex p-0">
-        <p className="flex w-11/12 flex-col leading-5">{note.body}</p>
+        <p className="flex w-11/12 flex-col leading-5 ">{note.body}</p>
         {/* FAVORITE / BOOKMARK */}
         <div className="flex w-1/12 flex-col">
           <button onClick={handleTogglePin}>

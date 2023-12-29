@@ -101,11 +101,7 @@ export const JitView = (props: { jit: Jit }) => {
 
     return (
       <>
-        <div
-          className={`flex w-[78%] flex-col gap-y-2 text-xs font-semibold ${
-            !jit.isFavorite ? "mt-1" : ""
-          }`}
-        >
+        <div className="flex w-[78%] flex-col gap-y-2 text-xs font-semibold">
           <div>
             {jit.isFavorite && <h3>Sessions to next stripe</h3>}
             <JitProgressStripe sessionCount={jit.sessionCount} />
@@ -145,20 +141,32 @@ export const JitView = (props: { jit: Jit }) => {
     );
   };
 
-  const FavoriteNotes = (props: { favoriteNotes: Note[] }) => {
+  const JitFavoriteNotesAndButton = (props: { favoriteNotes: Note[] }) => {
     const { favoriteNotes } = props;
 
     return (
-      <ul className="space-y-2">
-        {favoriteNotes?.map((note) => (
-          <li
-            key={note.id}
-            className="py-.5 flex rounded-md px-6 py-1 text-left font-mono text-xs"
-          >
-            {note.body}
-          </li>
-        ))}
-      </ul>
+      <div className="flex w-full pr-4 text-center">
+        {favoriteNotes?.length === 0 ? (
+          <div className="mt-2 flex w-full items-center justify-center rounded-md border-2 border-slate-300 py-2 text-xs">
+            <Button className="h-6 bg-slate-300 font-mono text-xs text-gray-700">
+              ADD NOTES
+            </Button>
+          </div>
+        ) : (
+          favoriteNotes && (
+            <ul className="w-full justify-center space-y-2 pt-3 ">
+              {favoriteNotes?.map((note) => (
+                <li
+                  key={note.id}
+                  className="py-.5 flex rounded-md px-6 py-1 text-left font-mono text-xs outline outline-2 outline-slate-300"
+                >
+                  {note.body}
+                </li>
+              ))}
+            </ul>
+          )
+        )}
+      </div>
     );
   };
 
@@ -185,24 +193,15 @@ export const JitView = (props: { jit: Jit }) => {
           </CardTitle>
         </CardHeader>
 
+        {/* FAVORITE JIT
+        FOR SOME REASON CANNOT BE PLACED INTO A COMPONENT OUTSIDE OF THIS RETURN
+        IT WILL MESS UP THE DIALOG: ON KEYDOWN IT WILL EXIT THE DIALOG */}
         {jit.isFavorite ? (
           <>
-            <CardContent className="mx-auto mb-8 w-11/12 p-0 pl-3">
+            <CardContent className="mx-auto mb-6 w-11/12 p-0 pl-3">
               <Dialog>
                 <DialogTrigger asChild>
-                  <div className="w-full pr-4 text-center">
-                    {favoriteNotes?.length === 0 ? (
-                      <div className="w-full rounded-md border-2 border-gray-200/50 py-2 font-mono text-xs">
-                        <Button className="h-6 bg-transparent font-mono text-xs text-gray-700">
-                          ADD NOTES
-                        </Button>
-                      </div>
-                    ) : (
-                      favoriteNotes && (
-                        <FavoriteNotes favoriteNotes={favoriteNotes} />
-                      )
-                    )}
-                  </div>
+                  <JitFavoriteNotesAndButton favoriteNotes={favoriteNotes} />
                 </DialogTrigger>
                 <DialogContent
                   className="sm:max-w-[425px] "
