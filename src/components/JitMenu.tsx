@@ -34,11 +34,8 @@ export const JitToastDescription = (props: { jit: Jit }) => {
   );
 };
 
-export default function JitMenu(props: {
-  jit: Jit;
-  setIsFadingOut: (isFadingOut: boolean) => void;
-}) {
-  const { jit, setIsFadingOut } = props;
+export default function JitMenu(props: { jit: Jit }) {
+  const { jit } = props;
   const ctx = api.useUtils();
   const [isMenuClicked, setIsMenuClicked] = useState(false);
   const handleMenuOpenChange = (open: boolean) => {
@@ -46,7 +43,20 @@ export default function JitMenu(props: {
   };
 
   // MAKE FAVORITE HANDLERS
-  const handleFavoriteClick = useToastWithAction();
+  const handleFavoriteClick = useToastWithAction()(
+    jit.isFavorite ? "Removing focus..." : "Focusing...",
+    <JitToastDescription jit={jit} />,
+    undefined,
+    () => {
+      ctx.jits.getAll.setData(
+        undefined,
+        (previousJits) =>
+          previousJits?.map((j) =>
+            j.id === jit.id ? { ...j, isFavorite: !j.isFavorite } : j,
+          ),
+      );
+    },
+  );
   const jitMakeFavorite = api.jits.updateById.useMutation({
     onMutate: (newJit) => {
       // Optimistically update to the new value
@@ -69,7 +79,17 @@ export default function JitMenu(props: {
   });
 
   // ADD SESSION HANDLERS
-  const handleAddSessionClick = useToastWithAction();
+  const handleAddSessionClick = useToastWithAction()(
+    "Adding Session...",
+    <JitToastDescription jit={jit} />,
+    undefined,
+    () => {
+      ctx.jits.getAll.setData(
+        undefined,
+        (previousSessions) => previousSessions?.slice(1),
+      );
+    },
+  );
   const jitAddSession = api.sessions.create.useMutation({
     onMutate: (newSession) => {
       // Optimistically update to the new value
@@ -103,17 +123,11 @@ export default function JitMenu(props: {
               <button
                 className="flex"
                 onClick={() => {
-                  setIsFadingOut(true);
-                  handleFavoriteClick(
-                    jit.isFavorite
-                      ? "Removing from Focus..."
-                      : "Moving to Focus...",
-                    <JitToastDescription jit={jit} />,
-                    () =>
-                      jitMakeFavorite.mutate({
-                        ...jit,
-                        isFavorite: !jit.isFavorite,
-                      }),
+                  handleFavoriteClick(() =>
+                    jitMakeFavorite.mutate({
+                      ...jit,
+                      isFavorite: !jit.isFavorite,
+                    }),
                   );
                 }}
               >
@@ -123,7 +137,7 @@ export default function JitMenu(props: {
                   <EyeClosedIcon className="h-4 w-4" />
                 )}
                 <span className="ml-2">
-                  {jit.isFavorite ? "Remove from Focus" : "Move to Focus"}
+                  {jit.isFavorite ? "Remove focus" : "Focus on this"}
                 </span>
               </button>
             </DropdownMenuItem>
@@ -132,10 +146,8 @@ export default function JitMenu(props: {
               <button
                 className="flex"
                 onClick={() =>
-                  handleAddSessionClick(
-                    "Adding Session...",
-                    <JitToastDescription jit={jit} />,
-                    () => jitAddSession.mutate({ jitId: jit.id }),
+                  handleAddSessionClick(() =>
+                    jitAddSession.mutate({ jitId: jit.id }),
                   )
                 }
               >

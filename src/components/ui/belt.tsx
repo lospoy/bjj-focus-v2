@@ -5,10 +5,16 @@ type IconProps = React.HTMLAttributes<SVGElement>;
 type BeltProps = IconProps & {
   numberOfStripes: number;
   beltColor: "white" | "blue" | "purple" | "brown" | "black";
+  className?: string;
 };
 
-export const Belt = (props: BeltProps) => {
+export const Belt = (props: {
+  numberOfStripes: BeltProps["numberOfStripes"];
+  beltColor: BeltProps["beltColor"];
+  className?: BeltProps["className"];
+}) => {
   const { numberOfStripes, beltColor } = props;
+  const svgProps = { className: props.className };
 
   const color = {
     white: "#faf8f2",
@@ -88,7 +94,7 @@ export const Belt = (props: BeltProps) => {
       width={95}
       height={20}
       xmlns="http://www.w3.org/2000/svg"
-      {...props}
+      {...svgProps}
     >
       {/* BELT COLOR */}
       <rect y={2} width="100%" height="92%" fill={color[beltColor]} rx={3} />

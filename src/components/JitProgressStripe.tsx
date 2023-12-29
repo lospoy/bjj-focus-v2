@@ -22,6 +22,7 @@ export const JitProgressStripe = ({
       if (sessionCount === 0) {
         squares.push(
           <div
+            key={i}
             className="mr-1 h-4 rounded-sm bg-primary/10"
             style={{ width: `100%` }}
           />,

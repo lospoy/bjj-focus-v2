@@ -34,12 +34,21 @@ export const JitView = (props: { jit: Jit }) => {
   const { jit } = props;
   const ctx = api.useUtils();
   const [inputValue, setInputValue] = useState("");
-  const [isFadingOut, setIsFadingOut] = useState(false);
   const favoriteNotes = jit.notes?.filter((note) => note.isFavorite);
 
   // NEW NOTE HANDLERS
   // ****Bug: the new note replaces every entry in the dummy cache, should only add one new entry
-  const handleSaveNewNoteClick = useToastWithAction();
+  const handleSaveNewNoteClick = useToastWithAction()(
+    "Saving New Note...",
+    <JitToastDescription jit={jit} />,
+    undefined,
+    () => {
+      ctx.notes.getNotesByJitId.setData(
+        { jitId: jit.id },
+        (previousNotes) => previousNotes?.slice(1),
+      );
+    },
+  );
   const jitSaveNote = api.notes.create.useMutation({
     onMutate: (newNote) => {
       return newNote;
@@ -103,7 +112,7 @@ export const JitView = (props: { jit: Jit }) => {
           </div>
         </div>
         <div className="flex w-[22%] items-end justify-end pb-1 pr-3">
-          <JitMenu jit={jit} setIsFadingOut={setIsFadingOut} />
+          <JitMenu jit={jit} />
         </div>
       </>
     );
@@ -120,7 +129,6 @@ export const JitView = (props: { jit: Jit }) => {
   return (
     <div
       className={`parent-component rounded-xl
-      ${isFadingOut ? "opacity-0 transition duration-3000" : ""}
       ${jit.isFavorite ? "bg-purple-200" : "bg-inherit"}`}
     >
       <Card
@@ -145,7 +153,7 @@ export const JitView = (props: { jit: Jit }) => {
             <CardContent className="mx-auto mb-8 w-11/12 p-0 pl-3">
               <Dialog>
                 <DialogTrigger asChild>
-                  <button className="w-full pr-4 text-center">
+                  <div className="w-full pr-4 text-center">
                     {favoriteNotes?.length === 0 ? (
                       <div className="w-full rounded-md border-2 border-gray-200/50 py-2 font-mono text-xs">
                         <Button className="h-6 bg-transparent font-mono text-xs text-gray-700">
@@ -157,7 +165,7 @@ export const JitView = (props: { jit: Jit }) => {
                         <FavoriteNotes favoriteNotes={favoriteNotes} />
                       )
                     )}
-                  </button>
+                  </div>
                 </DialogTrigger>
                 <DialogContent
                   className="sm:max-w-[425px] "
@@ -195,20 +203,9 @@ export const JitView = (props: { jit: Jit }) => {
                           (previousNotes) =>
                             [newNote, ...(previousNotes ?? [])] as Note[],
                         );
-                        handleSaveNewNoteClick(
-                          "Saving New Note...",
-                          <JitToastDescription jit={jit} />,
-                          () => {
-                            jitSaveNote.mutate(newNote);
-                          },
-                          undefined,
-                          () => {
-                            ctx.notes.getNotesByJitId.setData(
-                              { jitId: jit.id },
-                              (previousNotes) => previousNotes?.slice(1),
-                            );
-                          },
-                        );
+                        handleSaveNewNoteClick(() => {
+                          jitSaveNote.mutate(newNote);
+                        });
                       }}
                       type="submit"
                       className="bg-pink-950 px-2"
