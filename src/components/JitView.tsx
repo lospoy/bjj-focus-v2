@@ -23,11 +23,12 @@ import { useToastWithAction } from "~/hooks/useToastWithAction";
 import { JitBelt } from "./JitBelt";
 import { JitProgressBelt } from "./JitProgressBelt";
 import { JitProgressStripe } from "./JitProgressStripe";
-import JitMenu, { JitToastDescription } from "./JitMenu";
-import { SaveIcon, StarIcon } from "lucide-react";
+import { JitToastDescription } from "./JitMenu";
+import { Plus, SaveIcon, StarIcon } from "lucide-react";
 import { humanDate } from "~/utils/humanDate";
 import { StarFilledIcon } from "@radix-ui/react-icons";
 import { useFavoriteJit } from "~/hooks/useFavoriteJit";
+import { useAddSessionToJit } from "~/hooks/useAddSessionToJit";
 
 type Jit = RouterOutputs["jits"]["getAll"][number];
 type Note = RouterOutputs["jits"]["getAll"][number]["notes"][number];
@@ -96,7 +97,27 @@ export const JitView = (props: { jit: Jit }) => {
     return null;
   }
 
-  const JitProgressAndMenu = (props: { jit: Jit }) => {
+  // ADD SESSIONS HANDLERS AND BUTTON
+  const JitAddSessionButton = (props: { jit: Jit }) => {
+    const { jit } = props;
+    const { handleAddSessionClick } = useAddSessionToJit({ jit });
+
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      handleAddSessionClick();
+    };
+
+    return (
+      <button
+        onClick={handleClick}
+        className="mx-auto -mt-3 flex w-10 justify-center rounded-xl bg-inherit px-2 pt-1"
+      >
+        <Plus className="h-5 w-5" />
+      </button>
+    );
+  };
+
+  const JitSessionProgressAndButton = (props: { jit: Jit }) => {
     const { jit } = props;
 
     return (
@@ -112,7 +133,7 @@ export const JitView = (props: { jit: Jit }) => {
           </div>
         </div>
         <div className="flex w-[22%] items-end justify-end pb-1 pr-3">
-          <JitMenu jit={jit} />
+          <JitAddSessionButton jit={jit} />
         </div>
       </>
     );
@@ -262,7 +283,7 @@ export const JitView = (props: { jit: Jit }) => {
               </Dialog>
             </CardContent>
             <CardContent className="flex p-0 pb-4 pl-3">
-              <JitProgressAndMenu jit={jit} />
+              <JitSessionProgressAndButton jit={jit} />
             </CardContent>
           </>
         ) : (

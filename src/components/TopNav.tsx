@@ -79,13 +79,6 @@ export default function TopNav() {
                   <DropdownMenuSeparator />
                   <DropdownMenuLabel>Training</DropdownMenuLabel>
                   <DropdownMenuGroup>
-                    <Link href="/">
-                      <DropdownMenuItem>
-                        <EyeIcon className="mr-2 h-4 w-4" />
-                        <span>Focus</span>
-                      </DropdownMenuItem>
-                    </Link>
-
                     {/* JITS SUBMENU */}
                     <DropdownMenuSub>
                       <DropdownMenuSubTrigger>
