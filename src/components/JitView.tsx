@@ -24,8 +24,10 @@ import { JitBelt } from "./JitBelt";
 import { JitProgressBelt } from "./JitProgressBelt";
 import { JitProgressStripe } from "./JitProgressStripe";
 import JitMenu, { JitToastDescription } from "./JitMenu";
-import { SaveIcon } from "lucide-react";
+import { SaveIcon, StarIcon } from "lucide-react";
 import { humanDate } from "~/utils/humanDate";
+import { StarFilledIcon } from "@radix-ui/react-icons";
+import { useFavoriteJit } from "~/hooks/useFavoriteJit";
 
 type Jit = RouterOutputs["jits"]["getAll"][number];
 type Note = RouterOutputs["jits"]["getAll"][number]["notes"][number];
@@ -121,10 +123,25 @@ export const JitView = (props: { jit: Jit }) => {
   };
 
   const JitContentSlim = () => {
+    return <CardContent className="flex justify-end pb-0 pr-3"></CardContent>;
+  };
+
+  // FOCUS (STAR) HANDLERS AND BUTTON
+  const handleFocusClick = useFavoriteJit();
+  const JitFocusButton = (props: { isFavorite: boolean }) => {
+    const { isFavorite } = props;
+
     return (
-      <CardContent className="flex p-0 py-4 pl-3">
-        <JitProgressAndMenu jit={jit} />
-      </CardContent>
+      <button
+        onClick={(e) => handleFocusClick(jit, e)}
+        className="mx-auto -mt-3 flex w-10 justify-center rounded-xl bg-inherit px-2 pt-1"
+      >
+        {isFavorite ? (
+          <StarFilledIcon className="h-5 w-5" />
+        ) : (
+          <StarIcon className="h-4 w-4" />
+        )}
+      </button>
     );
   };
 
@@ -148,13 +165,14 @@ export const JitView = (props: { jit: Jit }) => {
   return (
     <div
       className={`parent-component rounded-xl
-      ${jit.isFavorite ? "bg-purple-200" : "bg-inherit"}`}
+      ${jit.isFavorite ? "bg-slate-200" : "bg-zinc-100"}`}
     >
       <Card
-        className={`relative mb-8 border-2 ${
-          jit.isFavorite ? "border-accent " : "border-gray-200 opacity-90"
+        className={`relative mb-8  ${
+          jit.isFavorite ? "" : " opacity-70 shadow-none"
         } bg-inherit`}
       >
+        <JitFocusButton isFavorite={jit.isFavorite} />
         <CardHeader className="mb-4 flex flex-row p-0 pl-3">
           {/* BELT */}
           <div className="flex flex-col justify-center ">
@@ -162,7 +180,7 @@ export const JitView = (props: { jit: Jit }) => {
           </div>
 
           {/* TITLE */}
-          <CardTitle className="flex w-11/12 flex-col text-2xl leading-5">
+          <CardTitle className="flex w-11/12 flex-col text-xl leading-5">
             <JitTitle jit={jit} />
           </CardTitle>
         </CardHeader>

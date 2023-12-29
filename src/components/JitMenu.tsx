@@ -12,7 +12,7 @@ import { useToastWithAction } from "~/hooks/useToastWithAction";
 import { type RouterOutputs, api } from "~/utils/api";
 import { Icons } from "./ui/icons";
 import { EyeClosedIcon } from "@radix-ui/react-icons";
-import { toast } from "./ui/use-toast";
+import { useFavoriteJit } from "~/hooks/useFavoriteJit";
 
 type Jit = RouterOutputs["jits"]["getAll"][number];
 
@@ -44,42 +44,7 @@ export default function JitMenu(props: { jit: Jit }) {
   };
 
   // MAKE FAVORITE HANDLERS
-  // TOAST AND UNDO
-  const handleFavoriteClick = () => {
-    try {
-      jitMakeFavorite.mutate({
-        ...jit,
-        isFavorite: !jit.isFavorite,
-      });
-    } catch (e: unknown) {
-      toast({
-        variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-        description: "There was a problem updating this Jit.",
-      });
-    }
-  };
-  // API CALL
-  const jitMakeFavorite = api.jits.updateById.useMutation({
-    onMutate: (newJit) => {
-      // Optimistically update to the new value
-      ctx.jits.getAll.setData(
-        undefined,
-        (previousJits) =>
-          previousJits?.map((j) => {
-            if (j.id === newJit.id) {
-              return { ...j, ...newJit };
-            }
-            return j;
-          }),
-      );
-      return newJit;
-    },
-
-    onSettled: () => {
-      void ctx.jits.getAll.invalidate();
-    },
-  });
+  const handleFavoriteClick = useFavoriteJit();
 
   // ADD SESSION HANDLERS
   // TOAST AND UNDO
@@ -126,7 +91,10 @@ export default function JitMenu(props: { jit: Jit }) {
         <DropdownMenuContent className="-mt-1 bg-background">
           <DropdownMenuGroup>
             <DropdownMenuItem>
-              <button className="flex" onClick={handleFavoriteClick}>
+              <button
+                className="flex"
+                onClick={(e) => handleFavoriteClick(jit, e)}
+              >
                 {jit.isFavorite ? (
                   <Icons.eyeHalf className="mt-0.5 h-4 w-4 fill-background" />
                 ) : (
