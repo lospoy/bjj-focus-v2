@@ -144,7 +144,7 @@ export const JitCreator = () => {
     }, delay);
 
     setTimeout(() => {
-      void router.push("/");
+      void router.push("/jitsPage");
     }, delay + 100);
 
     form.reset();

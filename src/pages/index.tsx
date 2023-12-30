@@ -6,17 +6,23 @@ import {
   type NextPage,
 } from "next";
 import { SignIn, useUser } from "@clerk/nextjs";
-import { Dashboard } from "../components/Dashboard";
 import { appRouter } from "~/server/api/root";
 import { createServerSideHelpers } from "@trpc/react-query/server";
 import { getAuth } from "@clerk/nextjs/server";
 import SuperJSON from "superjson";
 import { prisma } from "prisma/db";
 
+import { useRouter } from "next/router";
+
 const HomePage: NextPage = () => {
   const { isLoaded: userLoaded, isSignedIn } = useUser();
+  const router = useRouter();
 
-  return !isSignedIn ? (
+  if (isSignedIn) {
+    void router.push("/jitsPage");
+  }
+
+  return (
     <div className="min-w-screen flex flex-col items-center bg-background">
       <main className="flex-grow md:w-1/3">
         <section className="md:min-w-xl mx-auto p-4">
@@ -29,8 +35,6 @@ const HomePage: NextPage = () => {
         </p>
       </footer>
     </div>
-  ) : (
-    <Dashboard />
   );
 };
 

@@ -15,6 +15,8 @@ export const JitNoteView = (props: { note: Note }) => {
   const { note } = props;
   const ctx = api.useUtils();
 
+  // PIN HANDLER
+  // API CALL
   const noteUpdate = api.notes.updateById.useMutation({
     onMutate: (newNote) => {
       // Optimistically update to the new value
@@ -44,7 +46,6 @@ export const JitNoteView = (props: { note: Note }) => {
         isFavorite: !note.isFavorite,
       });
     } catch (e: unknown) {
-      // If the mutation fails, revert the local state
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
@@ -56,7 +57,7 @@ export const JitNoteView = (props: { note: Note }) => {
   return (
     <Card key={note.id} className="relative mb-3 bg-inherit pl-3">
       <CardContent className="my-1 flex p-0">
-        <p className="flex w-11/12 flex-col leading-5">{note.body}</p>
+        <p className="flex w-11/12 flex-col leading-5 ">{note.body}</p>
         {/* FAVORITE / BOOKMARK */}
         <div className="flex w-1/12 flex-col">
           <button onClick={handleTogglePin}>

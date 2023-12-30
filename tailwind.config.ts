@@ -16,6 +16,9 @@ module.exports = {
       },
     },
     extend: {
+      transitionDuration: {
+        "3000": "3000ms",
+      },
       backdropBlur: {
         none: "0",
         blur: "blur(20px)",

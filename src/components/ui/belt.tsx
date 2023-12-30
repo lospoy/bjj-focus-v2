@@ -5,10 +5,16 @@ type IconProps = React.HTMLAttributes<SVGElement>;
 type BeltProps = IconProps & {
   numberOfStripes: number;
   beltColor: "white" | "blue" | "purple" | "brown" | "black";
+  className?: string;
 };
 
-export const Belt = (props: BeltProps) => {
+export const Belt = (props: {
+  numberOfStripes: BeltProps["numberOfStripes"];
+  beltColor: BeltProps["beltColor"];
+  className?: BeltProps["className"];
+}) => {
   const { numberOfStripes, beltColor } = props;
+  const svgProps = { className: props.className };
 
   const color = {
     white: "#faf8f2",
@@ -27,19 +33,17 @@ export const Belt = (props: BeltProps) => {
       const incline = Math.random() * 1; // Making it slightly random to give it a more natural look
       const width = 7 + Math.random() * 3 - 0.000001; // Making it slightly random to give it a more natural look
       stripes.push(
-        <>
-          <rect
-            key={`${i}-stripe`}
-            y={0}
-            x={x}
-            width={width}
-            height="103%"
-            fill={color.white}
-            transform={`rotate(${incline} 0 0)`} // Apply rotation transform
-            stroke={color.black} // Add left border color
-            strokeWidth={0.2} // Set left border width
-          />
-        </>,
+        <rect
+          key={`${i}-stripe`}
+          y={0}
+          x={x}
+          width={width}
+          height="103%"
+          fill={color.white}
+          transform={`rotate(${incline} 0 0)`} // Apply rotation transform
+          stroke={color.black} // Add left border color
+          strokeWidth={0.2} // Set left border width
+        />,
       );
     }
 
@@ -88,7 +92,7 @@ export const Belt = (props: BeltProps) => {
       width={95}
       height={20}
       xmlns="http://www.w3.org/2000/svg"
-      {...props}
+      {...svgProps}
     >
       {/* BELT COLOR */}
       <rect y={2} width="100%" height="92%" fill={color[beltColor]} rx={3} />
