@@ -24,6 +24,15 @@ export const JitNotesFeed = (props: { jitId: string }) => {
 
   // Sort notes based on the number of sessions, descending order
   filteredNotes?.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  filteredNotes?.sort((a, b) => {
+    if (a.isFavorite && !b.isFavorite) {
+      return -1;
+    }
+    if (b.isFavorite && !a.isFavorite) {
+      return 1;
+    }
+    return 0;
+  });
 
   return (
     <div className="flex flex-col">

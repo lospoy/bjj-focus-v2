@@ -166,7 +166,7 @@ export const JitView = (props: { jit: Jit }) => {
 
   const JitNotesPinned = () => {
     return (
-      <ul className="mx-auto mt-2 w-full space-y-1 rounded-md border-2 border-secondary py-2 hover:bg-secondary-foreground md:grid md:grid-cols-3 md:gap-4">
+      <ul className="bg-card-secondaryLight mx-auto mt-2 w-full space-y-1 rounded-md border-2 border-secondary bg-opacity-5 py-2 hover:bg-secondary-foreground md:grid md:grid-cols-3 md:gap-4">
         {favoriteNotes?.map((note) => (
           <div key={note.id} className="flex px-4">
             <Pin className="mt-1 h-4 w-4 fill-gray-400 text-gray-400" />
