@@ -28,6 +28,8 @@ import { StarFilledIcon } from "@radix-ui/react-icons";
 import { useFavoriteJit } from "~/hooks/useFavoriteJit";
 import { useJitAddSession } from "~/hooks/useJitAddSession";
 import { useSaveNoteToJit } from "~/hooks/useSaveNoteToJit";
+import { FormField } from "./ui/form";
+import { Textarea } from "./ui/textarea";
 
 type Jit = RouterOutputs["jits"]["getAll"][number];
 
@@ -191,7 +193,7 @@ export const JitView = (props: { jit: Jit }) => {
                     {favoriteNotes?.length === 0 ? (
                       <div className="mt-2 flex w-full items-center justify-center rounded-md border-2 border-slate-300 py-2 text-xs">
                         <Button className="h-6 bg-slate-300 font-mono text-xs text-gray-700">
-                          ADD NOTES
+                          NOTES
                         </Button>
                       </div>
                     ) : (
@@ -211,7 +213,7 @@ export const JitView = (props: { jit: Jit }) => {
                   </div>
                 </DialogTrigger>
                 <DialogContent
-                  className="sm:max-w-[425px] "
+                  className="bg-background sm:max-w-[425px]"
                   onOpenAutoFocus={(e) => e.preventDefault()}
                 >
                   <DialogHeader className="pb-6">
@@ -224,10 +226,10 @@ export const JitView = (props: { jit: Jit }) => {
                   </DialogHeader>
 
                   <div className="flex items-center pb-4 text-center font-mono">
-                    <Input
+                    <Textarea
                       id="new-note"
                       placeholder="New note..."
-                      className="mr-2"
+                      className="mr-2 bg-background focus:border-2 focus:border-pink-900 focus:ring-background"
                       value={inputValue}
                       onChange={(event) => {
                         setInputValue(event.target.value);
