@@ -33,19 +33,17 @@ export const Belt = (props: {
       const incline = Math.random() * 1; // Making it slightly random to give it a more natural look
       const width = 7 + Math.random() * 3 - 0.000001; // Making it slightly random to give it a more natural look
       stripes.push(
-        <>
-          <rect
-            key={`${i}-stripe`}
-            y={0}
-            x={x}
-            width={width}
-            height="103%"
-            fill={color.white}
-            transform={`rotate(${incline} 0 0)`} // Apply rotation transform
-            stroke={color.black} // Add left border color
-            strokeWidth={0.2} // Set left border width
-          />
-        </>,
+        <rect
+          key={`${i}-stripe`}
+          y={0}
+          x={x}
+          width={width}
+          height="103%"
+          fill={color.white}
+          transform={`rotate(${incline} 0 0)`} // Apply rotation transform
+          stroke={color.black} // Add left border color
+          strokeWidth={0.2} // Set left border width
+        />,
       );
     }
 

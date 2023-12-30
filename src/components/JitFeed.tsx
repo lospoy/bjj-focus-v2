@@ -11,29 +11,29 @@ interface JitFeedProps {
 
 export type GetAllJit = RouterOutputs["jits"]["getAll"];
 
-export const JitFeed = ({
-  jitsPage,
-  dashboard,
-  allJits: jitsFromProps,
-}: JitFeedProps) => {
+export const JitFeed = ({ jitsPage, allJits: jitsFromProps }: JitFeedProps) => {
   const allJits = jitsFromProps;
   const [searchTerm, setSearchTerm] = useState("");
 
   // Filter jits based on the search term or isFavorite property
-  let filteredJits = allJits;
-
-  if (jitsPage) {
-    filteredJits = allJits?.filter(
-      (jit) =>
-        jit?.position?.name.toLowerCase().includes(searchTerm.toLowerCase()) ??
-        jit?.move?.name.toLowerCase().includes(searchTerm.toLowerCase()),
-    );
-  } else if (dashboard) {
-    filteredJits = allJits?.filter((jit) => jit.isFavorite);
-  }
+  const filteredJits = allJits?.filter(
+    (jit) =>
+      jit?.position?.name.toLowerCase().includes(searchTerm.toLowerCase()) ??
+      jit?.move?.name.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
 
   // Sort jits based on the number of sessions, descending order
   filteredJits?.sort((a, b) => b.sessionCount - a.sessionCount);
+  // Sort jits based on isFavorite, favorite jits come first
+  filteredJits?.sort((a, b) => {
+    if (a.isFavorite && !b.isFavorite) {
+      return -1;
+    }
+    if (b.isFavorite && !a.isFavorite) {
+      return 1;
+    }
+    return 0;
+  });
 
   return (
     <div className="flex flex-col">

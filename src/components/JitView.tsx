@@ -4,7 +4,7 @@
 // Used in:
 // ~/FullJitFeed
 
-import { api, type RouterOutputs } from "~/utils/api";
+import { type RouterOutputs } from "~/utils/api";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import {
   Dialog,
@@ -19,58 +19,109 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { JitNotesFeed } from "./JitNotesFeed";
 import { useState } from "react";
-import { useToastWithAction } from "~/hooks/useToastWithAction";
 import { JitBelt } from "./JitBelt";
 import { JitProgressBelt } from "./JitProgressBelt";
 import { JitProgressStripe } from "./JitProgressStripe";
-import { JitToastDescription } from "./JitMenu";
-import {
-  Check,
-  CheckSquare,
-  Plus,
-  PlusSquare,
-  SaveIcon,
-  StarIcon,
-} from "lucide-react";
-import { humanDate } from "~/utils/humanDate";
+import { PlusSquare, SaveIcon, StarIcon } from "lucide-react";
+// import { humanDate } from "~/utils/humanDate";
 import { StarFilledIcon } from "@radix-ui/react-icons";
 import { useFavoriteJit } from "~/hooks/useFavoriteJit";
-import { useAddSessionToJit } from "~/hooks/useAddSessionToJit";
+import { useJitAddSession } from "~/hooks/useJitAddSession";
+import { useSaveNoteToJit } from "~/hooks/useSaveNoteToJit";
 
 type Jit = RouterOutputs["jits"]["getAll"][number];
-type Note = RouterOutputs["jits"]["getAll"][number]["notes"][number];
 
 export const JitView = (props: { jit: Jit }) => {
   const { jit } = props;
-  const ctx = api.useUtils();
   const [inputValue, setInputValue] = useState("");
   const favoriteNotes = jit.notes?.filter((note) => note.isFavorite);
 
-  // NEW NOTE HANDLERS
-  // TOAST AND UNDO
-  const handleSaveNewNoteClick = useToastWithAction()(
-    "Saving New Note...",
-    <JitToastDescription jit={jit} />,
-    undefined,
-    // undo callback
-    () => {
-      ctx.notes.getNotesByJitId.setData(
-        { jitId: jit.id },
-        (previousNotes) => previousNotes?.slice(1),
-      );
-    },
-  );
-  // API CALL AND ADDING FAKE DATA TO THE CACHE
-  const jitSaveNote = api.notes.create.useMutation({
-    onMutate: (newNote) => {
-      return newNote;
-    },
+  // ADD SESSIONS BUTTON WITH HANDLERS
+  const JitAddSessionButton = (props: { jit: Jit }) => {
+    const { jit } = props;
+    const { handleAddSessionClick } = useJitAddSession({ jit });
 
-    onSettled: () => {
-      void ctx.notes.getNotesByJitId.invalidate();
-      void ctx.jits.getAll.invalidate();
-    },
-  });
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      handleAddSessionClick();
+    };
+
+    return (
+      <Button
+        onClick={handleClick}
+        className="flex h-14 flex-row rounded-xl pl-2 pr-3 text-start text-[0.7rem]"
+      >
+        <PlusSquare className="mr-1 h-8 w-8" />
+        <span className="leading-[0.9rem]">
+          Log
+          <br />
+          Session
+        </span>
+      </Button>
+    );
+  };
+
+  // SAVE NEW NOTE HANDLERS AND BUTTON
+  const JitSaveNoteButton = (props: { jit: Jit; body: string }) => {
+    const { jit, body } = props;
+    const { handleSaveNoteClick } = useSaveNoteToJit({ jit, body });
+
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      handleSaveNoteClick();
+    };
+
+    return (
+      <Button onClick={handleClick} className="bg-pink-950 px-2">
+        <SaveIcon className="h-5 w-5" />
+      </Button>
+    );
+  };
+
+  const JitSessionProgressAndButton = (props: { jit: Jit }) => {
+    const { jit } = props;
+
+    return (
+      <>
+        <div className="text-slate-6 00 flex w-[68%] flex-col gap-y-2 text-xs  font-semibold">
+          <div>
+            {jit.isFavorite && <h3>Sessions to next stripe</h3>}
+            <JitProgressStripe sessionCount={jit.sessionCount} />
+          </div>
+          <div>
+            {jit.isFavorite && <h3>Sessions to next belt</h3>}
+            <JitProgressBelt sessionCount={jit.sessionCount} />
+          </div>
+        </div>
+        <div className="flex w-[32%] items-end justify-end pl-2 pr-3">
+          <JitAddSessionButton jit={jit} />
+        </div>
+      </>
+    );
+  };
+
+  const JitContentSlim = () => {
+    return <CardContent className="flex justify-end pb-0 pr-3"></CardContent>;
+  };
+
+  // FOCUS (STAR) HANDLERS AND BUTTON
+  const handleFocusClick = useFavoriteJit();
+  const JitFocusButton = (props: { isFavorite: boolean }) => {
+    const { isFavorite } = props;
+
+    return (
+      <button
+        onClick={(e) => handleFocusClick(jit, e)}
+        className="mx-auto -mt-3 flex w-10 justify-center rounded-xl bg-inherit px-2 pt-1"
+      >
+        {isFavorite ? (
+          <StarFilledIcon className="h-5 w-5 text-accent" />
+        ) : (
+          <StarIcon className="h-4 w-4" />
+        )}
+      </button>
+    );
+  };
 
   function JitTitle(props: { jit: Jit }) {
     const { jit } = props;
@@ -104,105 +155,6 @@ export const JitView = (props: { jit: Jit }) => {
     return null;
   }
 
-  // ADD SESSIONS HANDLERS AND BUTTON
-  const JitAddSessionButton = (props: { jit: Jit }) => {
-    const { jit } = props;
-    const { handleAddSessionClick } = useAddSessionToJit({ jit });
-
-    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-      e.preventDefault();
-      handleAddSessionClick();
-    };
-
-    return (
-      <Button
-        onClick={handleClick}
-        className="flex h-14 flex-row rounded-xl pl-2 pr-3 text-start text-[0.7rem]"
-      >
-        <PlusSquare className="mr-1 h-8 w-8" />
-        <span className="leading-[0.9rem]">
-          Log
-          <br />
-          Session
-        </span>
-      </Button>
-    );
-  };
-
-  const JitSessionProgressAndButton = (props: { jit: Jit }) => {
-    const { jit } = props;
-
-    return (
-      <>
-        <div className="flex w-[68%] flex-col gap-y-2 text-xs font-semibold">
-          <div>
-            {jit.isFavorite && <h3>Sessions to next stripe</h3>}
-            <JitProgressStripe sessionCount={jit.sessionCount} />
-          </div>
-          <div>
-            {jit.isFavorite && <h3>Sessions to next belt</h3>}
-            <JitProgressBelt sessionCount={jit.sessionCount} />
-          </div>
-        </div>
-        <div className="flex w-[32%] items-end justify-end pl-2 pr-3">
-          <JitAddSessionButton jit={jit} />
-        </div>
-      </>
-    );
-  };
-
-  const JitContentSlim = () => {
-    return <CardContent className="flex justify-end pb-0 pr-3"></CardContent>;
-  };
-
-  // FOCUS (STAR) HANDLERS AND BUTTON
-  const handleFocusClick = useFavoriteJit();
-  const JitFocusButton = (props: { isFavorite: boolean }) => {
-    const { isFavorite } = props;
-
-    return (
-      <button
-        onClick={(e) => handleFocusClick(jit, e)}
-        className="mx-auto -mt-3 flex w-10 justify-center rounded-xl bg-inherit px-2 pt-1"
-      >
-        {isFavorite ? (
-          <StarFilledIcon className="h-5 w-5" />
-        ) : (
-          <StarIcon className="h-4 w-4" />
-        )}
-      </button>
-    );
-  };
-
-  const JitFavoriteNotesAndButton = (props: { favoriteNotes: Note[] }) => {
-    const { favoriteNotes } = props;
-
-    return (
-      <div className="flex w-full pr-4 text-center">
-        {favoriteNotes?.length === 0 ? (
-          <div className="mt-2 flex w-full items-center justify-center rounded-md border-2 border-slate-300 py-2 text-xs">
-            <Button className="h-6 bg-slate-300 font-mono text-xs text-gray-700">
-              ADD NOTES
-            </Button>
-          </div>
-        ) : (
-          favoriteNotes && (
-            <ul className="w-full justify-center space-y-2 pt-3 ">
-              {favoriteNotes?.map((note) => (
-                <li
-                  key={note.id}
-                  className="py-.5 flex rounded-md px-6 py-1 text-left font-mono text-xs outline outline-2 outline-slate-300"
-                >
-                  {note.body}
-                </li>
-              ))}
-            </ul>
-          )
-        )}
-      </div>
-    );
-  };
-
   return (
     <div
       className={`parent-component rounded-xl
@@ -214,19 +166,19 @@ export const JitView = (props: { jit: Jit }) => {
         } bg-inherit`}
       >
         <JitFocusButton isFavorite={jit.isFavorite} />
-        <CardHeader className="mb-4 flex flex-row p-0 pl-3">
+        <CardHeader className="-mt-1 mb-4 flex flex-row p-0 pl-3">
           {/* BELT */}
           <div className="flex flex-col justify-center ">
             <JitBelt sessionCount={jit.sessionCount} />
           </div>
 
           {/* TITLE */}
-          <CardTitle className="flex w-11/12 flex-col text-xl leading-5">
+          <CardTitle className="flex w-11/12 flex-col text-xl leading-5 ">
             <JitTitle jit={jit} />
           </CardTitle>
         </CardHeader>
 
-        {/* FAVORITE JIT
+        {/* FAVORITE/FOCUSED JIT
         FOR SOME REASON CANNOT BE PLACED INTO A COMPONENT OUTSIDE OF THIS RETURN
         IT WILL MESS UP THE DIALOG: ON KEYDOWN IT WILL EXIT THE DIALOG */}
         {jit.isFavorite ? (
@@ -234,7 +186,29 @@ export const JitView = (props: { jit: Jit }) => {
             <CardContent className="mx-auto mb-6 w-11/12 p-0 pl-3">
               <Dialog>
                 <DialogTrigger asChild>
-                  <JitFavoriteNotesAndButton favoriteNotes={favoriteNotes} />
+                  {/* <SquareAsterisk /> */}
+                  <div className="flex w-full pr-4 text-center">
+                    {favoriteNotes?.length === 0 ? (
+                      <div className="mt-2 flex w-full items-center justify-center rounded-md border-2 border-slate-300 py-2 text-xs">
+                        <Button className="h-6 bg-slate-300 font-mono text-xs text-gray-700">
+                          ADD NOTES
+                        </Button>
+                      </div>
+                    ) : (
+                      favoriteNotes && (
+                        <ul className="w-full justify-center space-y-2 pt-3 ">
+                          {favoriteNotes?.map((note) => (
+                            <li
+                              key={note.id}
+                              className="py-.5 flex rounded-md px-6 py-1 text-left font-mono text-xs outline outline-2 outline-slate-300"
+                            >
+                              {note.body}
+                            </li>
+                          ))}
+                        </ul>
+                      )
+                    )}
+                  </div>
                 </DialogTrigger>
                 <DialogContent
                   className="sm:max-w-[425px] "
@@ -259,28 +233,7 @@ export const JitView = (props: { jit: Jit }) => {
                         setInputValue(event.target.value);
                       }}
                     />
-                    <Button
-                      onClick={() => {
-                        const newNote = {
-                          body: inputValue,
-                          isFavorite: false,
-                          createdAt: new Date(),
-                          jitId: jit.id,
-                        };
-                        ctx.notes.getNotesByJitId.setData(
-                          { jitId: jit.id },
-                          (previousNotes) =>
-                            [newNote, ...(previousNotes ?? [])] as Note[],
-                        );
-                        handleSaveNewNoteClick(() => {
-                          jitSaveNote.mutate(newNote);
-                        });
-                      }}
-                      type="submit"
-                      className="bg-pink-950 px-2"
-                    >
-                      <SaveIcon className="h-5 w-5" />
-                    </Button>
+                    <JitSaveNoteButton jit={jit} body={inputValue} />
                   </div>
 
                   <div className="border-b-2"></div>

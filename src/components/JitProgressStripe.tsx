@@ -19,19 +19,11 @@ export const JitProgressStripe = ({
     const squareWidth = 100 / levelSteps; // Calculate the width of each square dynamically
 
     for (let i = 0; i < levelSteps; i++) {
-      if (sessionCount === 0) {
+      if (i < completedSteps) {
         squares.push(
           <div
             key={i}
-            className="mr-1 h-4 rounded-sm bg-primary/10"
-            style={{ width: `100%` }}
-          />,
-        );
-      } else if (i < completedSteps) {
-        squares.push(
-          <div
-            key={i}
-            className="mr-1 h-4 rounded-sm bg-primary"
+            className="mr-1 h-4 rounded-sm bg-slate-500"
             style={{ width: `${squareWidth}%` }}
           />,
         );
@@ -39,7 +31,7 @@ export const JitProgressStripe = ({
         squares.push(
           <div
             key={i}
-            className="mr-1 h-4 rounded-sm bg-primary/10"
+            className="mr-1 h-4 rounded-sm bg-slate-300"
             style={{ width: `${squareWidth}%` }}
           />,
         );

@@ -2,17 +2,13 @@
 // Handles displaying all Notes related to a Jit
 
 import { useState } from "react";
-import { api, type RouterOutputs } from "~/utils/api";
+import { api } from "~/utils/api";
 import { Search } from "lucide-react";
 import { JitNoteView } from "./JitNoteView";
-
-type Jit = RouterOutputs["jits"]["getAll"][number];
 
 export const JitNotesFeed = (props: { jitId: string }) => {
   const { jitId } = props;
   const notes = api.notes.getNotesByJitId.useQuery({ jitId: jitId }).data;
-
-  console.log({ notes });
 
   const [searchTerm, setSearchTerm] = useState("");
 
