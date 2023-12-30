@@ -18,15 +18,15 @@
 
     --card: 0 0% 100%;
     --card-foreground: 222.2 47.4% 11.2%;
-    --card-secondary: 135, 17%, 95%;
+    --card-secondary: 225, 100%, 98%;
     --card-secondary-light: 142, 18%, 91%;
     --card-secondary-foreground: 210 40% 98%;
 
     --primary: 210 40% 98%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 148, 23%, 28%;
-    --secondary-foreground: 146, 10%, 49%;
+    --secondary: 220, 9%, 27%;
+    --secondary-foreground: 220, 9%, 46%;
 
     --accent: 6, 23%, 28%;
     --accent-foreground: 210, 20%, 98%;

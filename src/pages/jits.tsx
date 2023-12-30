@@ -1,4 +1,4 @@
-// JitsPage
+// Jits
 
 import { api } from "~/utils/api";
 import { SignInButton, useUser } from "@clerk/nextjs";
@@ -16,7 +16,7 @@ import SuperJSON from "superjson";
 import { prisma } from "prisma/db";
 import { Shapes } from "lucide-react";
 
-const JitsPage: NextPage = () => {
+const Jits: NextPage = () => {
   const user = useUser().user;
 
   // const router = useRouter();
@@ -48,7 +48,7 @@ const JitsPage: NextPage = () => {
                 ALL JITS
               </h1>
             </div>
-            <JitFeed jitsPage={true} allJits={allJits} />
+            <JitFeed jits={true} allJits={allJits} />
           </>
         )}
       </div>
@@ -78,4 +78,4 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   };
 };
 
-export default JitsPage;
+export default Jits;

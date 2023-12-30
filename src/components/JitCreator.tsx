@@ -112,7 +112,7 @@ export const JitCreator = () => {
         action: (
           <ToastAction
             altText="go to jits page"
-            onClick={() => router.push("/jitsPage")}
+            onClick={() => router.push("/jits")}
           >
             Go to Jits Page
           </ToastAction>
@@ -144,7 +144,7 @@ export const JitCreator = () => {
     }, delay);
 
     setTimeout(() => {
-      void router.push("/jitsPage");
+      void router.push("/jits");
     }, delay + 100);
 
     form.reset();

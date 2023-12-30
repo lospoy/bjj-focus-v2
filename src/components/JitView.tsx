@@ -20,15 +20,13 @@ import { JitNotesFeed } from "./JitNotesFeed";
 import { useState } from "react";
 import { JitBelt } from "./JitBelt";
 import { JitProgressBelt } from "./JitProgressBelt";
-import { JitProgressStripe } from "./JitProgressStripe";
-import { Pin, PlusSquare, SaveIcon, StarIcon } from "lucide-react";
+import { Bookmark, Pin, PlusSquare, SaveIcon } from "lucide-react";
 // import { humanDate } from "~/utils/humanDate";
-import { StarFilledIcon } from "@radix-ui/react-icons";
+import { BookmarkFilledIcon } from "@radix-ui/react-icons";
 import { useFavoriteJit } from "~/hooks/useFavoriteJit";
 import { useJitAddSession } from "~/hooks/useJitAddSession";
 import { useSaveNoteToJit } from "~/hooks/useSaveNoteToJit";
 import { Textarea } from "./ui/textarea";
-import { Icons } from "./ui/icons";
 
 type Jit = RouterOutputs["jits"]["getAll"][number];
 
@@ -50,7 +48,7 @@ export const JitView = (props: { jit: Jit }) => {
     return (
       <Button
         onClick={handleClick}
-        className="flex h-14 flex-row rounded-xl pl-2 pr-3 text-start text-[0.7rem]"
+        className="flex h-full flex-row rounded-xl pl-2 pr-3 text-start text-[0.7rem]"
       >
         <PlusSquare className="mr-1 h-8 w-8" />
         <span className="leading-[0.9rem]">
@@ -79,22 +77,21 @@ export const JitView = (props: { jit: Jit }) => {
     );
   };
 
-  const JitSessionProgressAndButton = (props: { jit: Jit }) => {
+  const JitBeltAndProgressAndButton = (props: { jit: Jit }) => {
     const { jit } = props;
 
     return (
       <>
-        <div className="text-slate-6 00 flex w-[68%] flex-col gap-y-1 text-xs  font-semibold">
-          <div>
-            {jit.isFavorite && <h3>Sessions to next stripe</h3>}
-            <JitProgressStripe sessionCount={jit.sessionCount} />
-          </div>
-          <div>
+        <div className="text-slate-6 flex w-[68%] flex-col text-xs font-semibold">
+          <div className="mb-1.5">
             {jit.isFavorite && <h3>Sessions to next belt</h3>}
             <JitProgressBelt sessionCount={jit.sessionCount} />
           </div>
+          <div>
+            <JitBelt sessionCount={jit.sessionCount} />
+          </div>
         </div>
-        <div className="flex w-[32%] items-end justify-end pl-2 pr-3">
+        <div className="flex h-1/2 w-[32%] items-end justify-end pl-2 pr-4">
           <JitAddSessionButton jit={jit} />
         </div>
       </>
@@ -111,14 +108,11 @@ export const JitView = (props: { jit: Jit }) => {
     const { isFavorite } = props;
 
     return (
-      <button
-        onClick={(e) => handleFocusClick(jit, e)}
-        className="mx-auto -mt-3 flex w-14 justify-center rounded-full bg-inherit p-2 "
-      >
+      <button onClick={(e) => handleFocusClick(jit, e)}>
         {isFavorite ? (
-          <StarFilledIcon className="h-5 w-5 text-secondary hover:text-secondary-foreground hover:opacity-50" />
+          <BookmarkFilledIcon className="h-5 w-5 text-secondary hover:text-secondary-foreground hover:opacity-50" />
         ) : (
-          <StarIcon className="h-5 w-5 hover:fill-inherit" />
+          <Bookmark className="h-5 w-5 hover:fill-inherit" />
         )}
       </button>
     );
@@ -166,7 +160,7 @@ export const JitView = (props: { jit: Jit }) => {
 
   const JitNotesPinned = () => {
     return (
-      <ul className="bg-card-secondaryLight mx-auto mt-2 w-full space-y-1 rounded-md border-2 border-secondary bg-opacity-5 py-2 hover:bg-secondary-foreground md:grid md:grid-cols-3 md:gap-4">
+      <ul className="mx-auto mt-2 w-full space-y-1 rounded-md border-2 border-secondary bg-card-secondaryLight bg-opacity-5 py-2 hover:bg-secondary-foreground md:grid md:grid-cols-3 md:gap-4">
         {favoriteNotes?.map((note) => (
           <div key={note.id} className="flex px-4">
             <Pin className="mt-1 h-4 w-4 fill-gray-400 text-gray-400" />
@@ -189,17 +183,15 @@ export const JitView = (props: { jit: Jit }) => {
           jit.isFavorite ? "" : " opacity-70 shadow-none"
         } bg-inherit`}
       >
-        <JitFocusButton isFavorite={jit.isFavorite} />
-        <CardHeader className="-mt-5 mb-4 flex flex-row p-0 pl-3">
-          {/* BELT */}
-          <div className="flex flex-col justify-end">
-            <JitBelt sessionCount={jit.sessionCount} />
-          </div>
-
+        <CardHeader className="mb-4 flex flex-row p-0 pl-3 pt-1">
           {/* TITLE */}
-          <CardTitle className="flex w-11/12 flex-col text-xl leading-5 ">
+          <CardTitle className="flex w-[92%] flex-col text-xl leading-5">
             <JitTitle jit={jit} />
           </CardTitle>
+          {/* FAVORITE/FOCUS BUTTON */}
+          <div className="flex items-center">
+            <JitFocusButton isFavorite={jit.isFavorite} />
+          </div>
         </CardHeader>
 
         {/* FAVORITE/FOCUSED JIT
@@ -256,8 +248,8 @@ export const JitView = (props: { jit: Jit }) => {
                 </DialogContent>
               </Dialog>
             </CardContent>
-            <CardContent className="flex p-0 pb-4 pl-3">
-              <JitSessionProgressAndButton jit={jit} />
+            <CardContent className="flex h-20 p-0 pl-3">
+              <JitBeltAndProgressAndButton jit={jit} />
             </CardContent>
           </>
         ) : (

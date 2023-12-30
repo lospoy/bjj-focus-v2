@@ -87,7 +87,7 @@ export default function TopNav() {
                       </DropdownMenuSubTrigger>
                       <DropdownMenuPortal>
                         <DropdownMenuSubContent>
-                          <Link href="/jitsPage">
+                          <Link href="/jits">
                             <DropdownMenuItem>
                               <Shapes className="mr-2 h-4 w-4" />
                               <span>All Jits</span>
