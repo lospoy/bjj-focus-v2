@@ -13,27 +13,9 @@ import { type RouterOutputs, api } from "~/utils/api";
 import { Icons } from "./ui/icons";
 import { EyeClosedIcon } from "@radix-ui/react-icons";
 import { useFavoriteJit } from "~/hooks/useFavoriteJit";
+import { JitToastDescription } from "~/hooks/useSaveNoteToJit";
 
 type Jit = RouterOutputs["jits"]["getAll"][number];
-
-export const JitToastDescription = (props: { jit: Jit }) => {
-  const { jit } = props;
-
-  return (
-    <>
-      {jit.move && (
-        <div className="">
-          <strong>Move:</strong> {jit.move?.name}
-        </div>
-      )}
-      {jit.position && (
-        <div className="">
-          <strong>Position:</strong> {jit.position?.name}
-        </div>
-      )}
-    </>
-  );
-};
 
 export default function JitMenu(props: { jit: Jit }) {
   const { jit } = props;
@@ -79,7 +61,7 @@ export default function JitMenu(props: { jit: Jit }) {
   });
 
   return (
-    <div className="rounded-md bg-accent p-2 text-background shadow-md">
+    <div className="rounded-md bg-secondary p-2 text-background shadow-md">
       <DropdownMenu onOpenChange={handleMenuOpenChange}>
         <DropdownMenuTrigger asChild>
           <ChevronLeftSquare

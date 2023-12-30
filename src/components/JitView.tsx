@@ -15,21 +15,20 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
-import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { JitNotesFeed } from "./JitNotesFeed";
 import { useState } from "react";
 import { JitBelt } from "./JitBelt";
 import { JitProgressBelt } from "./JitProgressBelt";
 import { JitProgressStripe } from "./JitProgressStripe";
-import { PlusSquare, SaveIcon, StarIcon } from "lucide-react";
+import { Pin, PlusSquare, SaveIcon, StarIcon } from "lucide-react";
 // import { humanDate } from "~/utils/humanDate";
 import { StarFilledIcon } from "@radix-ui/react-icons";
 import { useFavoriteJit } from "~/hooks/useFavoriteJit";
 import { useJitAddSession } from "~/hooks/useJitAddSession";
 import { useSaveNoteToJit } from "~/hooks/useSaveNoteToJit";
-import { FormField } from "./ui/form";
 import { Textarea } from "./ui/textarea";
+import { Icons } from "./ui/icons";
 
 type Jit = RouterOutputs["jits"]["getAll"][number];
 
@@ -85,7 +84,7 @@ export const JitView = (props: { jit: Jit }) => {
 
     return (
       <>
-        <div className="text-slate-6 00 flex w-[68%] flex-col gap-y-2 text-xs  font-semibold">
+        <div className="text-slate-6 00 flex w-[68%] flex-col gap-y-1 text-xs  font-semibold">
           <div>
             {jit.isFavorite && <h3>Sessions to next stripe</h3>}
             <JitProgressStripe sessionCount={jit.sessionCount} />
@@ -114,12 +113,12 @@ export const JitView = (props: { jit: Jit }) => {
     return (
       <button
         onClick={(e) => handleFocusClick(jit, e)}
-        className="mx-auto -mt-3 flex w-10 justify-center rounded-xl bg-inherit px-2 pt-1"
+        className="mx-auto -mt-3 flex w-14 justify-center rounded-full bg-inherit p-2 "
       >
         {isFavorite ? (
-          <StarFilledIcon className="h-5 w-5 text-accent" />
+          <StarFilledIcon className="h-5 w-5 text-secondary hover:text-secondary-foreground hover:opacity-50" />
         ) : (
-          <StarIcon className="h-4 w-4" />
+          <StarIcon className="h-5 w-5 hover:fill-inherit" />
         )}
       </button>
     );
@@ -157,10 +156,33 @@ export const JitView = (props: { jit: Jit }) => {
     return null;
   }
 
+  const JitNotesButton = () => {
+    return (
+      <div className="mt-2 flex w-full items-center justify-center rounded-md border-2 border-gray-300 py-2 text-xs hover:bg-secondary-foreground">
+        <Button className="h-6 font-mono text-xs">NOTES</Button>
+      </div>
+    );
+  };
+
+  const JitNotesPinned = () => {
+    return (
+      <ul className="mx-auto mt-2 w-full space-y-1 rounded-md border-2 border-secondary py-2 hover:bg-secondary-foreground md:grid md:grid-cols-3 md:gap-4">
+        {favoriteNotes?.map((note) => (
+          <div key={note.id} className="flex px-4">
+            <Pin className="mt-1 h-4 w-4 fill-gray-400 text-gray-400" />
+            <li className="w-[90%] py-1 pl-1 text-left font-mono text-xs">
+              {note.body}
+            </li>
+          </div>
+        ))}
+      </ul>
+    );
+  };
+
   return (
     <div
       className={`parent-component rounded-xl
-      ${jit.isFavorite ? "bg-slate-200" : "bg-zinc-100"}`}
+      ${jit.isFavorite ? "bg-card-secondary" : "bg-zinc-100"}`}
     >
       <Card
         className={`relative mb-8  ${
@@ -168,9 +190,9 @@ export const JitView = (props: { jit: Jit }) => {
         } bg-inherit`}
       >
         <JitFocusButton isFavorite={jit.isFavorite} />
-        <CardHeader className="-mt-1 mb-4 flex flex-row p-0 pl-3">
+        <CardHeader className="-mt-5 mb-4 flex flex-row p-0 pl-3">
           {/* BELT */}
-          <div className="flex flex-col justify-center ">
+          <div className="flex flex-col justify-end">
             <JitBelt sessionCount={jit.sessionCount} />
           </div>
 
@@ -189,26 +211,11 @@ export const JitView = (props: { jit: Jit }) => {
               <Dialog>
                 <DialogTrigger asChild>
                   {/* <SquareAsterisk /> */}
-                  <div className="flex w-full pr-4 text-center">
+                  <div className="mx-auto flex w-full pr-4 text-center">
                     {favoriteNotes?.length === 0 ? (
-                      <div className="mt-2 flex w-full items-center justify-center rounded-md border-2 border-slate-300 py-2 text-xs">
-                        <Button className="h-6 bg-slate-300 font-mono text-xs text-gray-700">
-                          NOTES
-                        </Button>
-                      </div>
+                      <JitNotesButton />
                     ) : (
-                      favoriteNotes && (
-                        <ul className="w-full justify-center space-y-2 pt-3 ">
-                          {favoriteNotes?.map((note) => (
-                            <li
-                              key={note.id}
-                              className="py-.5 flex rounded-md px-6 py-1 text-left font-mono text-xs outline outline-2 outline-slate-300"
-                            >
-                              {note.body}
-                            </li>
-                          ))}
-                        </ul>
-                      )
+                      <JitNotesPinned />
                     )}
                   </div>
                 </DialogTrigger>

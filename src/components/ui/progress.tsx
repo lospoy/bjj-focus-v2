@@ -24,7 +24,7 @@ const Progress = React.forwardRef<
   >
     <ProgressPrimitive.Indicator
       className={cn(
-        "h-full w-full flex-1 border-r-accent bg-zinc-900 transition-all dark:bg-zinc-50",
+        "h-full w-full flex-1 border-r-secondary bg-zinc-900 transition-all dark:bg-zinc-50",
         indicatorClassName,
       )}
       style={{

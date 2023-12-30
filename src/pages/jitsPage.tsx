@@ -44,7 +44,7 @@ const JitsPage: NextPage = () => {
           <>
             <div className="mb-6 flex w-full flex-row items-center -space-x-4 text-center">
               <Shapes className="ml-6 h-1/4 w-1/4" />
-              <h1 className="w-full whitespace-nowrap text-[15vw] font-bold tracking-tighter text-accent md:text-[10vw] lg:text-[6vw]">
+              <h1 className="w-full whitespace-nowrap text-[15vw] font-bold tracking-tighter text-secondary md:text-[10vw] lg:text-[6vw]">
                 ALL JITS
               </h1>
             </div>

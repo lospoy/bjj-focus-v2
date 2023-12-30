@@ -43,7 +43,7 @@ export default function TopNav() {
       {isMenuClicked && (
         <div className="fixed inset-0 z-10 bg-black opacity-40"></div>
       )}
-      <nav className="sticky top-0 z-10 w-full bg-accent px-4 md:border-0 ">
+      <nav className="sticky top-0 z-10 w-full bg-secondary px-4 md:border-0 ">
         <div className="mx-auto md:max-w-3xl">
           <div className="flex justify-between pb-1 pt-2">
             {isSignedIn ? (
