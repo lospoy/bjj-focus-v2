@@ -19,7 +19,7 @@ const HomePage: NextPage = () => {
   const router = useRouter();
 
   if (isSignedIn) {
-    void router.push("/jitsPage");
+    void router.push("/jits");
   }
 
   return (

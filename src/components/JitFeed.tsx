@@ -4,14 +4,14 @@ import { JitView } from "./JitView";
 import { Search } from "lucide-react";
 
 interface JitFeedProps {
-  jitsPage?: boolean;
+  jits?: boolean;
   dashboard?: boolean;
   allJits?: GetAllJit;
 }
 
 export type GetAllJit = RouterOutputs["jits"]["getAll"];
 
-export const JitFeed = ({ jitsPage, allJits: jitsFromProps }: JitFeedProps) => {
+export const JitFeed = ({ jits, allJits: jitsFromProps }: JitFeedProps) => {
   const allJits = jitsFromProps;
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -38,7 +38,7 @@ export const JitFeed = ({ jitsPage, allJits: jitsFromProps }: JitFeedProps) => {
   return (
     <div className="flex flex-col">
       {/* Conditionally render Search Input */}
-      {jitsPage && (
+      {jits && (
         <div className="relative -mt-2">
           <Search
             className="absolute right-[14px] top-1/2 h-4 w-4 -translate-y-4 transform text-gray-400"
@@ -49,7 +49,7 @@ export const JitFeed = ({ jitsPage, allJits: jitsFromProps }: JitFeedProps) => {
             placeholder="search all jits..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="text-md mb-6 flex h-10 w-full rounded bg-gray-400/10 pl-[14px] text-accent placeholder-gray-400 placeholder:font-mono placeholder:uppercase focus:border-none focus:outline-none focus:ring-0"
+            className="text-md mb-6 flex h-10 w-full rounded bg-gray-400/10 pl-[14px] text-secondary placeholder-gray-400 placeholder:font-mono placeholder:uppercase focus:border-none focus:outline-none focus:ring-0"
           />
         </div>
       )}

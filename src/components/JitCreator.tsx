@@ -112,7 +112,7 @@ export const JitCreator = () => {
         action: (
           <ToastAction
             altText="go to jits page"
-            onClick={() => router.push("/jitsPage")}
+            onClick={() => router.push("/jits")}
           >
             Go to Jits Page
           </ToastAction>
@@ -144,7 +144,7 @@ export const JitCreator = () => {
     }, delay);
 
     setTimeout(() => {
-      void router.push("/jitsPage");
+      void router.push("/jits");
     }, delay + 100);
 
     form.reset();
@@ -252,7 +252,7 @@ export const JitCreator = () => {
                               <CommandItem
                                 className={cn(
                                   position.id === field.value?.id
-                                    ? "bg-accent text-background"
+                                    ? "bg-secondary text-background"
                                     : "bg-none",
                                 )}
                                 value={position.name}
@@ -345,7 +345,7 @@ export const JitCreator = () => {
                               <CommandItem
                                 className={cn(
                                   move.id === field.value?.id
-                                    ? "bg-accent text-background"
+                                    ? "bg-secondary text-background"
                                     : "bg-none",
                                 )}
                                 value={move.name}
@@ -407,7 +407,7 @@ export const JitCreator = () => {
           <Button
             size={"lg"}
             type="submit"
-            className="bg-accent text-background"
+            className="bg-secondary text-background"
             disabled={!moveValue && !positionValue}
           >
             CREATE JIT

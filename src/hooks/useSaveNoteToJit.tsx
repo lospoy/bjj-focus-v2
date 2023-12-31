@@ -1,10 +1,28 @@
 import { type RouterOutputs, api } from "~/utils/api";
-import { JitToastDescription } from "~/components/JitMenu";
 import { toast } from "~/components/ui/use-toast";
 import { ToastAction } from "~/components/ui/toast";
 
 type Jit = RouterOutputs["jits"]["getAll"][number];
 type Note = RouterOutputs["jits"]["getAll"][number]["notes"][number];
+
+export const JitToastDescription = (props: { jit: Jit }) => {
+  const { jit } = props;
+
+  return (
+    <>
+      {jit.move && (
+        <div className="">
+          <strong>Move:</strong> {jit.move?.name}
+        </div>
+      )}
+      {jit.position && (
+        <div className="">
+          <strong>Position:</strong> {jit.position?.name}
+        </div>
+      )}
+    </>
+  );
+};
 
 export function useSaveNoteToJit(props: { jit: Jit; body: string }) {
   const { jit, body } = props;

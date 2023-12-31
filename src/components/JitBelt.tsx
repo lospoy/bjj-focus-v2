@@ -24,12 +24,14 @@ export const JitBelt = ({ sessionCount = 0 }: { sessionCount?: number }) => {
   }
 
   return (
-    // TO PROPERLY ADJUST BELT WIDTH, WE PROBABLY NEED TO MODIFY THE SVG'S WIDTH
-    // VIA A PROP, BASED ON VIEWPORT WIDTH - maybe we could do some kind of clamp, or use wh
-    <Belt
-      className="absolute -right-2 h-[35px] w-[160px] drop-shadow-lg md:w-max"
-      numberOfStripes={numberOfStripes}
-      beltColor={beltColor}
-    />
+    // TO PROPERLY ADJUST BELT WIDTH, WE PROBABLY NEED TO MODIFY THE SVG'S WIDTH VIA A PROP
+    <div className="-ml-3 flex h-[36px]">
+      <div className="z-10 -mr-2 w-4 border-r-[1px] border-gray-600 bg-card-secondary  " />
+      <Belt
+        className="h-[32px] w-[180px] -scale-x-100 transform opacity-95 drop-shadow-md md:w-[190px]"
+        numberOfStripes={numberOfStripes}
+        beltColor={beltColor}
+      />
+    </div>
   );
 };

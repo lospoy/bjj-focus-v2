@@ -2,7 +2,6 @@ import Link from "next/link";
 import { UserNav } from "./UserNav";
 import {
   BarChart4,
-  EyeIcon,
   LampDesk,
   Menu,
   MessageSquare,
@@ -43,7 +42,7 @@ export default function TopNav() {
       {isMenuClicked && (
         <div className="fixed inset-0 z-10 bg-black opacity-40"></div>
       )}
-      <nav className="sticky top-0 z-10 w-full bg-accent px-4 md:border-0 ">
+      <nav className="sticky top-0 z-10 w-full bg-secondary px-4 md:border-0 ">
         <div className="mx-auto md:max-w-3xl">
           <div className="flex justify-between pb-1 pt-2">
             {isSignedIn ? (
@@ -87,7 +86,7 @@ export default function TopNav() {
                       </DropdownMenuSubTrigger>
                       <DropdownMenuPortal>
                         <DropdownMenuSubContent>
-                          <Link href="/jitsPage">
+                          <Link href="/jits">
                             <DropdownMenuItem>
                               <Shapes className="mr-2 h-4 w-4" />
                               <span>All Jits</span>

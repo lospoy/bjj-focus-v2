@@ -16,6 +16,9 @@ module.exports = {
       },
     },
     extend: {
+      scale: {
+        "-100": "-1",
+      },
       transitionDuration: {
         "3000": "3000ms",
       },
@@ -48,8 +51,8 @@ module.exports = {
           foreground: "hsl(var(--muted-foreground))",
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",
@@ -58,6 +61,8 @@ module.exports = {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+          secondary: "hsl(var(--card-secondary))",
+          secondaryLight: "hsl(var(--card-secondary-light))",
         },
       },
       borderRadius: {

@@ -9,25 +9,25 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
-import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { JitNotesFeed } from "./JitNotesFeed";
 import { useState } from "react";
 import { JitBelt } from "./JitBelt";
 import { JitProgressBelt } from "./JitProgressBelt";
-import { JitProgressStripe } from "./JitProgressStripe";
-import { PlusSquare, SaveIcon, StarIcon } from "lucide-react";
+import { Bookmark, Plus, SaveIcon } from "lucide-react";
 // import { humanDate } from "~/utils/humanDate";
-import { StarFilledIcon } from "@radix-ui/react-icons";
+import {
+  BookmarkFilledIcon,
+  DrawingPinFilledIcon,
+} from "@radix-ui/react-icons";
 import { useFavoriteJit } from "~/hooks/useFavoriteJit";
 import { useJitAddSession } from "~/hooks/useJitAddSession";
 import { useSaveNoteToJit } from "~/hooks/useSaveNoteToJit";
+import { Textarea } from "./ui/textarea";
 
 type Jit = RouterOutputs["jits"]["getAll"][number];
 
@@ -49,14 +49,10 @@ export const JitView = (props: { jit: Jit }) => {
     return (
       <Button
         onClick={handleClick}
-        className="flex h-14 flex-row rounded-xl pl-2 pr-3 text-start text-[0.7rem]"
+        className="h-8 rounded-xl pl-2 pr-3 text-xs"
       >
-        <PlusSquare className="mr-1 h-8 w-8" />
-        <span className="leading-[0.9rem]">
-          Log
-          <br />
-          Session
-        </span>
+        <Plus className="mr-1 h-5 w-5" />
+        <span>SESSION</span>
       </Button>
     );
   };
@@ -72,31 +68,31 @@ export const JitView = (props: { jit: Jit }) => {
     };
 
     return (
-      <Button onClick={handleClick} className="bg-pink-950 px-2">
+      <Button
+        onClick={handleClick}
+        className="h-full bg-pink-900 px-2 shadow-md hover:bg-pink-600"
+      >
         <SaveIcon className="h-5 w-5" />
       </Button>
     );
   };
 
-  const JitSessionProgressAndButton = (props: { jit: Jit }) => {
+  const JitBeltAndProgressAndButton = (props: { jit: Jit }) => {
     const { jit } = props;
 
     return (
-      <>
-        <div className="text-slate-6 00 flex w-[68%] flex-col gap-y-2 text-xs  font-semibold">
-          <div>
-            {jit.isFavorite && <h3>Sessions to next stripe</h3>}
-            <JitProgressStripe sessionCount={jit.sessionCount} />
-          </div>
-          <div>
-            {jit.isFavorite && <h3>Sessions to next belt</h3>}
-            <JitProgressBelt sessionCount={jit.sessionCount} />
+      <div className="flex w-full flex-col space-y-3 px-4 pb-4">
+        <div className="text-slate-6  text-xs font-semibold">
+          {jit.isFavorite && <h3>Sessions to next belt</h3>}
+          <JitProgressBelt sessionCount={jit.sessionCount} />
+        </div>
+        <div className="flex ">
+          <JitBelt sessionCount={jit.sessionCount} />
+          <div className="ml-auto">
+            <JitAddSessionButton jit={jit} />
           </div>
         </div>
-        <div className="flex w-[32%] items-end justify-end pl-2 pr-3">
-          <JitAddSessionButton jit={jit} />
-        </div>
-      </>
+      </div>
     );
   };
 
@@ -110,14 +106,11 @@ export const JitView = (props: { jit: Jit }) => {
     const { isFavorite } = props;
 
     return (
-      <button
-        onClick={(e) => handleFocusClick(jit, e)}
-        className="mx-auto -mt-3 flex w-10 justify-center rounded-xl bg-inherit px-2 pt-1"
-      >
+      <button onClick={(e) => handleFocusClick(jit, e)}>
         {isFavorite ? (
-          <StarFilledIcon className="h-5 w-5 text-accent" />
+          <BookmarkFilledIcon className="h-5 w-5 text-secondary hover:text-secondary-foreground hover:opacity-50" />
         ) : (
-          <StarIcon className="h-4 w-4" />
+          <Bookmark className="h-5 w-5 hover:fill-inherit" />
         )}
       </button>
     );
@@ -155,27 +148,50 @@ export const JitView = (props: { jit: Jit }) => {
     return null;
   }
 
+  const JitNotesButton = () => {
+    return (
+      <div className="mt-2 flex w-full items-center justify-center rounded-md border-2 border-gray-200 py-2 text-xs hover:bg-secondary-foreground">
+        <Button className="h-6 bg-card-secondaryLight font-mono text-xs text-secondary">
+          NOTES
+        </Button>
+      </div>
+    );
+  };
+
+  const JitNotesPinned = () => {
+    return (
+      <ul className="mx-auto mt-2 w-full space-y-1 rounded-md bg-slate-200 py-2 hover:bg-card-secondary hover:opacity-80 md:grid md:grid-cols-3 md:gap-4">
+        {favoriteNotes?.map((note) => (
+          <div key={note.id} className="flex px-4">
+            <DrawingPinFilledIcon className="translate mt-1 h-4 w-4 -scale-x-100 text-gray-500" />
+            <li className="w-[90%] py-1 pl-1 text-left font-mono text-xs leading-3">
+              {note.body}
+            </li>
+          </div>
+        ))}
+      </ul>
+    );
+  };
+
   return (
     <div
       className={`parent-component rounded-xl
-      ${jit.isFavorite ? "bg-slate-200" : "bg-zinc-100"}`}
+      ${jit.isFavorite ? "bg-card-secondary" : "bg-zinc-100"}`}
     >
       <Card
-        className={`relative mb-8  ${
+        className={` mb-8  ${
           jit.isFavorite ? "" : " opacity-70 shadow-none"
         } bg-inherit`}
       >
-        <JitFocusButton isFavorite={jit.isFavorite} />
-        <CardHeader className="-mt-1 mb-4 flex flex-row p-0 pl-3">
-          {/* BELT */}
-          <div className="flex flex-col justify-center ">
-            <JitBelt sessionCount={jit.sessionCount} />
-          </div>
-
+        <CardHeader className="mb-4 flex flex-row p-0 pl-3 pt-1">
           {/* TITLE */}
-          <CardTitle className="flex w-11/12 flex-col text-xl leading-5 ">
+          <CardTitle className="flex w-[92%] flex-col text-xl leading-5">
             <JitTitle jit={jit} />
           </CardTitle>
+          {/* FAVORITE / FOCUS BUTTON */}
+          <div className="flex items-start">
+            <JitFocusButton isFavorite={jit.isFavorite} />
+          </div>
         </CardHeader>
 
         {/* FAVORITE/FOCUSED JIT
@@ -183,51 +199,35 @@ export const JitView = (props: { jit: Jit }) => {
         IT WILL MESS UP THE DIALOG: ON KEYDOWN IT WILL EXIT THE DIALOG */}
         {jit.isFavorite ? (
           <>
-            <CardContent className="mx-auto mb-6 w-11/12 p-0 pl-3">
+            <CardContent className="mb-6 p-0">
               <Dialog>
                 <DialogTrigger asChild>
                   {/* <SquareAsterisk /> */}
-                  <div className="flex w-full pr-4 text-center">
+                  <div className="flex w-full px-6 text-center ">
                     {favoriteNotes?.length === 0 ? (
-                      <div className="mt-2 flex w-full items-center justify-center rounded-md border-2 border-slate-300 py-2 text-xs">
-                        <Button className="h-6 bg-slate-300 font-mono text-xs text-gray-700">
-                          ADD NOTES
-                        </Button>
-                      </div>
+                      <JitNotesButton />
                     ) : (
-                      favoriteNotes && (
-                        <ul className="w-full justify-center space-y-2 pt-3 ">
-                          {favoriteNotes?.map((note) => (
-                            <li
-                              key={note.id}
-                              className="py-.5 flex rounded-md px-6 py-1 text-left font-mono text-xs outline outline-2 outline-slate-300"
-                            >
-                              {note.body}
-                            </li>
-                          ))}
-                        </ul>
-                      )
+                      <JitNotesPinned />
                     )}
                   </div>
                 </DialogTrigger>
                 <DialogContent
-                  className="sm:max-w-[425px] "
+                  className="bg-background sm:max-w-[425px]"
                   onOpenAutoFocus={(e) => e.preventDefault()}
                 >
                   <DialogHeader className="pb-6">
-                    <DialogTitle className="flex flex-col text-2xl leading-5 ">
+                    <DialogTitle className="flex flex-col text-3xl leading-5 ">
                       <JitTitle jit={jit} />
                     </DialogTitle>
-                    <DialogDescription>
-                      Manage your notes specific to this Jit.
-                    </DialogDescription>
                   </DialogHeader>
 
-                  <div className="flex items-center pb-4 text-center font-mono">
-                    <Input
+                  {/* NEW NOTE INPUT AND SAVE BUTTON
+                  ALSO CANNOT BE PLACED INTO ITS OWN COMPONENT */}
+                  <div className="flex items-center pb-6 text-center font-mono ">
+                    <Textarea
                       id="new-note"
                       placeholder="New note..."
-                      className="mr-2"
+                      className="mr-2 border-2 bg-background text-pink-950 shadow-sm focus:bg-pink-300/10 focus:ring-pink-300/10"
                       value={inputValue}
                       onChange={(event) => {
                         setInputValue(event.target.value);
@@ -236,19 +236,14 @@ export const JitView = (props: { jit: Jit }) => {
                     <JitSaveNoteButton jit={jit} body={inputValue} />
                   </div>
 
-                  <div className="border-b-2"></div>
-
-                  <div className="grid gap-2 pb-0">
-                    <div className=" items-center gap-1 font-mono">
-                      <JitNotesFeed jitId={jit.id} />
-                    </div>
+                  <div className=" items-center gap-1 font-mono">
+                    <JitNotesFeed jitId={jit.id} />
                   </div>
-                  <DialogFooter></DialogFooter>
                 </DialogContent>
               </Dialog>
             </CardContent>
-            <CardContent className="flex p-0 pb-4 pl-3">
-              <JitSessionProgressAndButton jit={jit} />
+            <CardContent className="p-0">
+              <JitBeltAndProgressAndButton jit={jit} />
             </CardContent>
           </>
         ) : (
