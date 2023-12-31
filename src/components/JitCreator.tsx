@@ -22,7 +22,10 @@ import type { JitCreate } from "~/server/api/routers/jits";
 import { useRouter } from "next/router";
 
 export type JitRecord = RouterOutputs["jits"]["create"];
+export type Jit = RouterOutputs["jits"]["getAll"];
 export type JitCreate = z.infer<typeof JitCreate>;
+type Positions = RouterOutputs["positions"]["getAll"];
+type Moves = RouterOutputs["moves"]["getAll"];
 
 // On actual submit the toast is blank
 // Caching does not work
@@ -45,14 +48,15 @@ const FormSchema = z
 
 type FormData = z.infer<typeof FormSchema>;
 
-export const JitCreator = () => {
+export const JitCreator = (props: {
+  allJits: Jit;
+  allPositions: Positions;
+  allMoves: Moves;
+}) => {
   const ctx = api.useUtils();
+  const { allJits, allPositions, allMoves } = props;
   const { toast } = useToast();
-  const allPositions = ctx.positions.getAll.getData();
-  const allMoves = ctx.moves.getAll.getData();
-  const allJits = ctx.jits.getAll.getData();
   const router = useRouter();
-
   const form = useForm<FormData>({
     resolver: zodResolver(FormSchema),
   });

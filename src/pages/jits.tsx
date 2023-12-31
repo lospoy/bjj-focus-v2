@@ -24,7 +24,7 @@ import Link from "next/link";
 
 const Jits: NextPage = () => {
   const ctx = api.useUtils();
-  const allJits = ctx.jits.getAll.getData();
+  const allJits = api.jits.getAll.useQuery().data;
 
   const AllJitsFeed = () => {
     return (
