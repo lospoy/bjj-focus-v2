@@ -43,7 +43,7 @@ export const JitProgressBelt = ({
         squares.push(
           <div
             key={i}
-            className="mr-[1.5px] h-3 rounded-sm bg-gray-300"
+            className="mr-[1.6px] h-3 rounded-sm bg-slate-300/60"
             style={{ width: `${squareWidth}%` }}
           />,
         );

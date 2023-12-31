@@ -8,6 +8,7 @@ import { api, type RouterOutputs } from "~/utils/api";
 import { Card, CardContent } from "./ui/card";
 import { Pin } from "lucide-react";
 import { toast } from "./ui/use-toast";
+import { DrawingPinFilledIcon, DrawingPinIcon } from "@radix-ui/react-icons";
 
 type Note = RouterOutputs["notes"]["updateById"];
 
@@ -62,9 +63,12 @@ export const JitNoteView = (props: { note: Note }) => {
         <div className="flex w-1/12 flex-col">
           <button onClick={handleTogglePin}>
             {note.isFavorite ? (
-              <Pin fill="currentColor" className="h-5 w-5 text-blue-800" />
+              <DrawingPinFilledIcon
+                fill="currentColor"
+                className="h-6 w-6 text-pink-900 hover:text-pink-600"
+              />
             ) : (
-              <Pin className="h-5 w-5 text-blue-800" />
+              <DrawingPinIcon className="h-6 w-6 text-pink-900 hover:text-pink-600" />
             )}
           </button>
         </div>

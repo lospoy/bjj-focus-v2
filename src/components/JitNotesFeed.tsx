@@ -34,9 +34,8 @@ export const JitNotesFeed = (props: { jitId: string }) => {
     return 0;
   });
 
-  return (
-    <div className="flex flex-col">
-      {/* Search Input */}
+  const noteSearch = () => {
+    return (
       <div className="relative">
         <Search
           className="absolute right-[14px] top-1/2 h-4 w-4 -translate-y-4 transform text-gray-400"
@@ -47,10 +46,14 @@ export const JitNotesFeed = (props: { jitId: string }) => {
           placeholder="search notes..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="text-md mb-4 flex h-10 w-full rounded bg-pink-400/10 pl-[14px] placeholder-gray-400 placeholder:font-mono placeholder:uppercase focus:border-none focus:outline-none focus:ring-0"
+          className="text-md mb-4 flex h-8 w-full rounded bg-pink-400/10 pl-[14px] placeholder-gray-400 placeholder:font-mono placeholder:uppercase focus:border-none focus:outline-none focus:ring-0"
         />
       </div>
+    );
+  };
 
+  return (
+    <div className="flex flex-col">
       {/* Render NoteViews based on the filtered results */}
       {filteredNotes?.map((note) => (
         <div key={note.id}>
