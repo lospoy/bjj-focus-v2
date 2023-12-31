@@ -15,7 +15,7 @@ import { prisma } from "prisma/db";
 import { useRouter } from "next/router";
 
 const HomePage: NextPage = () => {
-  const { isLoaded: userLoaded, isSignedIn } = useUser();
+  const { isSignedIn } = useUser();
   const router = useRouter();
 
   if (isSignedIn) {

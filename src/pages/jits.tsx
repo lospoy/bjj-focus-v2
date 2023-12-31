@@ -1,5 +1,3 @@
-// Jits
-
 import { api } from "~/utils/api";
 import { useUser } from "@clerk/nextjs";
 import { PageLayout } from "~/components/ui/layout";
@@ -26,26 +24,15 @@ import { Button } from "~/components/ui/button";
 import Link from "next/link";
 
 const Jits: NextPage = () => {
-  const user = useUser().user;
   const ctx = api.useUtils();
-
-  // const router = useRouter();
-  const { isLoaded: userLoaded, isSignedIn } = useUser();
-
-  // Start fetching asap
-  // (React query will use cached data if the data doesn't change)
   const allJits = ctx.jits.getAll.getData();
-  console.log({ allJits });
-
-  // Return empty div if user isn't loaded yet
-  if (!userLoaded) return <div />;
 
   const AllJitsFeed = () => {
     return (
       <>
-        <div className="mx-auto mb-4 flex flex-row items-center text-center">
-          <Shapes className="absolute left-10 h-1/5 w-1/5 text-secondary opacity-10" />
-          <h1 className="whitespace-nowrap text-[15vw] font-bold tracking-tighter text-secondary md:text-[10vw] lg:text-[6vw]">
+        <div className="relative mb-4 flex h-24 flex-row items-center justify-center">
+          <Shapes className="absolute -left-28 flex h-full w-full text-secondary opacity-10" />
+          <h1 className="flex whitespace-nowrap pl-8 text-7xl font-bold tracking-tighter text-secondary">
             ALL JITS
           </h1>
         </div>
@@ -79,15 +66,11 @@ const Jits: NextPage = () => {
 
   return (
     <PageLayout>
-      {user && (
+      {allJits !== undefined && allJits.length !== 0 ? (
+        <AllJitsFeed />
+      ) : (
         <div className="flex h-[80vh] items-center justify-center">
-          <div className="flex items-center justify-center">
-            {allJits !== undefined && allJits.length !== 0 ? (
-              <AllJitsFeed />
-            ) : (
-              <NoJitsWelcome />
-            )}
-          </div>
+          <NoJitsWelcome />
         </div>
       )}
     </PageLayout>
