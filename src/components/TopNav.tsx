@@ -2,7 +2,6 @@ import Link from "next/link";
 import { UserNav } from "./UserNav";
 import {
   BarChart4,
-  EyeIcon,
   LampDesk,
   Menu,
   MessageSquare,

@@ -48,7 +48,6 @@ export function UserNav() {
           <span className="top-4">My account</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => signOut()} className="flex space-x-1">
-          {" "}
           <LogOut className="w-4" />
           <span className="top-4">Log out</span>
         </DropdownMenuItem>

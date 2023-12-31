@@ -6,7 +6,6 @@
 
 import { api, type RouterOutputs } from "~/utils/api";
 import { Card, CardContent } from "./ui/card";
-import { Pin } from "lucide-react";
 import { toast } from "./ui/use-toast";
 import { DrawingPinFilledIcon, DrawingPinIcon } from "@radix-ui/react-icons";
 

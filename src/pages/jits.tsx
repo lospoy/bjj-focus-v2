@@ -1,7 +1,7 @@
 // Jits
 
 import { api } from "~/utils/api";
-import { SignInButton, useUser } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 import { PageLayout } from "~/components/ui/layout";
 import { JitFeed } from "~/components/JitFeed";
 import {
@@ -14,44 +14,82 @@ import { createServerSideHelpers } from "@trpc/react-query/server";
 import { getAuth } from "@clerk/nextjs/server";
 import SuperJSON from "superjson";
 import { prisma } from "prisma/db";
-import { Shapes } from "lucide-react";
+import { PlusCircle, Shapes } from "lucide-react";
+import {
+  Card,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "~/components/ui/card";
+import { Button } from "~/components/ui/button";
+import Link from "next/link";
 
 const Jits: NextPage = () => {
   const user = useUser().user;
+  const ctx = api.useUtils();
 
   // const router = useRouter();
   const { isLoaded: userLoaded, isSignedIn } = useUser();
 
   // Start fetching asap
   // (React query will use cached data if the data doesn't change)
-  const allJits = api.jits.getAll.useQuery().data;
+  const allJits = ctx.jits.getAll.getData();
+  console.log({ allJits });
 
   // Return empty div if user isn't loaded yet
   if (!userLoaded) return <div />;
 
+  const AllJitsFeed = () => {
+    return (
+      <>
+        <div className="mx-auto mb-4 flex flex-row items-center text-center">
+          <Shapes className="absolute left-10 h-1/5 w-1/5 text-secondary opacity-10" />
+          <h1 className="whitespace-nowrap text-[15vw] font-bold tracking-tighter text-secondary md:text-[10vw] lg:text-[6vw]">
+            ALL JITS
+          </h1>
+        </div>
+        <JitFeed jits={true} allJits={allJits} />
+      </>
+    );
+  };
+
+  const NoJitsWelcome = () => {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Welcome!</CardTitle>
+          <CardDescription>
+            You have no jits, let&apos;s create one
+          </CardDescription>
+        </CardHeader>
+        <CardFooter>
+          <div className="flex w-full justify-center">
+            <Link href="/newJit">
+              <Button className="flex">
+                <PlusCircle className="mr-1 mt-0.5 h-4 w-4" />
+                NEW JIT
+              </Button>
+            </Link>
+          </div>
+        </CardFooter>
+      </Card>
+    );
+  };
+
   return (
     <PageLayout>
-      <div className="flex flex-col">
-        <div className="flex px-4 py-2">
-          {!isSignedIn && (
-            <div className="flex justify-center">
-              <SignInButton />
-            </div>
-          )}
+      {user && (
+        <div className="flex h-[80vh] items-center justify-center">
+          <div className="flex items-center justify-center">
+            {allJits !== undefined && allJits.length !== 0 ? (
+              <AllJitsFeed />
+            ) : (
+              <NoJitsWelcome />
+            )}
+          </div>
         </div>
-
-        {user && allJits && (
-          <>
-            <div className="mb-6 flex w-full flex-row items-center -space-x-4 text-center">
-              <Shapes className="ml-6 h-1/4 w-1/4" />
-              <h1 className="w-full whitespace-nowrap text-[15vw] font-bold tracking-tighter text-secondary md:text-[10vw] lg:text-[6vw]">
-                ALL JITS
-              </h1>
-            </div>
-            <JitFeed jits={true} allJits={allJits} />
-          </>
-        )}
-      </div>
+      )}
     </PageLayout>
   );
 };
