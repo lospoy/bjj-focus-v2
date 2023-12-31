@@ -24,6 +24,9 @@ import { useRouter } from "next/router";
 export type JitRecord = RouterOutputs["jits"]["create"];
 export type JitCreate = z.infer<typeof JitCreate>;
 
+// On actual submit the toast is blank
+// Caching does not work
+
 const FormSchema = z
   .object({
     move: z.object({ name: z.string(), id: z.string() }).optional(),
