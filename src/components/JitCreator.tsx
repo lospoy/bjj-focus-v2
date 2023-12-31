@@ -114,7 +114,7 @@ export const JitCreator = () => {
             altText="go to jits page"
             onClick={() => router.push("/jits")}
           >
-            Go to Jits Page
+            Jits Page
           </ToastAction>
         ),
       });

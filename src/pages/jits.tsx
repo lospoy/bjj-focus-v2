@@ -1,5 +1,4 @@
 import { api } from "~/utils/api";
-import { useUser } from "@clerk/nextjs";
 import { PageLayout } from "~/components/ui/layout";
 import { JitFeed } from "~/components/JitFeed";
 import {
@@ -30,7 +29,7 @@ const Jits: NextPage = () => {
   const AllJitsFeed = () => {
     return (
       <>
-        <div className="relative mb-4 flex h-24 flex-row items-center justify-center">
+        <div className="relative mb-4 mt-2 flex h-32 flex-row items-center justify-center">
           <Shapes className="absolute -left-28 flex h-full w-full text-secondary opacity-10" />
           <h1 className="flex whitespace-nowrap pl-8 text-7xl font-bold tracking-tighter text-secondary">
             ALL JITS
