@@ -1,6 +1,7 @@
 import { type RouterOutputs, api } from "~/utils/api";
 import { toast } from "~/components/ui/use-toast";
 import { ToastAction } from "~/components/ui/toast";
+import { useRouter } from "next/router";
 
 type Jit = RouterOutputs["jits"]["getAll"][number];
 export type JitCreate1 = {
@@ -33,11 +34,16 @@ const JitToastDescription = (props: { newJit: JitCreate1 }) => {
   );
 };
 
-export function useCreateJit(props: { newJit: JitCreate1; allJits: Jit[] }) {
+export function useCreateJit(props: {
+  newJit: JitCreate1;
+  allJits: Jit[];
+  data: JitCreate1;
+}) {
   const { newJit, allJits } = props;
   const ctx = api.useUtils();
   const delay = 4000;
   let timeoutId: NodeJS.Timeout | null = null;
+  const router = useRouter();
 
   function jitExists(
     moveId: string | undefined,
@@ -79,7 +85,8 @@ export function useCreateJit(props: { newJit: JitCreate1; allJits: Jit[] }) {
     },
   });
 
-  const handleCreateJitClick = () => {
+  const handleCreateJitClick = (props: { data: JitCreate1 }) => {
+    const { data } = props;
     if (jitExists(data.move?.id, data.position?.id)) {
       toast({
         title: "Jit already exists.",
