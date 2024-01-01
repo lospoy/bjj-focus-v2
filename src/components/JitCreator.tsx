@@ -82,14 +82,19 @@ export const JitCreator = (props: {
 
   const jitCreate = api.jits.create.useMutation({
     onMutate: (newJit: JitCreate) => {
-      // Optimistically update to the new value
-      ctx.jits.getAll.setData(
-        undefined,
-        (previousJits) =>
-          previousJits?.map((j) => {
-            return { ...j, ...newJit };
-          }),
-      );
+      // here we're only passing the ids but we need to initialize the whole jit
+      // so that we can use the name, sessionCount, etc.
+      ctx.jits.getAll.setData(undefined, (previousJits) => {
+        return [newJit, ...(previousJits ?? [])];
+      });
+    },
+
+    onError: () => {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem creating this Jit.",
+      });
     },
 
     onSettled: () => {
@@ -97,11 +102,14 @@ export const JitCreator = (props: {
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
+  function onSubmit(data: FormData) {
+    let newJitTimeoutId: NodeJS.Timeout | null = null;
+    const delay = 3000;
+
     if (jitExists(data.move?.id, data.position?.id)) {
       toast({
         title: "Jit already exists.",
-        duration: 4000,
+        duration: delay,
         description: (
           <>
             {data.move && (
@@ -126,67 +134,51 @@ export const JitCreator = (props: {
         ),
       });
       return;
+    } else {
+      jitCreate.mutate({
+        positionId: data.position?.id,
+        moveId: data.move?.id,
+      });
+
+      toast({
+        duration: delay,
+        className: "bg-secondary text-background",
+        title: "Creating New Jit...",
+        description: (
+          <>
+            {data.move && (
+              <div>
+                <strong>Move:</strong> {data.move?.name}
+              </div>
+            )}
+            {data.position && (
+              <div>
+                <strong>Position:</strong> {data.position?.name}
+              </div>
+            )}
+          </>
+        ),
+        action: (
+          <ToastAction
+            className="text-background hover:bg-card-secondaryLight hover:text-accent"
+            altText="undo"
+            onClick={() => {
+              if (newJitTimeoutId) {
+                clearTimeout(newJitTimeoutId);
+              }
+            }}
+          >
+            UNDO
+          </ToastAction>
+        ),
+      });
+
+      form.reset();
     }
 
-    let newJitTimeoutId: NodeJS.Timeout | null = null;
-    const delay = 3000;
-
-    const createNewJit = () => {
-      try {
-        jitCreate.mutate({
-          positionId: data.position?.id,
-          moveId: data.move?.id,
-        });
-      } catch (e: unknown) {
-        toast({
-          variant: "destructive",
-          title: "Uh oh! Something went wrong.",
-          description: "There was a problem creating this Jit.",
-        });
-      }
-    };
-
     newJitTimeoutId = setTimeout(() => {
-      void createNewJit();
-    }, delay);
-
-    setTimeout(() => {
       void router.push("/jits");
-    }, delay + 100);
-
-    form.reset();
-
-    toast({
-      duration: delay,
-      className: "bg-primary text-background",
-      title: "Creating New Jit...",
-      description: (
-        <>
-          {data.move && (
-            <div>
-              <strong>Move:</strong> {data.move?.name}
-            </div>
-          )}
-          {data.position && (
-            <div>
-              <strong>Position:</strong> {data.position?.name}
-            </div>
-          )}
-        </>
-      ),
-      action: (
-        <ToastAction
-          altText="Undo"
-          onClick={() => {
-            if (newJitTimeoutId) {
-              clearTimeout(newJitTimeoutId);
-            }
-          }}
-        >
-          Undo
-        </ToastAction>
-      ),
-    });
+    }, delay);
   }
 
   return (
@@ -210,7 +202,8 @@ export const JitCreator = (props: {
                         role="combobox"
                         className={cn(
                           "justify-between",
-                          !field.value && "text-muted-foreground",
+                          !field.value &&
+                            "text-muted-foreground hover:text-background",
                         )}
                       >
                         {field.value ? (
@@ -296,14 +289,15 @@ export const JitCreator = (props: {
             render={({ field }) => (
               <FormItem className="flex flex-col">
                 <Popover>
-                  <PopoverTrigger asChild>
+                  <PopoverTrigger asChild className="hover:text-background">
                     <FormControl>
                       <Button
                         variant="outline"
                         role="combobox"
                         className={cn(
                           "justify-between",
-                          !field.value && "text-muted-foreground",
+                          !field.value &&
+                            "text-muted-foreground hover:text-background",
                         )}
                       >
                         {field.value ? (
@@ -354,6 +348,7 @@ export const JitCreator = (props: {
                                   move.id === field.value?.id
                                     ? "bg-secondary text-background"
                                     : "bg-none",
+                                  "hover:bg-card-secondaryLight", // Add hover:bg-card-secondaryLight
                                 )}
                                 value={move.name}
                                 key={move.id}
