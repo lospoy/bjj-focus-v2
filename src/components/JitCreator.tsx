@@ -22,13 +22,10 @@ import type { JitCreate } from "~/server/api/routers/jits";
 import { useRouter } from "next/router";
 
 export type JitRecord = RouterOutputs["jits"]["create"];
-export type Jit = RouterOutputs["jits"]["getAll"];
+export type Jits = RouterOutputs["jits"]["getAll"];
 export type JitCreate = z.infer<typeof JitCreate>;
 type Positions = RouterOutputs["positions"]["getAll"];
 type Moves = RouterOutputs["moves"]["getAll"];
-
-// On actual submit the toast is blank
-// Caching does not work
 
 const FormSchema = z
   .object({
@@ -49,7 +46,7 @@ const FormSchema = z
 type FormData = z.infer<typeof FormSchema>;
 
 export const JitCreator = (props: {
-  allJits: Jit;
+  allJits: Jits;
   allPositions: Positions;
   allMoves: Moves;
 }) => {
@@ -57,6 +54,8 @@ export const JitCreator = (props: {
   const { allJits, allPositions, allMoves } = props;
   const { toast } = useToast();
   const router = useRouter();
+
+  // FORM VARIABLES
   const form = useForm<FormData>({
     resolver: zodResolver(FormSchema),
   });
@@ -64,6 +63,7 @@ export const JitCreator = (props: {
   const positionName = positionValue?.name;
   const moveValue = form.watch("move");
 
+  // CHECKS IF JIT EXISTS
   function jitExists(
     moveId: string | undefined,
     positionId: string | undefined,
@@ -81,24 +81,15 @@ export const JitCreator = (props: {
   }
 
   const jitCreate = api.jits.create.useMutation({
-    onMutate: (newJit: JitCreate) => {
-      // here we're only passing the ids but we need to initialize the whole jit
-      // so that we can use the name, sessionCount, etc.
-      ctx.jits.getAll.setData(undefined, (previousJits) => {
-        return [newJit, ...(previousJits ?? [])];
-      });
+    onSettled: () => {
+      void ctx.jits.getAll.invalidate();
     },
-
     onError: () => {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
         description: "There was a problem creating this Jit.",
       });
-    },
-
-    onSettled: () => {
-      void ctx.jits.getAll.invalidate();
     },
   });
 
@@ -135,10 +126,21 @@ export const JitCreator = (props: {
       });
       return;
     } else {
-      jitCreate.mutate({
-        positionId: data.position?.id,
-        moveId: data.move?.id,
+      const newJitId = Math.random().toString();
+      const newJitForCache = {
+        id: newJitId,
+        move: data.move,
+        position: data.position,
+        sessionCount: 0,
+        createdAt: new Date(),
+      };
+      // Set dummy Jit data to cache
+      ctx.jits.getAll.setData(undefined, (previousJits) => {
+        return [newJitForCache, ...(previousJits ?? [])] as Jits;
       });
+
+      const jitCache = ctx.jits.getAll.getData();
+      console.log({ jitCache });
 
       toast({
         duration: delay,
@@ -148,12 +150,12 @@ export const JitCreator = (props: {
           <>
             {data.move && (
               <div>
-                <strong>Move:</strong> {data.move?.name}
+                <strong>Move:</strong> {data.move.name}
               </div>
             )}
             {data.position && (
               <div>
-                <strong>Position:</strong> {data.position?.name}
+                <strong>Position:</strong> {data.position.name}
               </div>
             )}
           </>
@@ -166,6 +168,11 @@ export const JitCreator = (props: {
               if (newJitTimeoutId) {
                 clearTimeout(newJitTimeoutId);
               }
+              ctx.jits.getAll.setData(undefined, (previousJits) => {
+                return previousJits?.filter(
+                  (previousJit) => previousJit.id !== newJitId,
+                );
+              });
             }}
           >
             UNDO
@@ -177,6 +184,11 @@ export const JitCreator = (props: {
     }
 
     newJitTimeoutId = setTimeout(() => {
+      // Actual API call
+      jitCreate.mutate({
+        positionId: data.position?.id,
+        moveId: data.move?.id,
+      });
       void router.push("/jits");
     }, delay);
   }
