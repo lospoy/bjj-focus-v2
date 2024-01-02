@@ -29,6 +29,7 @@ import {
 
 import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
+import { appTitles } from "./pageTitles";
 
 export default function TopNav() {
   const [isMenuClicked, setIsMenuClicked] = useState(false);
@@ -41,7 +42,7 @@ export default function TopNav() {
   return (
     <>
       {isMenuClicked && (
-        <div className="fixed inset-0 z-10 bg-black opacity-40"></div>
+        <div className="fixed inset-0 z-50 bg-black opacity-40"></div>
       )}
       <nav className="sticky top-0 z-10 w-full bg-secondary px-4 md:border-0 ">
         <div className="mx-auto md:max-w-3xl">
@@ -60,7 +61,7 @@ export default function TopNav() {
                     }`}
                   />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="ml-4 w-56 bg-background">
+                <DropdownMenuContent className="ml-4 w-44 bg-background">
                   <DropdownMenuLabel className="text-[#a4a5a6]">
                     Account
                   </DropdownMenuLabel>
@@ -90,7 +91,7 @@ export default function TopNav() {
                           <Link href="/jits">
                             <DropdownMenuItem>
                               <Shapes className="mr-2 h-4 w-4" />
-                              <span>All Jits</span>
+                              <span>{appTitles.jits}</span>
                             </DropdownMenuItem>
                           </Link>
                           <DropdownMenuItem disabled>
@@ -101,7 +102,7 @@ export default function TopNav() {
                           <Link href="/newJit">
                             <DropdownMenuItem>
                               <PlusCircle className="mr-2 h-4 w-4" />
-                              <span>New Jit</span>
+                              <span>{appTitles.newJit}</span>
                             </DropdownMenuItem>
                           </Link>
                         </DropdownMenuSubContent>

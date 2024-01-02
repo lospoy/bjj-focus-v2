@@ -1,5 +1,5 @@
 import { JitCreator } from "~/components/JitCreator";
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Card, CardContent } from "~/components/ui/card";
 import { PageLayout } from "~/components/ui/layout";
 import {
   type NextApiRequest,
@@ -12,7 +12,7 @@ import { getAuth } from "@clerk/nextjs/server";
 import SuperJSON from "superjson";
 import { prisma } from "prisma/db";
 import { api } from "~/utils/api";
-import { PageTitle } from "~/components/pageTitle";
+import { PageTitle, appTitles } from "~/components/pageTitles";
 
 const NewJit: NextPage = () => {
   const ctx = api.useUtils();
@@ -23,7 +23,7 @@ const NewJit: NextPage = () => {
   return (
     <PageLayout>
       <div className="flex h-[80vh] flex-col items-center justify-center">
-        <PageTitle title="NEW JIT" />
+        <PageTitle title={appTitles.newJit} />
         <Card className="w-11/12 pt-8">
           <CardContent>
             <JitCreator

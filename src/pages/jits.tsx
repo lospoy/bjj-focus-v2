@@ -21,7 +21,7 @@ import {
 } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 import Link from "next/link";
-import { PageTitle } from "~/components/pageTitle";
+import { PageTitle, appTitles } from "~/components/pageTitles";
 
 const Jits: NextPage = () => {
   const allJits = api.jits.getAll.useQuery().data;
@@ -29,7 +29,7 @@ const Jits: NextPage = () => {
   const AllJitsFeed = () => {
     return (
       <>
-        <PageTitle title="ALL JITS" />
+        <PageTitle title={appTitles.jits} />
         <JitFeed jits={true} allJits={allJits} />
       </>
     );
