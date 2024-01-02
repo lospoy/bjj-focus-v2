@@ -1,7 +1,7 @@
 export const jitsTitle = "My Jits";
 
 export const appTitles = {
-  jits: "My Jits",
+  jits: "Jits",
   newJit: "New Jit",
   editJit: "Edit Jit",
   sequences: "My Sequences",

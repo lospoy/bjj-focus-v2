@@ -29,7 +29,7 @@ import {
 
 import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import { appTitles } from "./pageTitles";
+import { appTitles } from "./appTitles";
 
 export default function TopNav() {
   const [isMenuClicked, setIsMenuClicked] = useState(false);

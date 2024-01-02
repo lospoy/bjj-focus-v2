@@ -21,7 +21,7 @@ import {
 } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 import Link from "next/link";
-import { PageTitle, appTitles } from "~/components/pageTitles";
+import { PageTitle, appTitles } from "~/components/appTitles";
 
 const Jits: NextPage = () => {
   const allJits = api.jits.getAll.useQuery().data;
