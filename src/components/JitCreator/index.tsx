@@ -192,7 +192,6 @@ export const JitCreator = (props: Props) => {
 
 /* INTERPRETATION OF SELECTED POS/MOVE */
 const JitDescription = () => {
-  // FORM VARIABLES
   const form = useJitCreatorForm();
   const positionValue = form.watch("position");
   const positionName = positionValue?.name;
@@ -209,18 +208,14 @@ const JitDescription = () => {
           <span className="text-3xl">{moveValue?.name} </span>
           <div className="flex flex-col">
             <span>from </span>
-            {positionName ? (
-              <span className="text-3xl"> {positionName}</span>
-            ) : (
-              <span className="text-3xl">any position</span>
-            )}
+            <span className="text-3xl">{positionName ?? "any position"}</span>
           </div>
         </>
       ) : (
         <>
           <div className="flex flex-col -space-y-1">
-            <span>any move from</span>
-            <span className="text-3xl"> {positionName}</span>
+            <span>any move from </span>
+            <span className="text-3xl">{positionName}</span>
           </div>
         </>
       )}
