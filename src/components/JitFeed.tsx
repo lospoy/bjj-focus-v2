@@ -46,7 +46,7 @@ export const JitFeed = ({ jits, allJits: jitsFromProps }: JitFeedProps) => {
           />
           <input
             type="text"
-            placeholder="search all jits..."
+            placeholder="search..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="text-md mb-6 flex h-10 w-full rounded bg-gray-400/10 pl-[14px] text-secondary placeholder-gray-400 placeholder:font-mono placeholder:uppercase focus:border-none focus:outline-none focus:ring-0"

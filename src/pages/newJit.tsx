@@ -12,6 +12,7 @@ import { getAuth } from "@clerk/nextjs/server";
 import SuperJSON from "superjson";
 import { prisma } from "prisma/db";
 import { api } from "~/utils/api";
+import { PageTitle } from "~/components/pageTitle";
 
 const NewJit: NextPage = () => {
   const ctx = api.useUtils();
@@ -21,18 +22,18 @@ const NewJit: NextPage = () => {
 
   return (
     <PageLayout>
-      <Card className="mt-[15vh]">
-        <CardHeader className="flex items-center">
-          <CardTitle className="flex text-xl">Create New Jit</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <JitCreator
-            allJits={allJits}
-            allPositions={allPositions}
-            allMoves={allMoves}
-          />
-        </CardContent>
-      </Card>
+      <div className="flex h-[80vh] flex-col items-center justify-center">
+        <PageTitle title="NEW JIT" />
+        <Card className="w-11/12 pt-8">
+          <CardContent>
+            <JitCreator
+              allJits={allJits}
+              allPositions={allPositions}
+              allMoves={allMoves}
+            />
+          </CardContent>
+        </Card>
+      </div>
     </PageLayout>
   );
 };

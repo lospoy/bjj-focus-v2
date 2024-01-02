@@ -11,7 +11,7 @@ import { createServerSideHelpers } from "@trpc/react-query/server";
 import { getAuth } from "@clerk/nextjs/server";
 import SuperJSON from "superjson";
 import { prisma } from "prisma/db";
-import { PlusCircle, Shapes } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import {
   Card,
   CardDescription,
@@ -21,20 +21,15 @@ import {
 } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 import Link from "next/link";
+import { PageTitle } from "~/components/pageTitle";
 
 const Jits: NextPage = () => {
-  const ctx = api.useUtils();
   const allJits = api.jits.getAll.useQuery().data;
 
   const AllJitsFeed = () => {
     return (
       <>
-        <div className="relative mb-4 mt-2 flex h-32 flex-row items-center justify-center">
-          <Shapes className="absolute -left-28 flex h-full w-full text-secondary opacity-10" />
-          <h1 className="flex whitespace-nowrap pl-8 text-7xl font-bold tracking-tighter text-secondary">
-            ALL JITS
-          </h1>
-        </div>
+        <PageTitle title="ALL JITS" />
         <JitFeed jits={true} allJits={allJits} />
       </>
     );

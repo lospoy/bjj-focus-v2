@@ -1,9 +1,13 @@
-import type { PropsWithChildren } from "react";
+import type { PropsWithChildren, CSSProperties } from "react";
 
-export const PageLayout = (props: PropsWithChildren) => {
+interface PageLayoutProps extends PropsWithChildren<unknown> {
+  style?: CSSProperties;
+}
+
+export const PageLayout = ({ children }: PageLayoutProps) => {
   return (
     <main className="flex justify-center px-2">
-      <div className="h-full w-full md:max-w-xl">{props.children}</div>
+      <div className="h-full w-full md:max-w-xl">{children}</div>
     </main>
   );
 };

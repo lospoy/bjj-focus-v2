@@ -36,6 +36,22 @@ export const JitView = (props: { jit: Jit }) => {
   const [inputValue, setInputValue] = useState("");
   const favoriteNotes = jit.notes?.filter((note) => note.isFavorite);
 
+  // FOCUS (STAR) HANDLERS AND BUTTON
+  const handleFocusClick = useFavoriteJit();
+  const JitFocusButton = (props: { isFavorite: boolean }) => {
+    const { isFavorite } = props;
+
+    return (
+      <button onClick={(e) => handleFocusClick(jit, e)}>
+        {isFavorite ? (
+          <BookmarkFilledIcon className="h-5 w-5 text-secondary hover:text-secondary-foreground hover:opacity-50" />
+        ) : (
+          <Bookmark className="h-5 w-5 hover:fill-inherit" />
+        )}
+      </button>
+    );
+  };
+
   // ADD SESSIONS BUTTON WITH HANDLERS
   const JitAddSessionButton = (props: { jit: Jit }) => {
     const { jit } = props;
@@ -97,56 +113,8 @@ export const JitView = (props: { jit: Jit }) => {
   };
 
   const JitContentSlim = () => {
-    return <CardContent className="flex justify-end pb-0 pr-3"></CardContent>;
+    return <CardContent className="pb-0"></CardContent>;
   };
-
-  // FOCUS (STAR) HANDLERS AND BUTTON
-  const handleFocusClick = useFavoriteJit();
-  const JitFocusButton = (props: { isFavorite: boolean }) => {
-    const { isFavorite } = props;
-
-    return (
-      <button onClick={(e) => handleFocusClick(jit, e)}>
-        {isFavorite ? (
-          <BookmarkFilledIcon className="h-5 w-5 text-secondary hover:text-secondary-foreground hover:opacity-50" />
-        ) : (
-          <Bookmark className="h-5 w-5 hover:fill-inherit" />
-        )}
-      </button>
-    );
-  };
-
-  function JitTitle(props: { jit: Jit }) {
-    const { jit } = props;
-
-    if (jit.position && jit.move) {
-      return (
-        <>
-          <span>{jit.move.name}</span>
-          <div>
-            {" "}
-            <span className="text-sm">from </span>
-            <span>{jit.position.name}</span>
-          </div>
-        </>
-      );
-    } else if (jit.position && !jit.move) {
-      return (
-        <>
-          <span className="text-sm">any move from</span>
-          <span>{jit.position.name}</span>
-        </>
-      );
-    } else if (!jit.position && jit.move) {
-      return (
-        <>
-          <span>{jit.move.name}</span>
-          <span className="text-sm">from any position</span>
-        </>
-      );
-    }
-    return null;
-  }
 
   const JitNotesButton = () => {
     return (
@@ -179,13 +147,13 @@ export const JitView = (props: { jit: Jit }) => {
       ${jit.isFavorite ? "bg-card-secondary" : "bg-zinc-100"}`}
     >
       <Card
-        className={` mb-8  ${
-          jit.isFavorite ? "" : " opacity-70 shadow-none"
+        className={` mb-4  ${
+          jit.isFavorite ? "" : " opacity-40 shadow-none"
         } bg-inherit`}
       >
-        <CardHeader className="mb-4 flex flex-row p-0 pl-3 pt-1">
+        <CardHeader className="mb-2 flex flex-row p-0 pl-3 pt-1">
           {/* TITLE */}
-          <CardTitle className="flex w-[92%] flex-col text-xl leading-5">
+          <CardTitle className="flex w-[92%] flex-col pt-1 text-xl leading-5">
             <JitTitle jit={jit} />
           </CardTitle>
           {/* FAVORITE / FOCUS BUTTON */}
@@ -199,7 +167,7 @@ export const JitView = (props: { jit: Jit }) => {
         IT WILL MESS UP THE DIALOG: ON KEYDOWN IT WILL EXIT THE DIALOG */}
         {jit.isFavorite ? (
           <>
-            <CardContent className="mb-6 p-0">
+            <CardContent className="mb-6 p-0 pt-2">
               <Dialog>
                 <DialogTrigger asChild>
                   {/* <SquareAsterisk /> */}
@@ -252,4 +220,36 @@ export const JitView = (props: { jit: Jit }) => {
       </Card>
     </div>
   );
+
+  function JitTitle(props: { jit: Jit }) {
+    const { jit } = props;
+
+    if (jit.position && jit.move) {
+      return (
+        <>
+          <span>{jit.move.name}</span>
+          <div>
+            {" "}
+            <span className="text-sm">from </span>
+            <span>{jit.position.name}</span>
+          </div>
+        </>
+      );
+    } else if (jit.position && !jit.move) {
+      return (
+        <>
+          <span className="text-sm">any move from</span>
+          <span>{jit.position.name}</span>
+        </>
+      );
+    } else if (!jit.position && jit.move) {
+      return (
+        <>
+          <span>{jit.move.name}</span>
+          <span className="text-sm">from any position</span>
+        </>
+      );
+    }
+    return null;
+  }
 };

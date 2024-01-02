@@ -2,6 +2,7 @@ import Link from "next/link";
 import { UserNav } from "./UserNav";
 import {
   BarChart4,
+  Box,
   LampDesk,
   Menu,
   MessageSquare,
@@ -81,7 +82,7 @@ export default function TopNav() {
                     {/* JITS SUBMENU */}
                     <DropdownMenuSub>
                       <DropdownMenuSubTrigger>
-                        <Shapes className="mr-2 h-4 w-4" />
+                        <Box className="mr-2 h-4 w-4" />
                         <span>Jits</span>
                       </DropdownMenuSubTrigger>
                       <DropdownMenuPortal>
