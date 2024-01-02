@@ -12,7 +12,7 @@ import { getAuth } from "@clerk/nextjs/server";
 import SuperJSON from "superjson";
 import { prisma } from "prisma/db";
 import { api } from "~/utils/api";
-import { PageTitle, appTitles } from "~/components/pageTitles";
+import { PageTitle, appTitles } from "~/components/appTitles";
 
 const NewJit: NextPage = () => {
   const ctx = api.useUtils();

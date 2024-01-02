@@ -13,6 +13,7 @@ import SuperJSON from "superjson";
 import { prisma } from "prisma/db";
 
 import { useRouter } from "next/router";
+import { PageLayout } from "~/components/ui/layout";
 
 const HomePage: NextPage = () => {
   const { isSignedIn } = useUser();
@@ -23,18 +24,18 @@ const HomePage: NextPage = () => {
   }
 
   return (
-    <div className="min-w-screen flex flex-col items-center bg-background">
-      <main className="flex-grow md:w-1/3">
-        <section className="md:min-w-xl mx-auto p-4">
+    <PageLayout>
+      <div className="min-w-screen flex flex-col items-center">
+        <div className="mt-20">
           <SignIn />
-        </section>
-      </main>
-      <footer className="fixed bottom-0 left-0 w-full bg-gray-100 p-3 text-center">
-        <p className="text-xs text-gray-700">
-          © {new Date().getFullYear()} BJJ Focus. All rights reserved.
-        </p>
-      </footer>
-    </div>
+        </div>
+        <footer className="fixed bottom-0 left-0 w-full bg-gray-100 p-3 text-center">
+          <p className="text-xs text-gray-700">
+            © {new Date().getFullYear()} BJJ Focus. All rights reserved.
+          </p>
+        </footer>
+      </div>
+    </PageLayout>
   );
 };
 
