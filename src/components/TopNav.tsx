@@ -156,10 +156,11 @@ export default function TopNav() {
             ) : (
               <div className=""></div>
             )}
-            <Link href="/">
+            <Link href="/" className="flex">
               <h1 className="-mt-1 text-[1.6rem] font-bold text-background">
                 BJJ FOCUS
               </h1>
+              <span className="ml-0.5 font-mono text-amber-200">beta</span>
             </Link>
             {isSignedIn ? <UserNav /> : <div className=""></div>}
           </div>
