@@ -191,6 +191,7 @@ export const jitsRouter = createTRPCRouter({
         userId: ctx.userId,
         positionId: input.positionId,
         moveId: input.moveId,
+        isFavorite: true,
       },
     });
     return newJit;

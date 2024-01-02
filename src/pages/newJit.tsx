@@ -11,8 +11,14 @@ import { createServerSideHelpers } from "@trpc/react-query/server";
 import { getAuth } from "@clerk/nextjs/server";
 import SuperJSON from "superjson";
 import { prisma } from "prisma/db";
+import { api } from "~/utils/api";
 
 const NewJit: NextPage = () => {
+  const ctx = api.useUtils();
+  const allPositions = ctx.positions.getAll.getData() ?? [];
+  const allMoves = ctx.moves.getAll.getData() ?? [];
+  const allJits = ctx.jits.getAll.getData() ?? [];
+
   return (
     <PageLayout>
       <Card className="mt-[15vh]">
@@ -20,7 +26,11 @@ const NewJit: NextPage = () => {
           <CardTitle className="flex text-xl">Create New Jit</CardTitle>
         </CardHeader>
         <CardContent>
-          <JitCreator />
+          <JitCreator
+            allJits={allJits}
+            allPositions={allPositions}
+            allMoves={allMoves}
+          />
         </CardContent>
       </Card>
     </PageLayout>
