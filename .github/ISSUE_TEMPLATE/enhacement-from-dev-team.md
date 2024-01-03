@@ -1,5 +1,5 @@
 ---
-name: Enhacement from dev team
+name: Enhancement from dev team
 about: Quickly creating new enhacement issue
 title: ''
 labels: enhancement
@@ -9,9 +9,6 @@ assignees: lospoy
 
 ## Requirements:
 - [ ] 
-
-## UI:
-- [ ]
 
 ## Files
 `filename`
