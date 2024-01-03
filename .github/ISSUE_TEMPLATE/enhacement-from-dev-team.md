@@ -1,6 +1,6 @@
 ---
 name: Enhancement from dev team
-about: Quickly creating new enhacement issue
+about: Quickly creating new enhancement issue
 title: ''
 labels: enhancement
 assignees: lospoy
