@@ -1,10 +1,8 @@
 import {
   Edit,
-  LucideTrash,
   MinusCircle,
   MoreVertical,
   PlusCircle,
-  Trash,
   Trash2,
 } from "lucide-react";
 import {
@@ -20,7 +18,6 @@ import { type RouterOutputs } from "~/utils/api";
 import { useJitAddSession } from "~/hooks/useJitAddSession";
 import { useJitRemoveLastSession } from "~/hooks/useJitRemoveLastSession";
 import { useDeleteJit } from "~/hooks/useDeleteJit";
-import { DrawingPinFilledIcon } from "@radix-ui/react-icons";
 
 type Jit = RouterOutputs["jits"]["getAll"][number];
 
