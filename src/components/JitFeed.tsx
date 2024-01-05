@@ -18,7 +18,7 @@ export const JitFeed = ({ jits, allJits: jitsFromProps }: JitFeedProps) => {
   // Filter jits based on the search term or isFavorite property
   const filteredJits = allJits?.filter(
     (jit) =>
-      jit?.position?.name.toLowerCase().includes(searchTerm.toLowerCase()) ??
+      jit?.position?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       jit?.move?.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
