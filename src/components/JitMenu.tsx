@@ -40,7 +40,7 @@ export default function JitMenu(props: { jit: Jit }) {
     };
 
     return (
-      <button onClick={handleClick} className="flex rounded-xl text-xs">
+      <button onClick={handleClick} className="flex items-center rounded-xl">
         <PlusCircle className="h-4 w-4" />
         <span className="ml-2">Add Session</span>
       </button>
@@ -56,7 +56,7 @@ export default function JitMenu(props: { jit: Jit }) {
     };
 
     return (
-      <button onClick={handleClick} className="flex rounded-xl text-xs">
+      <button onClick={handleClick} className="flex items-center rounded-xl">
         <MinusCircle className="h-4 w-4" />
         <span className="ml-2">Remove Session</span>
       </button>
@@ -75,9 +75,9 @@ export default function JitMenu(props: { jit: Jit }) {
     return (
       <button
         onClick={handleClick}
-        className="flex rounded-xl text-xs font-semibold text-red-600"
+        className="flex items-center rounded-xl font-semibold text-red-600"
       >
-        <Trash2 className="h-4 w-4 " />
+        <Trash2 className="h-4 w-4" />
         <span className="ml-2">DELETE JIT</span>
       </button>
     );
@@ -93,7 +93,7 @@ export default function JitMenu(props: { jit: Jit }) {
             setIsEditMode(true);
             e.preventDefault();
           }}
-          className="flex flex-row text-xs"
+          className="flex flex-row justify-center"
         >
           <Edit className="h-4 w-4" />
           <span className="ml-2">Edit Jit</span>
@@ -116,12 +116,20 @@ export default function JitMenu(props: { jit: Jit }) {
       <DropdownMenu onOpenChange={handleMenuOpenChange}>
         <DropdownMenuTrigger asChild>
           <MoreVertical
-            className={`h-5 w-5 transition-transform duration-500 ${
-              isMenuClicked ? "-rotate-90" : "rotate-0"
-            }`}
+            className={`h-6 w-5 
+            `}
           />
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="-mt-1 bg-background">
+        <DropdownMenuContent
+          className="bg-background"
+          align="end"
+          alignOffset={-5}
+          onPointerDownOutside={() =>
+            setTimeout(() => {
+              setIsEditMode(false);
+            }, 100)
+          }
+        >
           <DropdownMenuGroup>
             <EditMode isEditMode={isEditMode} />
           </DropdownMenuGroup>
