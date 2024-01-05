@@ -80,7 +80,7 @@ export function useCreateJit(props: {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: "There was a problem saving this Note.",
+        description: "There was a problem creating this Jit.",
       });
     },
   });
@@ -125,7 +125,7 @@ export function useCreateJit(props: {
     toast({
       duration: delay,
       className: "bg-primary text-background",
-      title: "Saving New Note...",
+      title: "Creating New Jit...",
       description: <JitToastDescription newJit={newJit} />,
       action: (
         <ToastAction altText="Undo" onClick={undoCreateJit}>

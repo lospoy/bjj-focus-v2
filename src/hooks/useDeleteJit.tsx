@@ -57,7 +57,7 @@ export function useDeleteJit(props: { jit: Jit }) {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: "There was a problem saving this Note.",
+        description: "There was a problem deleting this Jit.",
       });
     },
   });
@@ -73,12 +73,16 @@ export function useDeleteJit(props: { jit: Jit }) {
     // toast
     toast({
       duration: delay,
-      className: "bg-accent text-background",
+      variant: "destructive",
       title: "Jit Deleted",
       description: <JitToastDescription jitToDelete={jit} />,
       action: (
-        <ToastAction altText="Undo" onClick={undoDeleteJit}>
-          Undo
+        <ToastAction
+          className="font-semibold"
+          altText="undo"
+          onClick={undoDeleteJit}
+        >
+          UNDO
         </ToastAction>
       ),
     });

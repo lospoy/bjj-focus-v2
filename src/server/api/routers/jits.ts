@@ -174,6 +174,20 @@ export const jitsRouter = createTRPCRouter({
 
       if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
 
+      // Delete all associated sessions
+      await ctx.prisma.session.deleteMany({
+        where: {
+          jitId: input.jitId,
+        },
+      });
+
+      // Delete all associated notes
+      await ctx.prisma.note.deleteMany({
+        where: {
+          jitId: input.jitId,
+        },
+      });
+
       const deletedJit = await ctx.prisma.jit.delete({
         where: {
           id: input.jitId,
