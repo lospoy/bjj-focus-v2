@@ -99,6 +99,7 @@ export const notesRouter = createTRPCRouter({
         data: {
           jitId: input.jitId,
           body: input.body ?? "empty note",
+          isFavorite: true,
         },
       });
 
