@@ -57,7 +57,7 @@ export function useSaveNoteToJit(props: { jit: Jit; body: string }) {
 
   const newNote = {
     body: body,
-    isFavorite: false,
+    isFavorite: true,
     createdAt: new Date(),
     jitId: jit.id,
   };
@@ -71,7 +71,7 @@ export function useSaveNoteToJit(props: { jit: Jit; body: string }) {
     // toast
     toast({
       duration: delay,
-      className: "bg-primary text-background",
+      className: "bg-primary text-accent",
       title: "Saving New Note...",
       description: <JitToastDescription jit={jit} />,
       action: (
