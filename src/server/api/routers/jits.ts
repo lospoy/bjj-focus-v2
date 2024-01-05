@@ -103,6 +103,7 @@ export const jitsRouter = createTRPCRouter({
       });
       return { ...jit, sessionCount, firstSession, lastSession };
     }),
+
   getAllSessionsById: privateProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
@@ -118,6 +119,7 @@ export const jitsRouter = createTRPCRouter({
       if (!jitSessions) throw new TRPCError({ code: "NOT_FOUND" });
       return jitSessions;
     }),
+
   getAll: privateProcedure.query(async ({ ctx }) => {
     const jits = await ctx.prisma.jit.findMany({
       where: {
@@ -164,6 +166,23 @@ export const jitsRouter = createTRPCRouter({
     );
     return jitsWithSessionCountAndLastSession;
   }),
+
+  deleteById: privateProcedure
+    .input(z.object({ jitId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { success } = await ratelimit.limit(ctx.userId);
+
+      if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
+
+      const deletedJit = await ctx.prisma.jit.delete({
+        where: {
+          id: input.jitId,
+        },
+      });
+
+      return deletedJit;
+    }),
+
   updateById: privateProcedure
     .input(JitSchemaInputUpdate)
     .mutation(async ({ ctx, input }) => {
@@ -183,6 +202,7 @@ export const jitsRouter = createTRPCRouter({
       if (!updatedJit) throw new TRPCError({ code: "NOT_FOUND" });
       return updatedJit;
     }),
+
   create: privateProcedure.input(JitCreate).mutation(async ({ ctx, input }) => {
     const { success } = await ratelimit.limit(ctx.userId);
     if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
