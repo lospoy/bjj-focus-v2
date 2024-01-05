@@ -48,6 +48,33 @@ export const sessionsRouter = createTRPCRouter({
       return session;
     }),
 
+  deleteLastSessionByJitId: privateProcedure
+    .input(z.object({ jitId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { success } = await ratelimit.limit(ctx.userId);
+
+      if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
+
+      const latestSession = await ctx.prisma.session.findFirst({
+        where: {
+          jitId: input.jitId,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+
+      if (!latestSession) throw new TRPCError({ code: "NOT_FOUND" });
+
+      const deletedSession = await ctx.prisma.session.delete({
+        where: {
+          id: latestSession.id,
+        },
+      });
+
+      return deletedSession;
+    }),
+
   getSessionsByJitId: privateProcedure
     .input(z.object({ jitId: z.string() }))
     .query(async ({ ctx, input }) => {
