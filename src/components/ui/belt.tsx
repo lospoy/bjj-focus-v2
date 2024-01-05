@@ -12,8 +12,9 @@ export const Belt = (props: {
   numberOfStripes: BeltProps["numberOfStripes"];
   beltColor: BeltProps["beltColor"];
   className?: BeltProps["className"];
+  isFavorite?: boolean;
 }) => {
-  const { numberOfStripes, beltColor } = props;
+  const { numberOfStripes, beltColor, isFavorite } = props;
   const svgProps = { className: props.className };
 
   const color = {
