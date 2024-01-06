@@ -13,6 +13,8 @@ import SuperJSON from "superjson";
 import { prisma } from "prisma/db";
 import { api } from "~/utils/api";
 import { PageTitle, appTitles } from "~/components/appTitles";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 const NewJit: NextPage = () => {
   const ctx = api.useUtils();
@@ -20,9 +22,23 @@ const NewJit: NextPage = () => {
   const allMoves = ctx.moves.getAll.getData() ?? [];
   const allJits = ctx.jits.getAll.getData() ?? [];
 
+  const BackToJits = () => {
+    return (
+      <Link href="/jits">
+        <div className="flex items-center space-x-1 text-secondary">
+          <ArrowLeft className="h-7 w-7" />
+          <span>back to jits</span>
+        </div>
+      </Link>
+    );
+  };
+
   return (
     <PageLayout>
       <div className="flex h-[80vh] flex-col items-center justify-center">
+        <div className="md:hidden">
+          <BackToJits />
+        </div>
         <PageTitle title={appTitles.newJit} />
         <Card className="w-11/12 pt-8">
           <CardContent>

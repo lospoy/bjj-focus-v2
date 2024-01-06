@@ -51,7 +51,7 @@ export const JitView = (props: { jit: Jit }) => {
 
   return (
     <div
-      className={`parent-component relative rounded-xl
+      className={`parent-component relative rounded-xl 
       ${jit.isFavorite ? "bg-card-secondary" : "bg-zinc-100"}
       `}
     >

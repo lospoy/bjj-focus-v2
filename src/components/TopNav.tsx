@@ -31,6 +31,26 @@ import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { appTitles } from "./appTitles";
 
+export const DropdownNewJit = () => {
+  return (
+    <Link href="/newJit">
+      <DropdownMenuItem>
+        <PlusCircle className="mr-2 h-4 w-4" />
+        <span>{appTitles.newJit}</span>
+      </DropdownMenuItem>
+    </Link>
+  );
+};
+
+export const DropdownNewSequence = () => {
+  return (
+    <DropdownMenuItem disabled>
+      <PlusCircle className="mr-2 h-4 w-4" />
+      <span>New Sequence</span>
+    </DropdownMenuItem>
+  );
+};
+
 export default function TopNav() {
   const [isMenuClicked, setIsMenuClicked] = useState(false);
   const { isSignedIn } = useUser();
@@ -99,12 +119,7 @@ export default function TopNav() {
                             <span>Jits Report</span>
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <Link href="/newJit">
-                            <DropdownMenuItem>
-                              <PlusCircle className="mr-2 h-4 w-4" />
-                              <span>{appTitles.newJit}</span>
-                            </DropdownMenuItem>
-                          </Link>
+                          <DropdownNewJit />
                         </DropdownMenuSubContent>
                       </DropdownMenuPortal>
                     </DropdownMenuSub>
@@ -129,10 +144,7 @@ export default function TopNav() {
                             <span>Sequences Report</span>
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem>
-                            <PlusCircle className="mr-2 h-4 w-4" />
-                            <span>New Sequence</span>
-                          </DropdownMenuItem>
+                          <DropdownNewSequence />
                         </DropdownMenuSubContent>
                       </DropdownMenuPortal>
                     </DropdownMenuSub>
