@@ -22,6 +22,7 @@ import {
 import { Button } from "~/components/ui/button";
 import Link from "next/link";
 import { PageTitle, appTitles } from "~/components/appTitles";
+import NewJitButton from "~/components/NewJitButton";
 
 const Jits: NextPage = () => {
   const allJits = api.jits.getAll.useQuery().data;
@@ -67,6 +68,7 @@ const Jits: NextPage = () => {
           <NoJitsWelcome />
         </div>
       )}
+      <NewJitButton />
     </PageLayout>
   );
 };

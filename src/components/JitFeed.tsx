@@ -58,7 +58,8 @@ export const JitFeed = ({ jits, allJits: jitsFromProps }: JitFeedProps) => {
 
       {/* Render JitViews based on the filtered results */}
       {filteredJits?.map((jit) => (
-        <div key={jit.id}>
+        // ADDING MARGIN TO THE LAST JIT SO IT DOES NOT COLLIDE WITH THE ACTION BUTTON
+        <div key={jit.id} className="last:mb-32">
           <JitView jit={jit} />
         </div>
       ))}
