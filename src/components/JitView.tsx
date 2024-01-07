@@ -11,11 +11,12 @@ import { JitProgressBelt } from "./JitProgressBelt";
 import { useFavoriteJit } from "~/hooks/useFavoriteJit";
 import JitMenu from "./JitMenu";
 import { JitNoteDialog } from "./JitNoteDialog";
+import { ArrowDown, ArrowUp } from "lucide-react";
 
 type Jit = RouterOutputs["jits"]["getAll"][number];
 
-export const JitView = (props: { jit: Jit }) => {
-  const { jit } = props;
+export const JitView = (props: { jit: Jit; firstJit: boolean }) => {
+  const { jit, firstJit } = props;
   const handleFocusClick = useFavoriteJit();
 
   const JitSessionsAndMenu = (props: { jit: Jit }) => {
@@ -50,33 +51,37 @@ export const JitView = (props: { jit: Jit }) => {
   };
 
   return (
-    <div
-      className={`parent-component relative rounded-xl 
+    <>
+      {firstJit && <FirstJitCardTop />}
+      <div
+        className={`parent-component relative rounded-xl 
       ${jit.isFavorite ? "bg-card-secondary" : "bg-zinc-100"}
       `}
-    >
-      <Card
-        className={`mb-4 bg-inherit ${
-          jit.isFavorite ? "" : " opacity-40 shadow-none"
-        } `}
       >
-        <button onClick={(e) => handleFocusClick(jit, e)}>
-          <CardHeader className="mb-2 flex flex-row p-0 pl-3 pt-1">
-            <CardTitle className="flex flex-col items-start pt-1 text-xl leading-5 ">
-              <JitTitle jit={jit} />
-            </CardTitle>
-            <JitBelt
-              sessionCount={jit.sessionCount}
-              isFavorite={jit.isFavorite}
-            />
-          </CardHeader>
-        </button>
+        <Card
+          className={`mb-4 bg-inherit ${
+            jit.isFavorite ? "" : " opacity-40 shadow-none"
+          } `}
+        >
+          <button onClick={(e) => handleFocusClick(jit, e)}>
+            <CardHeader className="mb-2 flex flex-row p-0 pl-3 pt-1">
+              <CardTitle className="flex flex-col items-start pt-1 text-lg leading-5">
+                <JitTitle jit={jit} />
+              </CardTitle>
+              <JitBelt
+                sessionCount={jit.sessionCount}
+                isFavorite={jit.isFavorite}
+              />
+            </CardHeader>
+          </button>
 
-        {/* JIT CONTENT */}
-        {jit.isFavorite && <JitFocused />}
-        {!jit.isFavorite && <JitContentSlim />}
-      </Card>
-    </div>
+          {/* JIT CONTENT */}
+          {jit.isFavorite && <JitFocused />}
+          {!jit.isFavorite && <JitContentSlim />}
+        </Card>
+      </div>
+      {firstJit && jit.isFavorite && <FirstJitCardBottom />}
+    </>
   );
 };
 
@@ -110,4 +115,31 @@ export const JitTitle = (props: { jit: Jit }) => {
     );
   }
   return null;
+};
+
+const FirstJitCardTop = () => {
+  return (
+    <div className="mt-4 flex flex-col items-end space-y-0 px-4 text-right">
+      <p className="text-sm">
+        New jits are in focus by default. <br />
+        Click the belt to toggle in/out of focus.
+      </p>
+      <div className="flex px-3">
+        <ArrowDown className="h-6 w-6 animate-pulse" />
+      </div>
+    </div>
+  );
+};
+const FirstJitCardBottom = () => {
+  return (
+    <div className="-mt-4 flex flex-col items-end space-y-0 px-4">
+      <div className="mr-1 flex">
+        <ArrowUp className="h-6 w-6 animate-pulse" />
+      </div>
+      <p className="text-right text-sm">
+        Click here to add a session. <br />
+        It means you actively focused on this jit during a training session.
+      </p>
+    </div>
+  );
 };

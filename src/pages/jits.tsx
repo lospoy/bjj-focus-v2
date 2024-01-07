@@ -40,9 +40,15 @@ const Jits: NextPage = () => {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Welcome!</CardTitle>
-          <CardDescription>
-            You have no jits, let&apos;s create one
+          <CardTitle className="mb-4">
+            Stop learning jiujitsu by coincidence.
+          </CardTitle>
+          <CardDescription className="space-y-4">
+            <p>
+              Top athletes pick a focus, then train it over and over for 10, 20,
+              50 sessions. This app helps you level up like they do.
+            </p>
+            <p>Let&apos;s get started.</p>
           </CardDescription>
         </CardHeader>
         <CardFooter>
@@ -50,7 +56,7 @@ const Jits: NextPage = () => {
             <Link href="/newJit">
               <Button className="flex">
                 <PlusCircle className="mr-1 mt-0.5 h-4 w-4" />
-                NEW JIT
+                CREATE YOUR FIRST JIT
               </Button>
             </Link>
           </div>
@@ -62,13 +68,15 @@ const Jits: NextPage = () => {
   return (
     <PageLayout>
       {allJits !== undefined && allJits.length !== 0 ? (
-        <AllJitsFeed />
+        <>
+          <AllJitsFeed />
+          <NewJitButton />
+        </>
       ) : (
         <div className="flex h-[80vh] items-center justify-center">
           <NoJitsWelcome />
         </div>
       )}
-      <NewJitButton />
     </PageLayout>
   );
 };
