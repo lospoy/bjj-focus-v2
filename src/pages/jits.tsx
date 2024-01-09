@@ -39,11 +39,11 @@ const Jits: NextPage = () => {
   const NoJitsWelcome = () => {
     return (
       <Card>
-        <CardHeader>
-          <CardTitle className="mb-4">
+        <CardHeader className="text-md">
+          <CardTitle className="mb-4 text-lg">
             Stop learning jiujitsu by coincidence.
           </CardTitle>
-          <CardDescription className="space-y-4">
+          <CardDescription className="text-md space-y-4">
             <p>
               Top athletes pick a focus, then train it over and over for 10, 20,
               50 sessions. This app helps you level up like they do.
