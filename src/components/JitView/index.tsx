@@ -4,7 +4,7 @@
 // Used in:
 // ~/FullJitFeed
 import { type RouterOutputs } from "~/utils/api";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { JitBelt } from "./JitBelt";
 import { JitProgressBelt } from "./JitProgressBelt";
 // import { humanDate } from "~/utils/humanDate";

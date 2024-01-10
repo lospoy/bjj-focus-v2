@@ -12,7 +12,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+} from "../ui/dropdown-menu";
 import { useState } from "react";
 import { type RouterOutputs } from "~/utils/api";
 import { useJitAddSession } from "~/hooks/useJitAddSession";
@@ -98,7 +98,7 @@ export default function JitMenu(props: { jit: Jit }) {
       </DropdownMenuItem>
     ) : (
       <>
-        <DropdownMenuItem>
+        <DropdownMenuItem className="bg-red-50 hover:bg-red-200">
           <JitDelete jit={jit} />
         </DropdownMenuItem>
         <DropdownMenuItem>

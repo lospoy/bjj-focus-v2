@@ -5,13 +5,13 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "./ui/dialog";
+} from "../ui/dialog";
 import { useSaveNoteToJit } from "~/hooks/useSaveNoteToJit";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { SaveIcon } from "lucide-react";
 import { DrawingPinFilledIcon } from "@radix-ui/react-icons";
-import { JitTitle } from "./JitView";
-import { Textarea } from "./ui/textarea";
+import { JitTitle } from ".";
+import { Textarea } from "../ui/textarea";
 import { JitNotesFeed } from "./JitNotesFeed";
 import { useState } from "react";
 
