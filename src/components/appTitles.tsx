@@ -18,12 +18,13 @@ export const appTitles = {
   editSession: "Edit Session",
   dashboard: "Dashboard",
   settings: "Settings",
+  challenges: "Challenges",
 };
 
 export const PageTitle = (props: { title: string }) => {
   return (
     <div className="flex h-32 items-center justify-center">
-      <h1 className="mb-4 mt-2 whitespace-nowrap text-[5rem] font-bold uppercase tracking-tighter text-secondary">
+      <h1 className="mb-4 mt-2 whitespace-nowrap text-[5rem] font-bold uppercase text-secondary">
         {props.title}
       </h1>
     </div>
