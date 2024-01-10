@@ -1,7 +1,6 @@
 // JitBelt
-
-import { generateBeltRules, rules } from "~/utils/beltRules";
-import { Belt } from "./ui/belt";
+import { generateBeltRules, rules } from "./JitProgressBelt";
+import { Belt } from "../ui/belt";
 
 export const JitBelt = ({
   sessionCount = 0,

@@ -37,6 +37,7 @@ model Jit {
   categoryId   String?
   moveId       String?
   positionId   String?
+  score        Int         @default(0)
   sessions     Session[]
   notes        Note[]
   user         User        @relation(fields: [userId], references: [id])

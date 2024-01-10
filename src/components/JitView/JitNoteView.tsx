@@ -5,8 +5,8 @@
 // ~/JitNotesFeed
 
 import { api, type RouterOutputs } from "~/utils/api";
-import { Card, CardContent } from "./ui/card";
-import { toast } from "./ui/use-toast";
+import { Card, CardContent } from "../ui/card";
+import { toast } from "../ui/use-toast";
 import { DrawingPinFilledIcon, DrawingPinIcon } from "@radix-ui/react-icons";
 
 type Note = RouterOutputs["notes"]["updateById"];

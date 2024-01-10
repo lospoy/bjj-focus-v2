@@ -12,7 +12,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+} from "../ui/dropdown-menu";
 import { useState } from "react";
 import { type RouterOutputs } from "~/utils/api";
 import { useJitAddSession } from "~/hooks/useJitAddSession";
@@ -23,11 +23,7 @@ type Jit = RouterOutputs["jits"]["getAll"][number];
 
 export default function JitMenu(props: { jit: Jit }) {
   const { jit } = props;
-  const [isMenuClicked, setIsMenuClicked] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
-  const handleMenuOpenChange = (open: boolean) => {
-    setIsMenuClicked(open);
-  };
 
   // ADD/REMOVE SESSION BUTTONS & HANDLERS
   const JitAddSession = (props: { jit: Jit }) => {
@@ -46,6 +42,7 @@ export default function JitMenu(props: { jit: Jit }) {
       </button>
     );
   };
+
   const JitRemoveLastSession = (props: { jit: Jit }) => {
     const { jit } = props;
     const { handleRemoveLastSessionClick } = useJitRemoveLastSession({ jit });
@@ -75,7 +72,7 @@ export default function JitMenu(props: { jit: Jit }) {
     return (
       <button
         onClick={handleClick}
-        className="flex items-center rounded-xl font-semibold text-red-600"
+        className="flex w-full items-center rounded-xl font-semibold text-red-600"
       >
         <Trash2 className="h-4 w-4" />
         <span className="ml-2">DELETE JIT</span>
@@ -93,7 +90,7 @@ export default function JitMenu(props: { jit: Jit }) {
             setIsEditMode(true);
             e.preventDefault();
           }}
-          className="flex flex-row justify-center"
+          className="flex w-full flex-row items-center"
         >
           <Edit className="h-4 w-4" />
           <span className="ml-2">Edit Jit</span>
@@ -101,7 +98,7 @@ export default function JitMenu(props: { jit: Jit }) {
       </DropdownMenuItem>
     ) : (
       <>
-        <DropdownMenuItem>
+        <DropdownMenuItem className="bg-red-50 hover:bg-red-200">
           <JitDelete jit={jit} />
         </DropdownMenuItem>
         <DropdownMenuItem>
@@ -113,7 +110,7 @@ export default function JitMenu(props: { jit: Jit }) {
 
   return (
     <div className="rounded-md bg-secondary p-1 text-background shadow-md">
-      <DropdownMenu onOpenChange={handleMenuOpenChange}>
+      <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <MoreVertical
             className={`h-6 w-5 
