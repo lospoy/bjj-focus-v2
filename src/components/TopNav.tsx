@@ -29,8 +29,8 @@ import {
 
 import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import { appTitles } from "./appTitles";
 import { Icons } from "./ui/icons";
+import { appTitles } from "./appText/appTitles";
 
 export const DropdownNewJit = () => {
   return (

@@ -10,7 +10,7 @@ import { createServerSideHelpers } from "@trpc/react-query/server";
 import { getAuth } from "@clerk/nextjs/server";
 import SuperJSON from "superjson";
 import { prisma } from "prisma/db";
-import { PageTitle, appTitles } from "~/components/appTitles";
+import { PageTitle, appTitles } from "~/components/appText/appTitles";
 import { ChallengeFeed } from "~/components/ChallengeFeed";
 
 const Jits: NextPage = () => {

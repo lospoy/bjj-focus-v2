@@ -1,5 +1,3 @@
-export const jitsTitle = "My Jits";
-
 export const appTitles = {
   jits: "Jits",
   newJit: "New Jit",
