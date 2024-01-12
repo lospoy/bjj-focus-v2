@@ -85,7 +85,7 @@ export const JitNoteDialog = (props: { jit: Jit }) => {
         onInteractOutside={(e) => e.preventDefault()}
       >
         <DialogHeader className="pb-6">
-          <DialogTitle className="flex flex-col text-3xl leading-5 ">
+          <DialogTitle className="flex flex-col text-3xl leading-6">
             <JitTitle jit={jit} />
           </DialogTitle>
         </DialogHeader>

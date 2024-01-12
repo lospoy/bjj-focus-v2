@@ -10,7 +10,6 @@ import { getAuth } from "@clerk/nextjs/server";
 import SuperJSON from "superjson";
 import { prisma } from "prisma/db";
 import { useRouter } from "next/router";
-import { PageLayout } from "~/components/ui/layout";
 import { Button } from "~/components/ui/button";
 import { appCopy } from "~/components/appText/appCopy";
 import Image from "next/image";
@@ -25,7 +24,7 @@ const HomePage: NextPage = () => {
 
   const Hero = () => {
     return (
-      <div className="py-20 text-secondary">
+      <div className="h-[50vh] py-48 text-secondary">
         <div className="container mx-auto">
           <h1 className="mb-4 text-6xl font-bold text-secondary">
             {appCopy.catchphrase}
@@ -51,22 +50,26 @@ const HomePage: NextPage = () => {
 
     const image = (
       <Image
-        className="w-1/2"
+        className="h-fit w-1/2"
         src={imageSrc}
         alt={title}
-        width={500}
-        height={300}
+        width={783}
+        height={378}
       />
     );
     const text = (
-      <div className="w-1/2 px-8">
+      <div className=" w-1/2 px-2">
         <h2 className="mb-4 text-3xl font-bold text-secondary">{title}</h2>
         <p>{description}</p>
       </div>
     );
 
     return (
-      <div className={`flex ${isImageOnRight ? "flex-row-reverse" : ""}`}>
+      <div
+        className={`flex h-[50vh] space-x-10 py-48 ${
+          isImageOnRight ? "flex-row-reverse" : ""
+        }`}
+      >
         {image}
         {text}
       </div>
@@ -82,24 +85,22 @@ const HomePage: NextPage = () => {
   };
 
   return (
-    <PageLayout>
-      <div className="min-w-screen flex flex-col items-center">
-        <Hero />
-        <AdvantageSection
-          title="Advantage 1"
-          description="This is a description of the first advantage of your product."
-          imageSrc="/path/to/image1.png"
-          isImageOnRight={false}
-        />
-        <AdvantageSection
-          title="Advantage 2"
-          description="This is a description of the second advantage of your product."
-          imageSrc="/path/to/image2.png"
-          isImageOnRight={true}
-        />
-        <Footer />
-      </div>
-    </PageLayout>
+    <div className="min-w-screen flex flex-col items-center">
+      <Hero />
+      <AdvantageSection
+        title={appCopy.index.advantage1.title}
+        description={appCopy.index.advantage1.description}
+        imageSrc="/img/advantage-1-mobile.png"
+        isImageOnRight={false}
+      />
+      <AdvantageSection
+        title={appCopy.index.advantage2.title}
+        description={appCopy.index.advantage2.description}
+        imageSrc="/img/advantage-1-mobile.png"
+        isImageOnRight={true}
+      />
+      <Footer />
+    </div>
   );
 };
 
