@@ -1,8 +1,3 @@
-// JitView
-// Handles displaying a single Active Jit
-
-// Used in:
-// ~/FullJitFeed
 import { type RouterOutputs } from "~/utils/api";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { JitBelt } from "./JitBelt";

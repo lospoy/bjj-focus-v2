@@ -29,7 +29,8 @@ import {
 
 import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import { appTitles } from "./appTitles";
+import { Icons } from "./ui/icons";
+import { appTitles } from "./appText/appTitles";
 
 export const DropdownNewJit = () => {
   return (
@@ -51,6 +52,96 @@ export const DropdownNewSequence = () => {
   );
 };
 
+const AccountGroup = () => {
+  return (
+    <DropdownMenuGroup>
+      <DropdownMenuLabel className="text-[#a4a5a6]">Account</DropdownMenuLabel>
+      <DropdownMenuItem disabled>
+        <User className="mr-2 h-4 w-4" />
+        <span>Profile</span>
+      </DropdownMenuItem>
+      <DropdownMenuItem disabled>
+        <Settings className="mr-2 h-4 w-4" />
+        <span>Settings</span>
+      </DropdownMenuItem>
+    </DropdownMenuGroup>
+  );
+};
+
+const TrainingGroup = () => {
+  return (
+    <DropdownMenuGroup>
+      <DropdownMenuLabel>Training</DropdownMenuLabel>
+      <Link href="">
+        <DropdownMenuItem disabled>
+          <Icons.eyeHalf className="mr-2 h-4 w-4" />
+          <span>Challenges</span>
+        </DropdownMenuItem>
+      </Link>
+      <DropdownMenuSub>
+        <DropdownMenuSubTrigger>
+          <Box className="mr-2 h-4 w-4" />
+          <span>Jits</span>
+        </DropdownMenuSubTrigger>
+        <DropdownMenuPortal>
+          <DropdownMenuSubContent>
+            <Link href="/jits">
+              <DropdownMenuItem>
+                <Shapes className="mr-2 h-4 w-4" />
+                <span>{appTitles.jits}</span>
+              </DropdownMenuItem>
+            </Link>
+            <DropdownMenuItem disabled>
+              <BarChart4 className="mr-2 h-4 w-4" />
+              <span>Jits Report</span>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownNewJit />
+          </DropdownMenuSubContent>
+        </DropdownMenuPortal>
+      </DropdownMenuSub>
+
+      {/* SEQUENCES SUBMENU */}
+      <DropdownMenuSub>
+        <DropdownMenuSubTrigger disabled className="text-[#a4a5a6]">
+          <Network className="mr-2 h-4 w-4" />
+          <span>Sequences</span>
+        </DropdownMenuSubTrigger>
+        <DropdownMenuPortal>
+          <DropdownMenuSubContent>
+            <DropdownMenuItem>
+              <Option className="mr-2 h-4 w-4" />
+              <span>All Sequences</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <BarChart4 className="mr-2 h-4 w-4" />
+              <span>Sequences Report</span>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownNewSequence />
+          </DropdownMenuSubContent>
+        </DropdownMenuPortal>
+      </DropdownMenuSub>
+    </DropdownMenuGroup>
+  );
+};
+
+const AppGroup = () => {
+  return (
+    <DropdownMenuGroup>
+      <DropdownMenuLabel className="text-[#a4a5a6]">App</DropdownMenuLabel>
+      <DropdownMenuItem disabled>
+        <LampDesk className="mr-2 h-4 w-4" />
+        <span>About</span>
+      </DropdownMenuItem>
+      <DropdownMenuItem disabled>
+        <MessageSquare className="mr-2 h-4 w-4" />
+        <span>Feedback</span>
+      </DropdownMenuItem>
+    </DropdownMenuGroup>
+  );
+};
+
 export default function TopNav() {
   const [isMenuClicked, setIsMenuClicked] = useState(false);
   const { isSignedIn } = useUser();
@@ -64,7 +155,9 @@ export default function TopNav() {
       {isMenuClicked && (
         <div className="fixed inset-0 z-50 bg-black opacity-40"></div>
       )}
-      <nav className="sticky top-0 z-10 w-full bg-secondary px-4 md:border-0 ">
+      <nav
+        className={`${isSignedIn ? "sticky" : ""} top-0 z-10 w-full bg-secondary px-4 md:border-0`}
+      >
         <div className="mx-auto md:max-w-3xl">
           <div className="flex justify-between pb-1 pt-2">
             {isSignedIn ? (
@@ -82,87 +175,11 @@ export default function TopNav() {
                   />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="ml-4 w-44 bg-background">
-                  <DropdownMenuLabel className="text-[#a4a5a6]">
-                    Account
-                  </DropdownMenuLabel>
-                  <DropdownMenuGroup>
-                    <DropdownMenuItem disabled>
-                      <User className="mr-2 h-4 w-4" />
-                      <span>Profile</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem disabled>
-                      <Settings className="mr-2 h-4 w-4" />
-                      <span>Settings</span>
-                    </DropdownMenuItem>
-                  </DropdownMenuGroup>
-
-                  {/* NEXT SECTION */}
+                  <AccountGroup />
                   <DropdownMenuSeparator />
-                  <DropdownMenuLabel>Training</DropdownMenuLabel>
-                  <DropdownMenuGroup>
-                    {/* JITS SUBMENU */}
-                    <DropdownMenuSub>
-                      <DropdownMenuSubTrigger>
-                        <Box className="mr-2 h-4 w-4" />
-                        <span>Jits</span>
-                      </DropdownMenuSubTrigger>
-                      <DropdownMenuPortal>
-                        <DropdownMenuSubContent>
-                          <Link href="/jits">
-                            <DropdownMenuItem>
-                              <Shapes className="mr-2 h-4 w-4" />
-                              <span>{appTitles.jits}</span>
-                            </DropdownMenuItem>
-                          </Link>
-                          <DropdownMenuItem disabled>
-                            <BarChart4 className="mr-2 h-4 w-4" />
-                            <span>Jits Report</span>
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownNewJit />
-                        </DropdownMenuSubContent>
-                      </DropdownMenuPortal>
-                    </DropdownMenuSub>
-
-                    {/* SEQUENCES SUBMENU */}
-                    <DropdownMenuSub>
-                      <DropdownMenuSubTrigger
-                        disabled
-                        className="text-[#a4a5a6]"
-                      >
-                        <Network className="mr-2 h-4 w-4" />
-                        <span>Sequences</span>
-                      </DropdownMenuSubTrigger>
-                      <DropdownMenuPortal>
-                        <DropdownMenuSubContent>
-                          <DropdownMenuItem>
-                            <Option className="mr-2 h-4 w-4" />
-                            <span>All Sequences</span>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <BarChart4 className="mr-2 h-4 w-4" />
-                            <span>Sequences Report</span>
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownNewSequence />
-                        </DropdownMenuSubContent>
-                      </DropdownMenuPortal>
-                    </DropdownMenuSub>
-                  </DropdownMenuGroup>
-
-                  {/* OTHER SECTION */}
+                  <TrainingGroup />
                   <DropdownMenuSeparator />
-                  <DropdownMenuLabel className="text-[#a4a5a6]">
-                    App
-                  </DropdownMenuLabel>
-                  <DropdownMenuItem disabled>
-                    <LampDesk className="mr-2 h-4 w-4" />
-                    <span>About</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem disabled>
-                    <MessageSquare className="mr-2 h-4 w-4" />
-                    <span>Feedback</span>
-                  </DropdownMenuItem>
+                  <AppGroup />
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (

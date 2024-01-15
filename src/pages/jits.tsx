@@ -21,8 +21,9 @@ import {
 } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 import Link from "next/link";
-import { PageTitle, appTitles } from "~/components/appTitles";
+import { PageTitle, appTitles } from "~/components/appText/appTitles";
 import NewJitButton from "~/components/NewJitButton";
+import { appCopy } from "~/components/appText/appCopy";
 
 const Jits: NextPage = () => {
   const allJits = api.jits.getAll.useQuery().data;
@@ -40,9 +41,7 @@ const Jits: NextPage = () => {
     return (
       <Card>
         <CardHeader className="text-md">
-          <CardTitle className="mb-4 text-lg">
-            Stop learning jiujitsu by coincidence.
-          </CardTitle>
+          <CardTitle className="mb-4 text-lg">{appCopy.catchphrase}</CardTitle>
           <CardDescription className="text-md space-y-4">
             <p>
               Top athletes pick a focus, then train it over and over for 10, 20,
