@@ -23,43 +23,52 @@ const HomePage: NextPage = () => {
     void router.push("/jits");
   }
 
+  const SignUpButton = () => {
+    return (
+      <SignInButton mode="modal">
+        <Button size="lg" className="text-lg">
+          Sign Up
+        </Button>
+      </SignInButton>
+    );
+  };
+
   const Hero = () => {
     return (
-      <div className="h-[80vh] max-w-xl px-2 py-20 text-secondary md:h-[90vh] md:py-48 md:pl-28">
+      <div className="h-[95vh] px-2 py-32 text-secondary md:py-48">
         <div className="container mx-auto">
-          <h1 className="mb-4 text-5xl font-bold text-secondary">
+          <h1 className="mb-14 text-5xl font-bold text-secondary md:max-w-xl">
             {appCopy.catchphrase}
           </h1>
-          <p className="mb-10 text-xl">{appCopy.index.description}</p>
-          <SignInButton mode="modal">
-            <Button size="lg" className="text-lg">
-              Get Started
-            </Button>
-          </SignInButton>
+          <SignUpButton />
         </div>
       </div>
     );
   };
 
-  const AdvantageSection = (props: {
-    title: string;
-    imageSrc: string;
-    isImageOnRight: boolean;
-  }) => {
-    const { title, imageSrc, isImageOnRight } = props;
+  const AdvantageSection = (props: { title: string; imageSrc: string }) => {
+    const { title, imageSrc } = props;
 
     const image = (
-      <Image className="" src={imageSrc} alt={title} width={783} height={378} />
+      <Image
+        className="max-w-xs"
+        src={imageSrc}
+        alt={title}
+        width={783}
+        height={378}
+      />
     );
     const text = (
       <div className="flex justify-center px-4">
-        <h2 className="mb-4 text-2xl font-bold text-secondary">{title}</h2>
+        <h2 className="mb-6 text-2xl font-bold text-secondary md:text-4xl">
+          {title}
+        </h2>
       </div>
     );
 
     return (
       <div
-        className={` flex flex-col px-2 py-20 md:flex-row ${isImageOnRight ? "md:flex-row-reverse" : ""}`}
+        className={`flex h-[85vh] w-screen flex-col items-center justify-center px-2 py-20`}
       >
         {text}
         {image}
@@ -69,10 +78,13 @@ const HomePage: NextPage = () => {
 
   const ComingSoonSection = () => {
     return (
-      <div className={`flex flex-col px-6 py-20`}>
+      <div className={`flex h-[85vh] flex-col justify-center px-6 py-20`}>
         <h4 className="mb-4 text-lg font-bold text-secondary">
           {appCopy.index.comingSoon}
         </h4>
+        <div className="self-center">
+          <SignUpButton />
+        </div>
       </div>
     );
   };
@@ -90,21 +102,19 @@ const HomePage: NextPage = () => {
   };
 
   return (
-    <>
+    <div className="mx-auto flex max-w-7xl flex-col items-center">
       <Hero />
       <AdvantageSection
         title={appCopy.index.advantage1}
         imageSrc="/img/advantage-focus.png"
-        isImageOnRight={true}
       />
       <AdvantageSection
         title={appCopy.index.advantage2}
         imageSrc="/img/advantage-notes.png"
-        isImageOnRight={true}
       />
       <ComingSoonSection />
       <Footer />
-    </>
+    </div>
   );
 };
 
