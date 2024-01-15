@@ -25,7 +25,7 @@ const HomePage: NextPage = () => {
 
   const Hero = () => {
     return (
-      <div className="h-[80vh] px-2 py-20 text-secondary">
+      <div className="h-[80vh] max-w-xl px-2 py-20 text-secondary md:h-[90vh] md:py-48 md:pl-28">
         <div className="container mx-auto">
           <h1 className="mb-4 text-5xl font-bold text-secondary">
             {appCopy.catchphrase}
