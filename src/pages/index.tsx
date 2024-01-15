@@ -24,7 +24,7 @@ const HomePage: NextPage = () => {
 
   const Hero = () => {
     return (
-      <div className="h-[50vh] py-48 text-secondary">
+      <div className="py-20 text-secondary">
         <div className="container mx-auto">
           <h1 className="mb-4 text-6xl font-bold text-secondary">
             {appCopy.catchphrase}
@@ -50,7 +50,7 @@ const HomePage: NextPage = () => {
 
     const image = (
       <Image
-        className="h-fit w-1/2"
+        className="h-fit"
         src={imageSrc}
         alt={title}
         width={783}
@@ -58,7 +58,7 @@ const HomePage: NextPage = () => {
       />
     );
     const text = (
-      <div className=" w-1/2 px-2">
+      <div className="">
         <h2 className="mb-4 text-3xl font-bold text-secondary">{title}</h2>
         <p>{description}</p>
       </div>
@@ -66,8 +66,8 @@ const HomePage: NextPage = () => {
 
     return (
       <div
-        className={`flex h-[50vh] space-x-10 py-48 ${
-          isImageOnRight ? "flex-row-reverse" : ""
+        className={`py-20 md:flex ${
+          isImageOnRight ? "md:flex-row-reverse" : ""
         }`}
       >
         {image}
@@ -85,7 +85,7 @@ const HomePage: NextPage = () => {
   };
 
   return (
-    <div className="min-w-screen flex flex-col items-center">
+    <div className="flex max-w-[90vw] flex-col items-center">
       <Hero />
       <AdvantageSection
         title={appCopy.index.advantage1.title}
@@ -96,7 +96,7 @@ const HomePage: NextPage = () => {
       <AdvantageSection
         title={appCopy.index.advantage2.title}
         description={appCopy.index.advantage2.description}
-        imageSrc="/img/advantage-1-mobile.png"
+        imageSrc="/img/advantage-2.png"
         isImageOnRight={true}
       />
       <Footer />

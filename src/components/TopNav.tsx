@@ -72,8 +72,8 @@ const TrainingGroup = () => {
   return (
     <DropdownMenuGroup>
       <DropdownMenuLabel>Training</DropdownMenuLabel>
-      <Link href="/challenges">
-        <DropdownMenuItem>
+      <Link href="">
+        <DropdownMenuItem disabled>
           <Icons.eyeHalf className="mr-2 h-4 w-4" />
           <span>Challenges</span>
         </DropdownMenuItem>
