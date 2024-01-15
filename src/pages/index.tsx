@@ -13,6 +13,7 @@ import { useRouter } from "next/router";
 import { Button } from "~/components/ui/button";
 import { appCopy } from "~/components/appText/appCopy";
 import Image from "next/image";
+import Link from "next/link";
 
 const HomePage: NextPage = () => {
   const { isSignedIn } = useUser();
@@ -24,12 +25,12 @@ const HomePage: NextPage = () => {
 
   const Hero = () => {
     return (
-      <div className="py-20 text-secondary">
+      <div className="h-[80vh] px-2 py-20 text-secondary">
         <div className="container mx-auto">
-          <h1 className="mb-4 text-6xl font-bold text-secondary">
+          <h1 className="mb-4 text-5xl font-bold text-secondary">
             {appCopy.catchphrase}
           </h1>
-          <p className="mb-10 text-2xl">{appCopy.index.description}</p>
+          <p className="mb-10 text-xl">{appCopy.index.description}</p>
           <SignInButton mode="modal">
             <Button size="lg" className="text-lg">
               Get Started
@@ -42,65 +43,68 @@ const HomePage: NextPage = () => {
 
   const AdvantageSection = (props: {
     title: string;
-    description: string;
     imageSrc: string;
     isImageOnRight: boolean;
   }) => {
-    const { title, description, imageSrc, isImageOnRight } = props;
+    const { title, imageSrc, isImageOnRight } = props;
 
     const image = (
-      <Image
-        className="h-fit"
-        src={imageSrc}
-        alt={title}
-        width={783}
-        height={378}
-      />
+      <Image className="" src={imageSrc} alt={title} width={783} height={378} />
     );
     const text = (
-      <div className="">
-        <h2 className="mb-4 text-3xl font-bold text-secondary">{title}</h2>
-        <p>{description}</p>
+      <div className="flex justify-center px-4">
+        <h2 className="mb-4 text-2xl font-bold text-secondary">{title}</h2>
       </div>
     );
 
     return (
       <div
-        className={`py-20 md:flex ${
-          isImageOnRight ? "md:flex-row-reverse" : ""
-        }`}
+        className={` flex flex-col px-2 py-20 md:flex-row ${isImageOnRight ? "md:flex-row-reverse" : ""}`}
       >
-        {image}
         {text}
+        {image}
+      </div>
+    );
+  };
+
+  const ComingSoonSection = () => {
+    return (
+      <div className={`flex flex-col px-6 py-20`}>
+        <h4 className="mb-4 text-lg font-bold text-secondary">
+          {appCopy.index.comingSoon}
+        </h4>
       </div>
     );
   };
 
   const Footer = () => {
     return (
-      <footer className="fixed bottom-0 left-0 w-full bg-gray-100 p-3 text-center">
-        <p className="text-xs text-gray-700">{appCopy.index.footer}</p>
+      <footer className="bottom-0 left-0 flex w-screen justify-center space-x-2 bg-gray-100 p-3 text-center text-xs text-gray-700">
+        <span>{appCopy.footer}</span>
+        <span>•</span>
+        <Link href="https://www.github.com/lospoy">
+          <span className="font-serif font-semibold">lospoy</span>
+        </Link>
       </footer>
     );
   };
 
   return (
-    <div className="flex max-w-[90vw] flex-col items-center">
+    <>
       <Hero />
       <AdvantageSection
-        title={appCopy.index.advantage1.title}
-        description={appCopy.index.advantage1.description}
-        imageSrc="/img/advantage-1-mobile.png"
-        isImageOnRight={false}
-      />
-      <AdvantageSection
-        title={appCopy.index.advantage2.title}
-        description={appCopy.index.advantage2.description}
-        imageSrc="/img/advantage-2.png"
+        title={appCopy.index.advantage1}
+        imageSrc="/img/advantage-focus.png"
         isImageOnRight={true}
       />
+      <AdvantageSection
+        title={appCopy.index.advantage2}
+        imageSrc="/img/advantage-notes.png"
+        isImageOnRight={true}
+      />
+      <ComingSoonSection />
       <Footer />
-    </div>
+    </>
   );
 };
 
