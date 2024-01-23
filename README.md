@@ -1,17 +1,16 @@
-## BJJ Focus: Stop learning jiujitsu by coincidence.
-Welcome to BJJ Focus – your ultimate companion in the world of Brazilian Jiu-Jitsu. Unleash the full potential of your training with our meticulously crafted app, designed in collaboration with professional BJJ athletes and tailored for both beginners and seasoned practitioners.
-
-🥋 Save, Manage, and Find with Ease: Effortlessly organize and retrieve your BJJ notes, ensuring that your valuable insights are always at your fingertips. Our intuitive interface makes note-taking and management a breeze.
-
-🏆 Developed with the Pros, Tailored for All: Created in partnership with pro BJJ athletes, BJJ Focus caters to the needs of coaches, students, and enthusiasts of all skill levels. Benefit from the expertise of the best in the field.
-
-## Screens
 <div align="center" padding="0">
     <img src="https://u.cubeupload.com/aa9988vvb/AppleiPhone11ProMaxS.png" width="23%">
     <img src="https://u.cubeupload.com/aa9988vvb/cb7AppleiPhone11ProMaxS.png" width="23%">
       <img src="https://u.cubeupload.com/aa9988vvb/25cAppleiPhone11ProMaxS.png" width="23%">
     <img src="https://u.cubeupload.com/aa9988vvb/AppleiPhone11ProMax.png" width="23%">
 </div>
+
+## BJJ Focus: Stop learning jiujitsu by coincidence.
+Welcome to BJJ Focus – your ultimate companion in the world of Brazilian Jiu-Jitsu. Unleash the full potential of your training with our meticulously crafted app, designed in collaboration with professional BJJ athletes and tailored for both beginners and seasoned practitioners.
+
+🥋 Save, Manage, and Find with Ease: Effortlessly organize and retrieve your BJJ notes, ensuring that your valuable insights are always at your fingertips. Our intuitive interface makes note-taking and management a breeze.
+
+🏆 Developed with the Pros, Tailored for All: Created in partnership with pro BJJ athletes, BJJ Focus caters to the needs of coaches, students, and enthusiasts of all skill levels. Benefit from the expertise of the best in the field.
 
 ## Stack
 <p align="center">
