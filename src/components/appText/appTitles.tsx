@@ -2,21 +2,32 @@ export const appTitles = {
   jits: "Jits",
   newJit: "New Jit",
   editJit: "Edit Jit",
+
   sequences: "My Sequences",
   newSequence: "New Sequence",
   editSequence: "Edit Sequence",
+
   positions: "My Positions",
   newPosition: "New Position",
   editPosition: "Edit Position",
+
   moves: "My Moves",
   newMove: "New Move",
   editMove: "Edit Move",
+
   sessions: "My Sessions",
   newSession: "New Session",
   editSession: "Edit Session",
+
   dashboard: "Dashboard",
   settings: "Settings",
+
   challenges: "Challenges",
+
+  notes: "Notes",
+
+  bjjNotes: "BJJ Notes",
+  bjjFocus: "BJJ Focus",
 };
 
 export const PageTitle = (props: { title: string }) => {

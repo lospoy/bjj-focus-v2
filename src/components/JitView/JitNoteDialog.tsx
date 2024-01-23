@@ -2,6 +2,7 @@ import { type RouterOutputs } from "~/utils/api";
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -14,6 +15,8 @@ import { JitTitle } from ".";
 import { Textarea } from "../ui/textarea";
 import { JitNotesFeed } from "./JitNotesFeed";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
+import { JitDelete } from "./JitMenu";
 
 type Jit = RouterOutputs["jits"]["getAll"][number];
 
@@ -21,6 +24,8 @@ export const JitNoteDialog = (props: { jit: Jit }) => {
   const { jit } = props;
   const favoriteNotes = jit.notes?.filter((note) => note.isFavorite);
   const [inputValue, setInputValue] = useState("");
+  const path = usePathname();
+  const notePath = path === "/notes";
 
   // SAVE NEW NOTE HANDLERS AND BUTTON
   const JitSaveNoteButton = (props: { jit: Jit; body: string }) => {
@@ -79,7 +84,7 @@ export const JitNoteDialog = (props: { jit: Jit }) => {
         </div>
       </DialogTrigger>
       <DialogContent
-        className="bg-background sm:max-w-[425px]"
+        className="flex flex-col bg-background sm:max-w-[425px]"
         onOpenAutoFocus={(e) => e.preventDefault()}
         onPointerDownOutside={(e) => e.preventDefault()}
         onInteractOutside={(e) => e.preventDefault()}
@@ -108,6 +113,16 @@ export const JitNoteDialog = (props: { jit: Jit }) => {
         <div className=" items-center gap-1 font-mono">
           <JitNotesFeed jitId={jit.id} />
         </div>
+        {notePath && (
+          <DialogFooter className="self-center">
+            <Button
+              variant="outline"
+              className="border-2 border-red-600 hover:bg-red-600 hover:text-background"
+            >
+              <JitDelete jit={jit} />
+            </Button>
+          </DialogFooter>
+        )}
       </DialogContent>
     </Dialog>
   );

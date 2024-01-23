@@ -21,6 +21,27 @@ import { useDeleteJit } from "~/hooks/useDeleteJit";
 
 type Jit = RouterOutputs["jits"]["getAll"][number];
 
+// DELETE JIT BUTTON & HANDLER
+export const JitDelete = (props: { jit: Jit }) => {
+  const { jit } = props;
+  const { handleDeleteJitClick } = useDeleteJit({ jit: jit });
+
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    handleDeleteJitClick({ jitId: jit.id });
+  };
+
+  return (
+    <button
+      onClick={handleClick}
+      className="flex w-full items-center rounded-xl font-semibold text-red-600"
+    >
+      <Trash2 className="h-4 w-4" />
+      <span className="ml-2">DELETE JIT</span>
+    </button>
+  );
+};
+
 export default function JitMenu(props: { jit: Jit }) {
   const { jit } = props;
   const [isEditMode, setIsEditMode] = useState(false);
@@ -56,26 +77,6 @@ export default function JitMenu(props: { jit: Jit }) {
       <button onClick={handleClick} className="flex items-center rounded-xl">
         <MinusCircle className="h-4 w-4" />
         <span className="ml-2">Remove Session</span>
-      </button>
-    );
-  };
-  // DELETE JIT BUTTON & HANDLER
-  const JitDelete = (props: { jit: Jit }) => {
-    const { jit } = props;
-    const { handleDeleteJitClick } = useDeleteJit({ jit: jit });
-
-    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-      e.preventDefault();
-      handleDeleteJitClick({ jitId: jit.id });
-    };
-
-    return (
-      <button
-        onClick={handleClick}
-        className="flex w-full items-center rounded-xl font-semibold text-red-600"
-      >
-        <Trash2 className="h-4 w-4" />
-        <span className="ml-2">DELETE JIT</span>
       </button>
     );
   };

@@ -7,11 +7,16 @@ interface JitFeedProps {
   jits?: boolean;
   dashboard?: boolean;
   allJits?: GetAllJit;
+  mode: "jits" | "notes";
 }
 
 export type GetAllJit = RouterOutputs["jits"]["getAll"];
 
-export const JitFeed = ({ jits, allJits: jitsFromProps }: JitFeedProps) => {
+export const JitFeed = ({
+  jits,
+  allJits: jitsFromProps,
+  mode,
+}: JitFeedProps) => {
   const allJits = jitsFromProps;
   const firstJit = allJits?.length === 1;
   const [searchTerm, setSearchTerm] = useState("");
@@ -61,7 +66,7 @@ export const JitFeed = ({ jits, allJits: jitsFromProps }: JitFeedProps) => {
       {filteredJits?.map((jit) => (
         // ADDING MARGIN TO THE LAST JIT SO IT DOES NOT COLLIDE WITH THE ACTION BUTTON
         <div key={jit.id} className="last:mb-32">
-          <JitView jit={jit} firstJit={firstJit} />
+          <JitView jit={jit} firstJit={firstJit} mode={mode} />
         </div>
       ))}
     </div>

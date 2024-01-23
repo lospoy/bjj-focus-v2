@@ -31,6 +31,7 @@ import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { Icons } from "./ui/icons";
 import { appTitles } from "./appText/appTitles";
+import { usePathname } from "next/navigation";
 
 export const DropdownNewJit = () => {
   return (
@@ -145,6 +146,8 @@ const AppGroup = () => {
 export default function TopNav() {
   const [isMenuClicked, setIsMenuClicked] = useState(false);
   const { isSignedIn } = useUser();
+  const path = usePathname();
+  const notePath = path === "/notes";
 
   const handleMenuOpenChange = (open: boolean) => {
     setIsMenuClicked(open);
@@ -156,7 +159,9 @@ export default function TopNav() {
         <div className="fixed inset-0 z-50 bg-black opacity-40"></div>
       )}
       <nav
-        className={`${isSignedIn ? "sticky" : ""} top-0 z-10 w-full bg-secondary px-4 md:border-0`}
+        className={`${
+          isSignedIn ? "sticky" : ""
+        } top-0 z-10 w-full bg-secondary px-4 md:border-0`}
       >
         <div className="mx-auto md:max-w-3xl">
           <div className="flex justify-between pb-1 pt-2">
@@ -187,7 +192,7 @@ export default function TopNav() {
             )}
             <Link href="/" className="flex">
               <h1 className="-mt-1 text-[1.6rem] font-bold text-background">
-                BJJ FOCUS
+                {notePath ? "BJJ NOTES" : "BJJ FOCUS"}
               </h1>
               <span className="ml-0.5 font-mono text-amber-200">beta</span>
             </Link>

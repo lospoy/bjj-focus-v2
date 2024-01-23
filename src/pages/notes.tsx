@@ -24,9 +24,13 @@ import Link from "next/link";
 import { PageTitle, appTitles } from "~/components/appText/appTitles";
 import NewJitButton from "~/components/NewJitButton";
 import { appCopy } from "~/components/appText/appCopy";
+import { usePathname } from "next/navigation";
 
-const Jits: NextPage = () => {
+const Notes: NextPage = () => {
   const allJits = api.jits.getAll.useQuery().data;
+  const path = usePathname();
+
+  console.log({ path });
 
   const NoJitsWelcome = () => {
     return (
@@ -34,10 +38,7 @@ const Jits: NextPage = () => {
         <CardHeader className="text-md">
           <CardTitle className="mb-4 text-lg">{appCopy.catchphrase}</CardTitle>
           <CardDescription className="text-md space-y-4">
-            <p>
-              Top athletes pick a focus, then train it over and over for 10, 20,
-              50 sessions. This app helps you level up like they do.
-            </p>
+            <p>blablabla.</p>
             <p>Let&apos;s get started.</p>
           </CardDescription>
         </CardHeader>
@@ -59,8 +60,8 @@ const Jits: NextPage = () => {
     <PageLayout>
       {allJits !== undefined && allJits.length !== 0 ? (
         <>
-          <PageTitle title={appTitles.jits} />
-          <JitFeed jits={true} allJits={allJits} mode="jits" />
+          <PageTitle title={appTitles.notes} />
+          <JitFeed jits={true} allJits={allJits} mode={"notes"} />
           <NewJitButton />
         </>
       ) : (
@@ -94,4 +95,4 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   };
 };
 
-export default Jits;
+export default Notes;
