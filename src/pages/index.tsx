@@ -26,7 +26,10 @@ const HomePage: NextPage = () => {
   const SignUpButton = () => {
     return (
       <SignInButton mode="modal">
-        <Button size="lg" className="text-lg">
+        <Button
+          size="lg"
+          className="bg-accent text-lg font-bold uppercase text-secondary"
+        >
           Sign Up
         </Button>
       </SignInButton>
@@ -64,11 +67,13 @@ const HomePage: NextPage = () => {
     );
   };
 
-  const ComingSoonSection = () => {
+  const BottomSignupSection = () => {
     return (
-      <div className={`flex h-[50vh] flex-col justify-center px-6 py-20`}>
-        <h4 className="mb-4 text-lg font-bold text-secondary">
-          {appCopy.index.comingSoon}
+      <div className={`flex flex-col justify-center px-6 pb-52`}>
+        <h4 className="mb-4 pb-8 pt-40 text-center text-2xl font-bold text-secondary lg:pt-0">
+          BJJ Focus is in beta.
+          <br />
+          Get early access now, free.
         </h4>
         <div className="self-center">
           <SignUpButton />
@@ -97,7 +102,7 @@ const HomePage: NextPage = () => {
         <AdvantageSection imageSrc="/img/features-2.png" />
         <AdvantageSection imageSrc="/img/features-3.png" />
       </div>
-      <ComingSoonSection />
+      <BottomSignupSection />
       <Footer />
     </div>
   );
