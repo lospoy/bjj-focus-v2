@@ -35,7 +35,7 @@ const HomePage: NextPage = () => {
 
   const Hero = () => {
     return (
-      <div className="h-[95vh] px-2 py-32 text-secondary md:py-48">
+      <div className="px-2 py-32 text-secondary md:py-48">
         <div className="container mx-auto">
           <h1 className="mb-14 text-5xl font-bold text-secondary md:max-w-xl">
             {appCopy.catchphrase}
@@ -46,39 +46,27 @@ const HomePage: NextPage = () => {
     );
   };
 
-  const AdvantageSection = (props: { title: string; imageSrc: string }) => {
-    const { title, imageSrc } = props;
+  const AdvantageSection = (props: { imageSrc: string }) => {
+    const { imageSrc } = props;
 
     const image = (
       <Image
-        className="max-w-xs"
+        className=""
         src={imageSrc}
-        alt={title}
-        width={783}
-        height={378}
+        alt={imageSrc}
+        width={1242}
+        height={2688}
       />
-    );
-    const text = (
-      <div className="flex justify-center px-4">
-        <h2 className="mb-6 text-2xl font-bold text-secondary md:text-4xl">
-          {title}
-        </h2>
-      </div>
     );
 
     return (
-      <div
-        className={`flex h-[85vh] w-screen flex-col items-center justify-center px-2 py-20`}
-      >
-        {text}
-        {image}
-      </div>
+      <div className={`items-center justify-center py-5 lg:px-2`}>{image}</div>
     );
   };
 
   const ComingSoonSection = () => {
     return (
-      <div className={`flex h-[85vh] flex-col justify-center px-6 py-20`}>
+      <div className={`flex h-[50vh] flex-col justify-center px-6 py-20`}>
         <h4 className="mb-4 text-lg font-bold text-secondary">
           {appCopy.index.comingSoon}
         </h4>
@@ -104,14 +92,11 @@ const HomePage: NextPage = () => {
   return (
     <div className="mx-auto flex max-w-7xl flex-col items-center">
       <Hero />
-      <AdvantageSection
-        title={appCopy.index.advantage1}
-        imageSrc="/img/advantage-focus.png"
-      />
-      <AdvantageSection
-        title={appCopy.index.advantage2}
-        imageSrc="/img/advantage-notes.png"
-      />
+      <div className="flex max-w-screen-xl flex-col justify-center md:flex-row md:justify-between lg:h-screen lg:w-screen">
+        <AdvantageSection imageSrc="/img/features-1.png" />
+        <AdvantageSection imageSrc="/img/features-2.png" />
+        <AdvantageSection imageSrc="/img/features-3.png" />
+      </div>
       <ComingSoonSection />
       <Footer />
     </div>
