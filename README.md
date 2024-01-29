@@ -6,7 +6,7 @@
 </div>
 
 ## BJJ Focus: Stop learning jiujitsu by coincidence.
-Welcome to BJJ Focus:
+[www.bjjfocus.com](www.bjjfocus.com)
 
 📝 Effortlessly organize and retrieve your BJJ notes, ensuring that your insights are always easy to find.
 
