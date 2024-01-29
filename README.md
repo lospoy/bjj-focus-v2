@@ -6,9 +6,11 @@
 </div>
 
 ## BJJ Focus: Stop learning jiujitsu by coincidence.
-Welcome to BJJ Focus – manage your notes, track your progress, and build your own techniques.
+Welcome to BJJ Focus:
 
 📝 Effortlessly organize and retrieve your BJJ notes, ensuring that your insights are always easy to find.
+
+📈 Keep track of what's important to you & reach your goals faster.
 
 🏆 Created in partnership with pro BJJ athletes, BJJ Focus caters to the needs of coaches, students, and enthusiasts of all skill levels.
 
